@@ -1,4 +1,4 @@
-#include "sphere.h"
+#include "WindowManager.h"
 
 Manager::Manager(int max_count) : size(max_count), count(0) {
     Manager::figures = (PhysShape**) calloc(max_count, sizeof(PhysShape*));

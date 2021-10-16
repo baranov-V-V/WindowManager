@@ -1136,9 +1136,9 @@ inline RGBQUAD* txVideoMemory() tx_nodiscard;
 //! @return  Если операция была успешна -- true, иначе -- false.
 //!
 //! @par     Параметры по умолчанию:
-//!        - Линии   -- цвет белый (TX_WHITE), толщина 1
-//!        - Заливка -- цвет белый (TX_WHITE)
-//!        - Шрифт   -- Системный, цвет белый (TX_WHITE)
+//!        - Линии   -- цвет белый (white_c), толщина 1
+//!        - Заливка -- цвет белый (white_c)
+//!        - Шрифт   -- Системный, цвет белый (white_c)
 //!        - Растровая операция -- копирование цвета (R2_COPYPEN)
 //!
 //! @see     txSetColor(), txGetColor(), txSetFillColor(), txGetFillColor(), txColors, RGB(), txSelectFont()
@@ -1198,7 +1198,7 @@ inline bool txOK() tx_nodiscard;
 //!
 //!          txBitBlt (center.x - size.x/2, center.y - size.y/2, image);  // This is centered
 //!
-//!          txSetColor (TX_WHITE, 3);
+//!          txSetColor (white_c, 3);
 //!          txSetFillColor (TX_TRANSPARENT);
 //!          txCircle (center.x, center.y, hypot (size.x, size.y) / 2);
 //!          txCircle (center.x, center.y, 10);
@@ -1375,7 +1375,7 @@ int txMessageBox (const char text[] = "Муаххаха! :)", const char header[] = "TXL
 //! @ingroup Drawing
 //! @brief   Названия предопределенных цветов.
 //!
-//!          См. TX_BLACK, TX_BLUE и другие цвета в списке выше.
+//!          См. black_c, TX_BLUE и другие цвета в списке выше.
 //!
 //!          Если кому-то эти цвета не нравятся (что неудивительно), всегда можно сделать свои с помощью RGB().
 //!          См. пример ниже.
@@ -1404,7 +1404,7 @@ const COLORREF
     enum txColors {
 #endif
 
-    TX_BLACK         = RGB (  0,   0,   0),   //!< Черный цвет.
+    black_c         = RGB (  0,   0,   0),   //!< Черный цвет.
     TX_BLUE          = RGB (  0,   0, 128),   //!< Темно-синий цвет. <i>Плохо виден.</i>
     TX_GREEN         = RGB (  0, 128,   0),   //!< Зеленый цвет.
     TX_CYAN          = RGB (  0, 128, 128),   //!< Бирюзовый цвет.
@@ -1422,7 +1422,7 @@ const COLORREF
     TX_LIGHTMAGENTA  = RGB (255,   0, 255),   //!< Светло-малиновый цвет. <i>Еще менее лучшего оттенка.</i>
     TX_PINK          = RGB (255, 128, 255),   //!< Розовый гламурный :)
     TX_YELLOW        = RGB (255, 255, 128),   //!< Желтый цвет.
-    TX_WHITE         = RGB (255, 255, 255),   //!< Белый цвет.
+    white_c         = RGB (255, 255, 255),   //!< Белый цвет.
     TX_TRANSPARENT   = 0xFFFFFFFF,            //!< Прозрачный цвет. <i>Отключает рисование.</i>  //-V112
     TX_NULL          = TX_TRANSPARENT,        //!< Прозрачный цвет. <i>Отключает рисование.</i>
 
@@ -2094,12 +2094,12 @@ bool txNotifyIcon (unsigned flags, const char title[], const char format[], ...)
 //!        //           | x |  y |sizeX|sizeY| color    |handL|handR|twist|head|eyes|wink|crazy|smile|hair|wind
 //!        //-----------+---+----+-----+-----+----------+-----+-----+-----+----+----+----+-----+-----+----+-----
 //!        //           |   |    |     |     |          |     |     |     |    |    |    |     |     |    |
-//!           txDrawMan (125, 250, 200,  200, TX_WHITE,    0,    0,    0,   0,   0.8,  0,   0,   1.0,   0,  0);
+//!           txDrawMan (125, 250, 200,  200, white_c,    0,    0,    0,   0,   0.8,  0,   0,   1.0,   0,  0);
 //!           txDrawMan (325, 250, 100,  200, TX_YELLOW,   0,    0,    0,   0,   0.8,  0,   0,  -1.0,   2,  0);
 //!           txDrawMan (525, 250, 200,  100, TX_ORANGE,   0,    0,    0,   0,   1.0,  0,  -1,   0.3,   1,  0);
 //!           txDrawMan (725, 250, 100,  100, TX_LIGHTRED, 0,    0,    0,   0,   1.0,  0,   1,  -0.3,   3,  0);
 //!
-//!           txDrawMan (125, 550, 200,  200, TX_WHITE,    0.3,  0.3,  0,   0,   0.8, -1,   1,   0.5,   2, -1);
+//!           txDrawMan (125, 550, 200,  200, white_c,    0.3,  0.3,  0,   0,   0.8, -1,   1,   0.5,   2, -1);
 //!           txDrawMan (325, 550, 100,  200, TX_YELLOW,  -0.5, -0.5,  0,   0.1, 0.8,  1,   0,  -0.5,   3,  5);
 //!           txDrawMan (525, 550, 200,  100, TX_ORANGE,  -0.5,  0.3,  0.2, 0,   0.8, -1,   1,   0.0,  10, -5);
 //!           txDrawMan (725, 550, 100,  100, TX_LIGHTRED, 0.3, -0.5, -0.4, 0,   0.8,  1,  -1,   0.0,   1,  1);
@@ -2244,9 +2244,9 @@ bool txTextOut (double x, double y, const char text[], HDC dc = txDC());
 //!          txTextOut(), txSelectFont(), txGetTextExtent(), txGetTextExtentX(), txGetTextExtentY()
 //!
 //! @usage @code
-//!          txSetColor     (TX_BLACK);
+//!          txSetColor     (black_c);
 //!          txSetFillColor (TX_DARKGRAY); Win32::RoundRect (txDC(), 105, 105, 205, 255, 30, 30);
-//!          txSetFillColor (TX_WHITE);    Win32::RoundRect (txDC(), 100, 100, 200, 250, 30, 30);
+//!          txSetFillColor (white_c);    Win32::RoundRect (txDC(), 100, 100, 200, 250, 30, 30);
 //!
 //!          txSelectFont ("Arial", 20, 0, FW_BOLD);
 //!          txDrawText  (100, 100, 200, 250, "I hate it when I'm studying "
@@ -2505,7 +2505,7 @@ HDC txCreateCompatibleDC (double sizeX, double sizeY, HBITMAP bitmap = NULL, RGB
 //!
 //!              POINT size = txGetExtent();
 //!
-//!              txSetFillColor (TX_BLACK);
+//!              txSetFillColor (black_c);
 //!              txTextCursor (false);
 //!              txBegin();
 //!
@@ -2758,7 +2758,7 @@ inline bool txBitBlt (double xDest, double yDest, HDC sourceImage, double xSourc
 //!                        Необязательна. Если не указана, то 0.</i>
 //! @param   ySource    <i>Y-координата верхнего левого угла копируемой области внутри изображения-источника.
 //!                        Необязательна. Если не указана, то 0.</i>
-//! @param   transColor <i>Цвет, который будет считаться прозрачным. Необязателен. Если не указан, то TX_BLACK.</i>
+//! @param   transColor <i>Цвет, который будет считаться прозрачным. Необязателен. Если не указан, то black_c.</i>
 //!
 //! @return  Если операция была успешна -- true, иначе -- false.
 //!
@@ -2807,7 +2807,7 @@ inline bool txBitBlt (double xDest, double yDest, HDC sourceImage, double xSourc
 //}----------------------------------------------------------------------------------------------------------------
 
 bool txTransparentBlt (HDC destImage,   double xDest,       double yDest,       double width, double height,
-                       HDC sourceImage, double xSource = 0, double ySource = 0, COLORREF transColor = TX_BLACK);
+                       HDC sourceImage, double xSource = 0, double ySource = 0, COLORREF transColor = black_c);
 
 //{----------------------------------------------------------------------------------------------------------------
 //! @ingroup Drawing
@@ -2816,7 +2816,7 @@ bool txTransparentBlt (HDC destImage,   double xDest,       double yDest,       
 //! @param   xDest         X-координата верхнего левого угла копируемого изображения.
 //! @param   yDest         Y-координата верхнего левого угла копируемого изображения.
 //! @param   sourceImage   Копируемое изображение.
-//! @param   transColor <i>Цвет, который будет считаться прозрачным. Необязателен. Если не указан, то TX_BLACK.</i>
+//! @param   transColor <i>Цвет, который будет считаться прозрачным. Необязателен. Если не указан, то black_c.</i>
 //! @param   xSource    <i>X-координата верхнего левого угла копируемой области внутри изображения-источника.
 //!                        Необязательна. Если не указана, то 0.</i>
 //! @param   ySource    <i>Y-координата верхнего левого угла копируемой области внутри изображения-источника.
@@ -2828,7 +2828,7 @@ bool txTransparentBlt (HDC destImage,   double xDest,       double yDest,       
 //}----------------------------------------------------------------------------------------------------------------
 
 inline bool txTransparentBlt (double xDest, double yDest, HDC sourceImage,
-                              COLORREF transColor = TX_BLACK, double xSource = 0, double ySource = 0);
+                              COLORREF transColor = black_c, double xSource = 0, double ySource = 0);
 
 //{----------------------------------------------------------------------------------------------------------------
 //! @ingroup Drawing
@@ -3086,7 +3086,7 @@ double txSleep (double time = 0);
 //!
 //! @usage @code
 //!          txBegin();                             // Здесь изображение "замерзнет"
-//!          txSetFillColor (TX_WHITE);
+//!          txSetFillColor (white_c);
 //!          txClear();                             // Это вызвало бы мигание без txBegin()
 //!          txSetFillColor (TX_RED);
 //!          txRectangle (100, 100, 200, 200);
@@ -3102,14 +3102,14 @@ double txSleep (double time = 0);
 //!
 //!          while (!GetAsyncKeyState (VK_ESCAPE))  // Цикл, пока не нажата клавиша ESCAPE
 //!              {
-//!              txSetFillColor (TX_BLACK);
+//!              txSetFillColor (black_c);
 //!              txClear();                         // Очищаем окно
 //!
 //!              txSetFillColor (TX_DARKGRAY);      // Рисуем объект. По-нормальному это надо сделать в отдельной
 //!              txCircle (x, y, 50);               // функции. На экране это рисование пока не будет видно,
 //!              txSetFillColor (TX_LIGHTGRAY);     // из-за отключенного обновления и двойной буферизации.
 //!              txCircle (x, y, 30);
-//!              txSetFillColor (TX_WHITE);
+//!              txSetFillColor (white_c);
 //!              txCircle (x, y, 10);
 //!
 //!              x += 5;                            // Изменяем координаты объекта
@@ -3128,7 +3128,7 @@ double txSleep (double time = 0);
 //!
 //!          while (!GetAsyncKeyState (VK_ESCAPE))
 //!              {
-//!              txSetFillColor (TX_BLACK);         // Очищаем окно
+//!              txSetFillColor (black_c);         // Очищаем окно
 //!              txClear();
 //!              txSleep (50);                      // Первая ошибка: окно обновляется в нелогичный момент,
 //!                                                 // когда оно только что очищено. Мы увидим только черный фон.
@@ -3137,7 +3137,7 @@ double txSleep (double time = 0);
 //!              txCircle (x, y, 50);
 //!              txSetFillColor (TX_LIGHTGRAY);
 //!              txCircle (x, y, 30);
-//!              txSetFillColor (TX_WHITE);
+//!              txSetFillColor (white_c);
 //!              txCircle (x, y, 10);
 //!
 //!              x += 5;
@@ -3168,7 +3168,7 @@ inline int txBegin();
 //!
 //! @usage @code
 //!          txBegin();                        // Здесь изображение "замерзнет"
-//!          txSetFillColor (TX_WHITE);
+//!          txSetFillColor (white_c);
 //!          txClear();                        // Это вызвало бы мигание без txBegin()
 //!          txSetFillColor (TX_RED);
 //!          txRectangle (100, 100, 200, 200);
@@ -4429,7 +4429,7 @@ inline bool In (std::nomeow_t, Tx x, Ta a, Tb b) tx_nodiscard tx_deprecated;
 //!          txRectangle (button.left, button.top, button.right, button.bottom);
 //!
 //!          txSetTextAlign();
-//!          txSetFillColor (TX_WHITE);
+//!          txSetFillColor (white_c);
 //!          txTextOut (125, 115, "Cookie");
 //!
 //!          for (;;)
@@ -4444,7 +4444,7 @@ inline bool In (std::nomeow_t, Tx x, Ta a, Tb b) tx_nodiscard tx_deprecated;
 //!                      txSetFillColor (TX_DARKGRAY);
 //!                      txRectangle (button.left, button.top, button.right, button.bottom);
 //!
-//!                      txSetFillColor (TX_WHITE);
+//!                      txSetFillColor (white_c);
 //!                      txTextOut (125, 115, "You got cookie");
 //!
 //!                      break;
@@ -8623,7 +8623,7 @@ $   _txBuffer_Select (Win32::CreateFont (szCon.cy/szTxt.cy, szCon.cx/szTxt.cx,
                                          DEFAULT_QUALITY, FIXED_PITCH, TX_CONSOLE_FONT),
                       dc) asserted;
 
-$  (Win32::SetTextColor      (dc, TX_WHITE) != CLR_INVALID) asserted;
+$  (Win32::SetTextColor      (dc, white_c) != CLR_INVALID) asserted;
 $   Win32::SetBkMode         (dc, TRANSPARENT)              asserted;
 
 $   Win32::SetROP2           (dc, R2_COPYPEN)               asserted;
@@ -13396,7 +13396,7 @@ $   return txBitBlt (txDC(), xDest, yDest, 0, 0, sourceImage, xSource, ySource);
 //-----------------------------------------------------------------------------------------------------------------
 
 bool txTransparentBlt (HDC destImage,   double xDest, double yDest, double width, double height,
-                       HDC sourceImage, double xSource /*= 0*/, double ySource /*= 0*/, COLORREF transColor /*= TX_BLACK*/)
+                       HDC sourceImage, double xSource /*= 0*/, double ySource /*= 0*/, COLORREF transColor /*= black_c*/)
     {
     // Это проверки того, правильные ли HDC вы передали в функцию.
     // Не бойтесь долларов - <s>это не запрещенная валюта</s> это макросы для отладки TXLib'а.
@@ -13467,7 +13467,7 @@ $   return ok;
 //-----------------------------------------------------------------------------------------------------------------
 
 bool txTransparentBlt (double xDest, double yDest, HDC sourceImage,
-                       COLORREF transColor /*= TX_BLACK*/, double xSource /*= 0*/, double ySource /*= 0*/)
+                       COLORREF transColor /*= black_c*/, double xSource /*= 0*/, double ySource /*= 0*/)
     {
 $1  if (_TX_TXWINDOW_FAILED()) return false;
 
@@ -14475,7 +14475,7 @@ $       if (t > maxTime) break;
         // Draw test scene
 
 $       for (int y = 0; y < size.y; y++)
-        for (int x = 0; x < size.x; x++)     txSetPixel (x, y, TX_BLACK, dc);
+        for (int x = 0; x < size.x; x++)     txSetPixel (x, y, black_c, dc);
 
 $       for (int y = 0; y < size.y; y += 10)
         for (int x = 0; x < size.x; x += 50) txTextOut  (x, y, "*", dc);

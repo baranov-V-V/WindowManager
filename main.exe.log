@@ -1,0 +1,310 @@
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x0000000000417BAF в функции (anonymous namespace)::TX::txCreateDIBSection(). Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043C900 (64-bit), Flags: CMdRe0, Thread: 0x1620 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x0000000000417BAF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::txCreateDIBSection()
+# 1 0x000000000041DEF7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: Texture::Texture()
+# 2 0x00000000004019AC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: ManagerWindow::ManagerWindow()
+# 3 0x0000000000401D3C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: BorderWindow::BorderWindow()
+# 4 0x00000000004015E8 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: App::App()
+# 5 0x000000000041F93D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 16 2021 23:23:12, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 16 2021 23:23:19
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x0000000000417BAF в функции (anonymous namespace)::TX::txCreateDIBSection(). Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043C900 (64-bit), Flags: CMdRe0, Thread: 0x1620 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x0000000000417BAF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::txCreateDIBSection()
+# 1 0x000000000041DEF7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: Texture::Texture()
+# 2 0x00000000004019AC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: ManagerWindow::ManagerWindow()
+# 3 0x0000000000401D3C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: BorderWindow::BorderWindow()
+# 4 0x00000000004015E8 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: App::App()
+# 5 0x000000000041F93D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 16 2021 23:23:12, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 16 2021 23:23:19
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x0000000000417BAF в функции (anonymous namespace)::TX::txCreateDIBSection(). Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043C900 (64-bit), Flags: CMdRe0, Thread: 0x7FC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x0000000000417BAF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::txCreateDIBSection()
+# 1 0x000000000041DEF7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: Texture::Texture()
+# 2 0x00000000004019AC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: ManagerWindow::ManagerWindow()
+# 3 0x0000000000401D3C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: BorderWindow::BorderWindow()
+# 4 0x00000000004015E8 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: App::App()
+# 5 0x000000000041F93D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 16 2021 23:23:12, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 16 2021 23:23:28
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x0000000000417BAF в функции (anonymous namespace)::TX::txCreateDIBSection(). Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043C900 (64-bit), Flags: CMdRe0, Thread: 0x7FC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x0000000000417BAF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::txCreateDIBSection()
+# 1 0x000000000041DEF7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: Texture::Texture()
+# 2 0x00000000004019AC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: ManagerWindow::ManagerWindow()
+# 3 0x0000000000401D3C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: BorderWindow::BorderWindow()
+# 4 0x00000000004015E8 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: App::App()
+# 5 0x000000000041F93D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 16 2021 23:23:12, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 16 2021 23:23:28
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x0000000000417BAF в функции txCreateDIBSection() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h на строке 13300. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043C900 (64-bit), Flags: CMdRe0, Thread: 0x279C (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x0000000000417BAF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txCreateDIBSection() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (13300)
+
+# 1 0x000000000041DEF7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (29):
+
+     27:     BasicWindow(x_size, y_size, color), coord(coord_x, coord_y) {
+     28:     type = TYPE_TEXTURE;
+=>   29:     screen = txCreateDIBSection(x_size, y_size);
+     30:     
+     31:     txSetFillColor(color, screen);
+
+# 2 0x00000000004019AC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (35):
+
+     33: 
+     34: ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor, ManagerWindow* parent) :
+=>   35:     Texture(x_size, y_size, color, coord_x, coord_y), parent(parent), functor(nullptr) {
+     36:     max_size = 100;
+     37:     count = 0;
+
+# 3 0x0000000000401D3C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (94):
+
+     92: BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor,
+     93:                            ManagerWindow* parent, COLORREF border_color, int thickness) : 
+=>   94:     ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent), border_color(border_color), thickness(thickness) {};
+     95:     
+     96: void BorderWindow::draw(Renderer* render) const {
+
+# 4 0x00000000004015E8 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (4):
+
+      2: 
+      3: App::App(int app_x, int app_y) : users_window(app_x, app_y), feather(), app_size(app_x, app_y),
+=>    4:     app_window(app_x, app_y, white_c, 0, 0, nullptr, nullptr, black_c, 2) {};
+      5:     
+      6: void App::run() {
+
+# 5 0x000000000041F93D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (4):
+
+      2: 
+      3: int main() {
+=>    4:     App app(1200, 700);
+      5:     app.run();
+      6: 
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 16 2021 23:24:02, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 16 2021 23:24:09
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x0000000000417BAF в функции txCreateDIBSection() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h на строке 13300. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043C900 (64-bit), Flags: CMdRe0, Thread: 0x279C (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x0000000000417BAF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txCreateDIBSection() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (13300)
+
+# 1 0x000000000041DEF7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (29):
+
+     27:     BasicWindow(x_size, y_size, color), coord(coord_x, coord_y) {
+     28:     type = TYPE_TEXTURE;
+=>   29:     screen = txCreateDIBSection(x_size, y_size);
+     30:     
+     31:     txSetFillColor(color, screen);
+
+# 2 0x00000000004019AC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (35):
+
+     33: 
+     34: ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor, ManagerWindow* parent) :
+=>   35:     Texture(x_size, y_size, color, coord_x, coord_y), parent(parent), functor(nullptr) {
+     36:     max_size = 100;
+     37:     count = 0;
+
+# 3 0x0000000000401D3C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (94):
+
+     92: BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor,
+     93:                            ManagerWindow* parent, COLORREF border_color, int thickness) : 
+=>   94:     ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent), border_color(border_color), thickness(thickness) {};
+     95:     
+     96: void BorderWindow::draw(Renderer* render) const {
+
+# 4 0x00000000004015E8 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (4):
+
+      2: 
+      3: App::App(int app_x, int app_y) : users_window(app_x, app_y), feather(), app_size(app_x, app_y),
+=>    4:     app_window(app_x, app_y, white_c, 0, 0, nullptr, nullptr, black_c, 2) {};
+      5:     
+      6: void App::run() {
+
+# 5 0x000000000041F93D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (4):
+
+      2: 
+      3: int main() {
+=>    4:     App app(1200, 700);
+      5:     app.run();
+      6: 
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 16 2021 23:24:02, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 16 2021 23:24:09
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
