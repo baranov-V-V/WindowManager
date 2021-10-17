@@ -11,7 +11,7 @@ Manager::~Manager() {
     free(figures);
 };
 
-void Manager::drawAll(const Renderer& renderer) const {
+void Manager::drawChilds(const Renderer& renderer) const {
     for (int i = 0; i < count; ++i) {
         figures[i]->draw(renderer);
     }

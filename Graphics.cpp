@@ -73,30 +73,16 @@ void Renderer::clear() const {
     txClear(window->getHdc());
 }
 
-void PrintMousePos() {
-    fprintf(stderr, "x:%lg, y:%lg\n", txMouseX(), txMouseY());
-}
+void WindowMouse::update() {
+    abs_coord.x = txMouseX();
+    abs_coord.y = txMouseY();
+    state = txMouseButtons();
 
-void GetMouse(double* x, double* y, const Renderer& render) {
-    *x = txMouseX();
-    *y = render.getWindow()->getSizeY() - txMouseY();  
-    if (render.getWindow()->getType() == TYPE_TEXTURE) {
-        *x -= ((Texture*)render.getWindow())->getCoordX();
-        *y += ((Texture*)render.getWindow())->getCoordY();
+    if (window->getParent() != nullptr) {
+        assert("Wrong call of Mouse::update()");
     }
-}
 
-/*
-bool Button::checkBoundary(const Renderer& render) const {
-    double x = 0, y = 0;
-    GetMouse(x, y, render);
-    return (coord.x < x && (coord.x + size.x) > x) && (coord.y < y && (coord.y + size.y) > y);
-};
-*/
-
-bool CheckPress() {
-    unsigned int press = txMouseButtons();  
-    return (press & 1);
+    rel_coord = abs_coord;
 }
 
 void App::sleep(int millisec) const {

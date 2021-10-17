@@ -3,6 +3,7 @@
 #include <iostream>
 #include <windows.h>
 #include <windef.h>
+#include <cassert>
 #include <initializer_list>
 #include <string>
 #include "Functors.h"
@@ -11,6 +12,8 @@ using std::string;
 
 using std::rand;
 using std::max;
+using std::cerr;
+using std::cout;
 
 const double dt = 0.03;
 
@@ -38,10 +41,11 @@ enum WINDOW_TYPES {
 class Window;
 class Renderer;
 class MainWindow;
+class ManagerWindow;
 class Frame;
 class BasicWindow;
 class Graph;
-class Vfunctor;
+class VFunctor;
 
 template <typename T>
 class Pair {
@@ -63,16 +67,35 @@ enum MOUSE_STATES {
 //
 
 
-const COLORREF black_c = RGB(  0,   0,   0);
-const COLORREF white_c = RGB(255, 255, 255);   
+const COLORREF black_c  = RGB(  0,   0,   0);
+const COLORREF white_c  = RGB(255, 255, 255); 
+const COLORREF canvas_c = RGB( 85,  86, 179);
+const COLORREF blue_c   = RGB( 85,  86, 179);
+const COLORREF red_c    = RGB(  4,   2, 255);
+const COLORREF grey_c   = RGB( 153, 76,   0);
+const COLORREF green_c  = RGB(  4, 135,   0);
 
-class Mouse {
+
+class WindowMouse {
   public:
-    getInfo() const;
+    WindowMouse(ManagerWindow* window) : window(window), abs_coord(0, 0), rel_coord(0, 0), state(NONE_CLICK) {};
+
+    void update(); //call only if window is app_window!!
+    
+    int getState() const;
+    void printState() const;
+    
+    Pair<int> getRelCoord() const { return rel_coord; }; 
+    Pair<int> getAbsCoord() const { return abs_coord; };
+    
+    void setWindow(ManagerWindow* new_window);          // only if new window is child of current window
+    void setToParent();
 
   private:
     int state;
-    Pair<int> coord;
+    Pair<int> abs_coord;
+    ManagerWindow* window;
+    Pair<int> rel_coord;
 };
 
 class Feather {
@@ -138,28 +161,6 @@ class Renderer {
     Pair<double> min;
 };
 
-/*
-class Manager {
-  public:
-    Manager(int max_count);
-    ~Manager();
-
-    void addFigure(PhysShape* figure);
-    void delFigure(const PhysShape* figure);
-    void delLast();
-
-    PhysShape* get_figure(int pos) const { return figures[pos]; };
-    int getCount() const { return count; };
-
-    void drawAll(const Renderer& renderer) const;
-    void moveAll(double time) const;
-
-  private:
-    int count;
-    int size;
-    PhysShape** figures;
-};
-*/
 
 class BasicWindow {
   public:
@@ -203,19 +204,21 @@ class Texture : public BasicWindow {
 class ManagerWindow : public Texture {
   public:
     ManagerWindow();
-    ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor, ManagerWindow* parent = nullptr);
-    ~ManagerWindow();
+    ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, ManagerWindow* parent = nullptr);
+    virtual ~ManagerWindow();
 
     //general part
     virtual void draw(Renderer* render) const = 0;
     
     //!mouse press part
-    Pair<int>* checkPress();   //nullptr if it doesn't have click on it, coords of mouse on window if has click on it.
-    ManagerWindow* getPress(); //go from end and check all children
+    bool checkLeftClick(WindowMouse* mouse);   //nullptr if it doesn't have click on it, coords of mouse on window if has click on it.
+    bool proceedClicks(WindowMouse* mouse); //go from end and check all children
     bool action();
+    void setFunctor(VFunctor* functor) { ManagerWindow::functor = functor; };
     
     //manager part
-    void drawAll(Renderer* render) const;
+    ManagerWindow* getParent() const { return parent; };
+    void drawChilds(Renderer* render) const;
     void addChild(ManagerWindow* window);
     void addChild(std::initializer_list<ManagerWindow*> windows);
     ManagerWindow* getChild(int pos) const { return children[pos]; };
@@ -235,7 +238,7 @@ class ManagerWindow : public Texture {
 class BorderWindow : public ManagerWindow {
   public:
     BorderWindow();
-    BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor,
+    BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
                  ManagerWindow* parent = nullptr, COLORREF border_color = black_c, int thickness = 2);
     void draw(Renderer* render) const override;
 
@@ -247,10 +250,10 @@ class BorderWindow : public ManagerWindow {
 class CanvasWindow : public BorderWindow {
   public:
     CanvasWindow();
-    CanvasWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor,
+    CanvasWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
                  ManagerWindow* parent = nullptr, COLORREF border_color = black_c, int thickness = 2);
 
-    void draw_feather(Feather* feather, Mouse* mouse);
+    void draw_feather(Feather* feather, WindowMouse* mouse);
 
 
   private:
@@ -259,6 +262,9 @@ class CanvasWindow : public BorderWindow {
 
 class PaletteWindow : public BorderWindow {
   public:
+    PaletteWindow();
+    PaletteWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
+                  ManagerWindow* parent = nullptr, COLORREF border_color = black_c, int thickness = 2);
 
   private:
 
@@ -266,7 +272,10 @@ class PaletteWindow : public BorderWindow {
 
 class MenuWindow : public BorderWindow {
   public:
-    
+    MenuWindow();
+    MenuWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
+               ManagerWindow* parent = nullptr, COLORREF border_color = black_c, int thickness = 2);
+
   private:
 
 };
@@ -287,14 +296,57 @@ class App {
 
   private:
     void initWindows() const;
-    void proceedPress() const;
+    void proceedMouseEvent();
     void sleep(int millisec) const;
-
 
     Pair<int> app_size;
     Window users_window;
     BorderWindow app_window;
     Feather feather;
+    WindowMouse mouse;
+};
+
+class VFunctor {
+  public:
+    virtual bool action() = 0;
+};
+
+class DummyFunctor : public VFunctor {
+  public:
+    bool action() override { return true; };
+};
+
+class FeatherFunctor : public VFunctor {
+    FeatherFunctor(Feather* feather) : feather(feather), new_color(feather->getColor()), new_thickness(feather->getThickness()) {};
+
+    bool action() override { feather->setColor(new_color); feather->setThickness(new_thickness); return true; };
+    void setColor(COLORREF color) { new_color = color; };
+    void setThickness(int thinckness) { new_thickness = thinckness; };
+
+  private:
+    Feather* feather;
+    COLORREF new_color;
+    int new_thickness;  
+};
+
+class DebugFunctorTrue : public VFunctor {
+  public:
+    DebugFunctorTrue();
+    DebugFunctorTrue(ManagerWindow* window) : window(window) {};
+    bool action() override { cout << "Click true on " << window << "\n"; return true; };
+
+  private:
+    ManagerWindow* window;
+};
+
+class DebugFunctorFalse : public VFunctor {
+  public:
+    DebugFunctorFalse();
+    DebugFunctorFalse(ManagerWindow* window) : window(window) {};
+    bool action() override { cout << "Click false on " << window << "\n"; return false; };
+
+  private:
+    ManagerWindow* window;
 };
 
 RGBQUAD ToRGBQUAD(COLORREF color);

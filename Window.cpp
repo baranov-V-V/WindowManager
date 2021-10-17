@@ -12,6 +12,10 @@ void Renderer::calcScale() {
 
 void Renderer::setWindow(BasicWindow* new_window) {
     window = new_window;
+    this->setMaxX(window->getSizeX());    
+    this->setMinX(0);
+    this->setMaxY(window->getSizeY());    
+    this->setMinY(0);
     this->calcScale();
 };
 
@@ -31,8 +35,13 @@ double Renderer::toCoordY(int y) const {
     return double(y) / scale.y + min.y;
 };
 
-ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor, ManagerWindow* parent) :
-    Texture(x_size, y_size, color, coord_x, coord_y), parent(parent), functor(nullptr) {
+ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, ManagerWindow* parent) :
+    Texture(x_size, y_size, color, coord_x, coord_y), parent(parent) {
+    if (functor == nullptr) {
+        ManagerWindow::functor = nullptr;
+    } else {
+        ManagerWindow::functor = functor;
+    }
     max_size = 100;
     count = 0;
     ManagerWindow::children = new ManagerWindow*[max_size];
@@ -43,11 +52,14 @@ ManagerWindow::~ManagerWindow() {
         this->delLast();
     }
     delete[] children;
+    delete functor;
 };
 
-void ManagerWindow::drawAll(Renderer* renderer) const {
-    for (int i = 0; i < count; ++i) {
+void ManagerWindow::drawChilds(Renderer* renderer) const {
+    //cerr << "trying draw childs for: [" << this << "]\n";
+    for (int i = count - 1; i >= 0; --i) {
         children[i]->draw(renderer);
+        children[i]->showOn(this);
     }
 };
 
@@ -77,24 +89,79 @@ void ManagerWindow::delLast() {
     children[--count] = nullptr;
 };
 
-Pair<int>* checkPress() {
-    return nullptr;
+bool ManagerWindow::checkLeftClick(WindowMouse* mouse) {
+    int x = mouse->getRelCoord().x;
+    int y = mouse->getRelCoord().y;
+    return (x > 0 && x < this->getSizeX()) && (y > 0 && y < this->getSizeY()) && (mouse->getState() & LEFT_CLICK != 0);
 };
 
-ManagerWindow* getPress() {
-    return nullptr;
+bool ManagerWindow::proceedClicks(WindowMouse* mouse) {
+    mouse->setWindow(this);
+    if (this->checkLeftClick(mouse)) {
+        cerr << "in window [" << this << "]";
+        mouse->printState();
+        for (int i = count - 1; i >= 0; --i) {
+            if (children[i]->proceedClicks(mouse)) {
+                return true;
+            }
+        }
+        mouse->setToParent();
+        return this->action();
+    }
+    mouse->setToParent();
+    return false;
 };
 
 bool ManagerWindow::action() {
-    functor->action();
+    return functor->action();
 };
 
-BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor,
+BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
                            ManagerWindow* parent, COLORREF border_color, int thickness) : 
-    ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent), border_color(border_color), thickness(thickness) {};
+    ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent), border_color(border_color), thickness(thickness) {
+    cerr << "constructed: [" << this << "]\n";
+};
     
 void BorderWindow::draw(Renderer* render) const {
-    this->drawAll(render);
+    //cerr << "started drawing: [" << this << "]\n";
     render->setWindow(const_cast<BorderWindow*>(this));
     render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
+    this->drawChilds(render);
+    //cerr << "ended drawing: [" << this << "]\n";
+};
+
+
+
+CanvasWindow::CanvasWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
+                           ManagerWindow* parent, COLORREF border_color, int thickness) : 
+    BorderWindow(x_size, y_size, color, coord_x, coord_y, functor, parent, border_color, thickness) {};
+
+
+
+int WindowMouse::getState() const {
+    return state;
+};
+
+void WindowMouse::printState() const{
+    cout << "    Mouse\n" << "abs_coord_x: " << abs_coord.x << " abs_coord_y: " << abs_coord.y << "\n";
+    cout << "rel_coord_x: " << rel_coord.x << " rel_coord_y: " << rel_coord.y << "\n";
+    cout << "state: " << state << "\n";
+    //cout << "window: " << window << "\n";
+};
+
+void WindowMouse::setWindow(ManagerWindow* new_window) {
+    if (new_window->getParent() != window) {
+        assert("In WindowMouse::setWindow parent of new window is not current window");
+    }
+    rel_coord.x = rel_coord.x - new_window->getCoordX();
+    rel_coord.y = rel_coord.y - new_window->getCoordY();
+    window = new_window;
+};  
+        // only if new window is child of current window
+void WindowMouse::setToParent() {
+    if (window->getParent() != nullptr) {
+        window = window->getParent();
+        rel_coord.x = rel_coord.x + window->getCoordX();
+        rel_coord.y = rel_coord.y + window->getCoordY();
+    }
 };

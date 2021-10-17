@@ -186,14 +186,14 @@ TXLib предупреждает:
 # 2 0x00000000004019AC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (35):
 
      33: 
-     34: ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor, ManagerWindow* parent) :
+     34: ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, ManagerWindow* parent) :
 =>   35:     Texture(x_size, y_size, color, coord_x, coord_y), parent(parent), functor(nullptr) {
      36:     max_size = 100;
      37:     count = 0;
 
 # 3 0x0000000000401D3C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (94):
 
-     92: BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor,
+     92: BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
      93:                            ManagerWindow* parent, COLORREF border_color, int thickness) : 
 =>   94:     ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent), border_color(border_color), thickness(thickness) {};
      95:     
@@ -263,14 +263,14 @@ TXLib соболезнует...
 # 2 0x00000000004019AC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (35):
 
      33: 
-     34: ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor, ManagerWindow* parent) :
+     34: ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, ManagerWindow* parent) :
 =>   35:     Texture(x_size, y_size, color, coord_x, coord_y), parent(parent), functor(nullptr) {
      36:     max_size = 100;
      37:     count = 0;
 
 # 3 0x0000000000401D3C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (94):
 
-     92: BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, Vfunctor* functor,
+     92: BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
      93:                            ManagerWindow* parent, COLORREF border_color, int thickness) : 
 =>   94:     ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent), border_color(border_color), thickness(thickness) {};
      95:     
@@ -303,6 +303,1758 @@ See license on: http://txlib.ru
 TXLib file:	TXLib.h
 Compiled:	Oct 16 2021 23:24:02, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
 Started:	Oct 16 2021 23:24:09
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x28B8 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:12:36
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x28B8 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:12:37
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x1124 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:13:06
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x1124 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:13:07
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x34B8 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:13:37
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x34B8 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:13:36
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x42F4 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:13:46
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x42F4 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:13:45
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x4B80 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:15:33
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x4B80 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:15:34
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x3780 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:16:16
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x3780 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:16:16
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x4828 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:17
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x4828 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:17
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x3F08 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:28
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x3F08 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:29
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x1B64 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:43
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x1B64 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:43
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x201C (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:53
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x201C (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:52
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x20D4 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:59
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x20D4 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:19:59
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x2A44 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:20:45
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000040226E в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 116. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043D900 (64-bit), Flags: CMdRe0, Thread: 0x2A44 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040226E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (116):
+
+    114: 
+    115: bool ManagerWindow::action() {
+=>  116:     return functor->action();
+    117: };
+    118: 
+
+# 1 0x0000000000402238 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedClicks() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (109):
+
+    107:         }
+    108:         mouse->setToParent();
+=>  109:         return this->action();
+    110:     }
+    111:     mouse->setToParent();
+
+# 2 0x0000000000401A2D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59: void App::proceedMouseEvent() {
+     60:     mouse.update();
+=>   61:     if(!app_window.proceedClicks(&mouse)) {
+     62:         //cout << "Click with info wasn't taken by any window\n";
+     63:         //mouse.printState(); 
+
+# 3 0x00000000004016C5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         this->sleep(30);
+     15:     }
+
+# 4 0x00000000004200B9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 17 2021 15:12:27, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 17 2021 15:20:44
 
 Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
 Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
