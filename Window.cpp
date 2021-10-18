@@ -98,15 +98,17 @@ bool ManagerWindow::checkLeftClick(WindowMouse* mouse) {
 bool ManagerWindow::proceedClicks(WindowMouse* mouse) {
     mouse->setWindow(this);
     if (this->checkLeftClick(mouse)) {
-        cerr << "in window [" << this << "]";
-        mouse->printState();
+        //cerr << "in window [" << this << "]\n";
+        //mouse->printState();
         for (int i = count - 1; i >= 0; --i) {
             if (children[i]->proceedClicks(mouse)) {
+                //mouse->setToParent();
                 return true;
             }
         }
+        bool result = this->action();
         mouse->setToParent();
-        return this->action();
+        return result;
     }
     mouse->setToParent();
     return false;
@@ -160,8 +162,8 @@ void WindowMouse::setWindow(ManagerWindow* new_window) {
         // only if new window is child of current window
 void WindowMouse::setToParent() {
     if (window->getParent() != nullptr) {
-        window = window->getParent();
         rel_coord.x = rel_coord.x + window->getCoordX();
         rel_coord.y = rel_coord.y + window->getCoordY();
+        window = window->getParent();
     }
 };

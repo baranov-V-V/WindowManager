@@ -52,7 +52,10 @@ void Renderer::setPixel(double x, double y, COLORREF color) const {
 };
 
 void Renderer::drawCircle(double x, double y, double r, COLORREF color, int thickness) const {
+    cerr << "drawing on [" << window << "]\n";
+    cerr << "x: " << x << " y: " << y << " r: " << r << " thick: " << thickness << " color: " << color << "\n";
     txSetColor(color, thickness, window->getHdc());
+    //txSetFillColor(color, window->getHdc());
     txEllipse(this->toPixelX(x - r), this->toPixelY(y + r),
               this->toPixelX(x + r), this->toPixelY(y - r), window->getHdc());
 };

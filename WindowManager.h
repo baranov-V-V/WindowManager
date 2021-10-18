@@ -212,7 +212,7 @@ class ManagerWindow : public Texture {
     
     //!mouse press part
     bool checkLeftClick(WindowMouse* mouse);   //nullptr if it doesn't have click on it, coords of mouse on window if has click on it.
-    bool proceedClicks(WindowMouse* mouse); //go from end and check all children
+    bool proceedClicks(WindowMouse* mouse);    //go from end and check all children
     bool action();
     void setFunctor(VFunctor* functor) { ManagerWindow::functor = functor; };
     
@@ -220,7 +220,6 @@ class ManagerWindow : public Texture {
     ManagerWindow* getParent() const { return parent; };
     void drawChilds(Renderer* render) const;
     void addChild(ManagerWindow* window);
-    void addChild(std::initializer_list<ManagerWindow*> windows);
     ManagerWindow* getChild(int pos) const { return children[pos]; };
     int getCount() const { return count; };
     void delChild(ManagerWindow* window);
@@ -280,11 +279,16 @@ class MenuWindow : public BorderWindow {
 
 };
 
-class TextWindow : public BorderWindow {
+class ClockWindow : public BorderWindow {
   public:
-    
-  private:
+    ClockWindow();
+    ClockWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
+               ManagerWindow* parent = nullptr, COLORREF border_color = black_c, int thickness = 2);
 
+    void draw(Renderer* render) const override;
+
+  private:
+    time_t
 };
 
 class App {
@@ -295,7 +299,7 @@ class App {
     void run();
 
   private:
-    void initWindows() const;
+    void initWindows();
     void proceedMouseEvent();
     void sleep(int millisec) const;
 
@@ -304,6 +308,7 @@ class App {
     BorderWindow app_window;
     Feather feather;
     WindowMouse mouse;
+    Renderer render;
 };
 
 class VFunctor {
@@ -349,8 +354,50 @@ class DebugFunctorFalse : public VFunctor {
     ManagerWindow* window;
 };
 
-RGBQUAD ToRGBQUAD(COLORREF color);
+class ChangeColor : public VFunctor {
+  public:
+    ChangeColor() : feather(nullptr), color(black_c) {};
+    ChangeColor(Feather* feather, COLORREF color) : feather(feather), color(color) {};
 
+    bool action() override { feather->setColor(color); return true; };
+
+  private:
+    Feather* feather;
+    COLORREF color;  
+};
+
+class ChangeThickness : public VFunctor {
+  public:
+    ChangeThickness() : feather(nullptr), thickness(0) {};
+    ChangeThickness(Feather* feather, int thickness) : feather(feather), thickness(thickness) {};
+
+    bool action() override { feather->setThickness(thickness); return true; };
+
+  private:
+    Feather* feather;
+    int thickness;  
+};
+
+class DrawFunctor : public VFunctor {
+  public:
+    DrawFunctor() : feather(nullptr), render(nullptr), window(nullptr), mouse(nullptr) {};
+    DrawFunctor(ManagerWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) : feather(feather), render(render), window(window), mouse(mouse) {};
+
+    bool action() override {
+        render->setWindow(window);
+        //render->drawCircle(mouse->getRelCoord().x, mouse->getRelCoord().y, feather->getThickness(), feather->getColor(), 1);
+        render->setPixel(mouse->getRelCoord().x, mouse->getRelCoord().y, feather->getColor());
+        return true;
+    };
+
+  private:
+    Feather* feather;
+    Renderer* render;
+    ManagerWindow* window;
+    WindowMouse* mouse;
+};
+
+RGBQUAD ToRGBQUAD(COLORREF color);
 
 void PrintMousePos();
 int NumOfDigits(int num);
