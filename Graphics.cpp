@@ -33,6 +33,14 @@ Texture::Texture(int x_size, int y_size, COLORREF color, int coord_x, int coord_
     txRectangle(0, 0, x_size, y_size, screen);
 }
 
+Texture::Texture(int x_size, int y_size, const char* file_name, int coord_x, int coord_y) :
+    BasicWindow(x_size, y_size, 0), coord(coord_x, coord_y) {
+    type = TYPE_TEXTURE;
+    screen_buf = nullptr;
+    screen = txLoadImage(file_name, x_size, y_size);
+    assert(screen);
+};
+
 Texture::~Texture() {
     txDeleteDC(screen);
 }
@@ -52,10 +60,10 @@ void Renderer::setPixel(double x, double y, COLORREF color) const {
 };
 
 void Renderer::drawCircle(double x, double y, double r, COLORREF color, int thickness) const {
-    cerr << "drawing on [" << window << "]\n";
-    cerr << "x: " << x << " y: " << y << " r: " << r << " thick: " << thickness << " color: " << color << "\n";
+    //cerr << "drawing on [" << window << "]\n";
+    //cerr << "x: " << x << " y: " << y << " r: " << r << " thick: " << thickness << " color: " << color << "\n";
     txSetColor(color, thickness, window->getHdc());
-    //txSetFillColor(color, window->getHdc());
+    txSetFillColor(color, window->getHdc());
     txEllipse(this->toPixelX(x - r), this->toPixelY(y + r),
               this->toPixelX(x + r), this->toPixelY(y - r), window->getHdc());
 };
@@ -70,6 +78,12 @@ void Renderer::drawRoundRect(double x1, double y1, double x2, double y2, double 
     txSetColor(color, thickness, window->getHdc());
     Win32::RoundRect(window->getHdc(), this->toPixelX(x1), this->toPixelY(y1), 
                      this->toPixelX(x2), this->toPixelY(y2), width * this->getScaleX(), height * this->getScaleY());
+};
+
+void Renderer::drawText(double x, double y, string text, string font_name, int size_y, int size_x, COLORREF color) {
+    txSetColor(color, 1, window->getHdc());
+    txSelectFont(font_name.data(), size_y, size_x, FW_DONTCARE, false, false, false, 0, window->getHdc());
+    txTextOut(x, y, text.data(), window->getHdc());
 };
 
 void Renderer::clear() const {

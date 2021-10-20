@@ -38,7 +38,7 @@ double Renderer::toCoordY(int y) const {
 ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, ManagerWindow* parent) :
     Texture(x_size, y_size, color, coord_x, coord_y), parent(parent) {
     if (functor == nullptr) {
-        ManagerWindow::functor = nullptr;
+        ManagerWindow::functor = new DebugFunctorTrue(this);
     } else {
         ManagerWindow::functor = functor;
     }
@@ -98,8 +98,6 @@ bool ManagerWindow::checkLeftClick(WindowMouse* mouse) {
 bool ManagerWindow::proceedClicks(WindowMouse* mouse) {
     mouse->setWindow(this);
     if (this->checkLeftClick(mouse)) {
-        //cerr << "in window [" << this << "]\n";
-        //mouse->printState();
         for (int i = count - 1; i >= 0; --i) {
             if (children[i]->proceedClicks(mouse)) {
                 //mouse->setToParent();
@@ -118,26 +116,43 @@ bool ManagerWindow::action() {
     return functor->action();
 };
 
-BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
+BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, Renderer* render,
                            ManagerWindow* parent, COLORREF border_color, int thickness) : 
     ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent), border_color(border_color), thickness(thickness) {
-    cerr << "constructed: [" << this << "]\n";
+    render->setWindow(this);
+    render->drawRectangle(0, 0, x_size, y_size, border_color, thickness);
+    //cerr << "constructed: [" << this << "]\n";
 };
     
 void BorderWindow::draw(Renderer* render) const {
     //cerr << "started drawing: [" << this << "]\n";
     render->setWindow(const_cast<BorderWindow*>(this));
-    render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
+    //render->drawRectangle(0, 0, size.x, size.y, border_color, thickness); CHANGE!!!
     this->drawChilds(render);
     //cerr << "ended drawing: [" << this << "]\n";
 };
 
+/*
+void ClockWindow::draw(Renderer* render) const {
+    ClockWindow* nc_this = const_cast<ClockWindow*>(this);
+    render->setWindow(nc_this);
+    render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
+    nc_this->updateTime();
 
+    char buf[1024];
+    strftime(buf, 1024, "%R", *curr_time);
 
+    render->drawText(size.x / 10, 3 * size.y / 4, )
+
+    //this->drawChilds(render);
+};
+*/
+
+/*
 CanvasWindow::CanvasWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
                            ManagerWindow* parent, COLORREF border_color, int thickness) : 
     BorderWindow(x_size, y_size, color, coord_x, coord_y, functor, parent, border_color, thickness) {};
-
+*/
 
 
 int WindowMouse::getState() const {
@@ -158,7 +173,7 @@ void WindowMouse::setWindow(ManagerWindow* new_window) {
     rel_coord.x = rel_coord.x - new_window->getCoordX();
     rel_coord.y = rel_coord.y - new_window->getCoordY();
     window = new_window;
-};  
+}; 
         // only if new window is child of current window
 void WindowMouse::setToParent() {
     if (window->getParent() != nullptr) {
@@ -166,4 +181,15 @@ void WindowMouse::setToParent() {
         rel_coord.y = rel_coord.y + window->getCoordY();
         window = window->getParent();
     }
+};
+
+PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, char* pic_name, ManagerWindow* parent) :
+    ManagerWindow(x_size, y_size, 0, coord_x, coord_y, functor, parent) {
+    Texture pic(x_size, y_size, pic_name, 0, 0);
+    pic.showOn(this);
+};
+    
+void PicWindow::draw(Renderer* render) const {
+    render->setWindow(const_cast<PicWindow*>(this));
+    this->drawChilds(render);
 };

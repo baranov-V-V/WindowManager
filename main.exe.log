@@ -2060,3 +2060,543 @@ Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main
 Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
 
 --------------------------------------------------
+
+--------------------------------------------------
+TXLib сообщает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: TXLib.h, строка: 13377, функция: bool {anonymous}::TX::txBitBlt(HDC, double, double, double, double, HDC, double, double, unsigned int),
+
+Сообщение: Параметр "sourceImage" неверен. Возможно, этот холст не создан, или уже уничтожен, или не загрузилась картинка.
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdRe0, Thread: 0x43FC (Main), GetLastError(): 13 (Недопустимые данные). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040C799 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+# 1 0x0000000000418FDF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txBitBlt() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (13377)
+
+# 2 0x000000000041EF58 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: showOn() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (48):
+
+     46: 
+     47: void Texture::showOn(const BasicWindow* target) const {
+=>   48:     txBitBlt(target->getHdc(), coord.x, coord.y, 0, 0, this->getHdc());
+     49: }
+     50: 
+
+# 3 0x0000000000402B98 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (189):
+
+    187:     ManagerWindow(x_size, y_size, 0, coord_x, coord_y, functor, parent) {
+    188:     Texture pic(x_size, y_size, pic_name, 0, 0);
+=>  189:     pic.showOn(this);
+    190: };
+    191:     
+
+# 4 0x00000000004017B4 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: initWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (30):
+
+     28: 
+     29:     //BorderWindow* canvas  = new BorderWindow(400, 300, white_c, 400, 200, nullptr, &render, &(no_const_this->app_window), mgrey_c, 3);
+=>   30:     PicWindow* canvas       = new PicWindow(400, 300, 400, 200, nullptr, img_canvas, &(this->app_window));
+     31:     BorderWindow* canvas_2  = new BorderWindow(200, 400, white_c, 850, 200, nullptr, &render, &(no_const_this->app_window), mgrey_c, 3);
+     32:     BorderWindow* menu      = new BorderWindow(app_size.x, app_size.y / 25, lgrey_c, 0, 0, nullptr, &render,&(no_const_this->app_window), mgrey_c, 3);
+
+# 5 0x00000000004016A9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (8):
+
+      6:     
+      7: void App::run() {
+=>    8:     this->initWindows();
+      9: 
+     10:     //render.setWindow(app_window.getChild(2));
+
+# 6 0x0000000000420899 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 20 2021 23:15:15, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 20 2021 23:15:47
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: Graphics.cpp, строка: 41, функция: Texture::Texture(int, int, const char*, int, int),
+
+Сообщение: ВНЕЗАПНО: Логическая ошибка: Неверно, что "screen".
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdRe0, Thread: 0x8AC (Main), GetLastError(): 2 (Не удается найти указанный файл). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040C799 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+
+# 1 0x000000000041EEB2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (41):
+
+     39:     screen_buf = nullptr;
+     40:     screen = txLoadImage(file_name, x_size, y_size);
+=>   41:     assert(screen);
+     42: };
+     43: 
+
+# 2 0x0000000000402B84 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (188):
+
+    186: PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, char* pic_name, ManagerWindow* parent) :
+    187:     ManagerWindow(x_size, y_size, 0, coord_x, coord_y, functor, parent) {
+=>  188:     Texture pic(x_size, y_size, pic_name, 0, 0);
+    189:     pic.showOn(this);
+    190: };
+
+# 3 0x00000000004017B4 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: initWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (30):
+
+     28: 
+     29:     //BorderWindow* canvas  = new BorderWindow(400, 300, white_c, 400, 200, nullptr, &render, &(no_const_this->app_window), mgrey_c, 3);
+=>   30:     PicWindow* canvas       = new PicWindow(400, 300, 400, 200, nullptr, img_canvas, &(this->app_window));
+     31:     BorderWindow* canvas_2  = new BorderWindow(200, 400, white_c, 850, 200, nullptr, &render, &(no_const_this->app_window), mgrey_c, 3);
+     32:     BorderWindow* menu      = new BorderWindow(app_size.x, app_size.y / 25, lgrey_c, 0, 0, nullptr, &render,&(no_const_this->app_window), mgrey_c, 3);
+
+# 4 0x00000000004016A9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (8):
+
+      6:     
+      7: void App::run() {
+=>    8:     this->initWindows();
+      9: 
+     10:     //render.setWindow(app_window.getChild(2));
+
+# 5 0x0000000000420909 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 20 2021 23:18:41, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 20 2021 23:18:48
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: Graphics.cpp, строка: 41, функция: Texture::Texture(int, int, const char*, int, int),
+
+Сообщение: ВНЕЗАПНО: Логическая ошибка: Неверно, что "screen".
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdRe0, Thread: 0x4B38 (Main), GetLastError(): 2 (Не удается найти указанный файл). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040C799 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+
+# 1 0x000000000041EEB2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (41):
+
+     39:     screen_buf = nullptr;
+     40:     screen = txLoadImage(file_name, x_size, y_size);
+=>   41:     assert(screen);
+     42: };
+     43: 
+
+# 2 0x0000000000402B84 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (188):
+
+    186: PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, char* pic_name, ManagerWindow* parent) :
+    187:     ManagerWindow(x_size, y_size, 0, coord_x, coord_y, functor, parent) {
+=>  188:     Texture pic(x_size, y_size, pic_name, 0, 0);
+    189:     pic.showOn(this);
+    190: };
+
+# 3 0x00000000004017B4 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: initWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (30):
+
+     28: 
+     29:     //BorderWindow* canvas  = new BorderWindow(400, 300, white_c, 400, 200, nullptr, &render, &(no_const_this->app_window), mgrey_c, 3);
+=>   30:     PicWindow* canvas       = new PicWindow(400, 300, 400, 200, nullptr, img_canvas, &(this->app_window));
+     31:     BorderWindow* canvas_2  = new BorderWindow(200, 400, white_c, 850, 200, nullptr, &render, &(no_const_this->app_window), mgrey_c, 3);
+     32:     BorderWindow* menu      = new BorderWindow(app_size.x, app_size.y / 25, lgrey_c, 0, 0, nullptr, &render,&(no_const_this->app_window), mgrey_c, 3);
+
+# 4 0x00000000004016A9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (8):
+
+      6:     
+      7: void App::run() {
+=>    8:     this->initWindows();
+      9: 
+     10:     //render.setWindow(app_window.getChild(2));
+
+# 5 0x0000000000420909 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (5):
+
+      3: int main() {
+      4:     App app(1200, 700);
+=>    5:     app.run();
+      6: 
+      7:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 20 2021 23:35:38, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 20 2021 23:35:48
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: #1: Куча была повреждена. (0xC0000374) при выполнении кода по адресу 0x00007FFED9ECF199 в функции RtlIsZeroMemory(). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+Ой, всё (EXCEPTION_NONCONTINUABLE).
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdrE0, Thread: 0x4CE0 (Canvas), GetLastError(): 6 (Неверный дескриптор). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FFED9ECF199 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 1 0x00007FFED9ECF163 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 2 0x00007FFED9ED7EE2 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 3 0x00007FFED9ED81CA in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 4 0x00007FFED9EDDE51 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 5 0x00007FFED9DF5BF0 in C:\Windows\SYSTEM32\ntdll.dll: RtlGetCurrentServiceSessionId()
+# 6 0x00007FFED9DF47B1 in C:\Windows\SYSTEM32\ntdll.dll: RtlFreeHeap()
+# 7 0x00007FFED8A29C9C in C:\Windows\System32\msvcrt.dll: free()
+# 8 0x000000006606A295 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 9 0x0000000066044532 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x000000006606B84A in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#11 0x000000006604430B in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#12 0x0000000066044636 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#13 0x00000000660573D1 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#14 0x0000000066043773 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymCleanup()
+#15 0x00000000004123A9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#16 0x0000000000405A4A in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCleanup()
+#17 0x0000000000408004 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCanvas_ThreadProc()
+#18 0x00007FFED8A4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#19 0x00007FFED8A4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#20 0x00007FFED83C7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#21 0x00007FFED9E22651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 20 2021 23:37:39, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 20 2021 23:41:05
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: #1: Куча была повреждена. (0xC0000374) при выполнении кода по адресу 0x00007FFED9ECF199 в функции RtlIsZeroMemory(). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+Ой, всё (EXCEPTION_NONCONTINUABLE).
+
+С помощью функции _set_se_translator() вы можете сами обработать эту ошибку.
+
+#3: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdrE0, Thread: 0x4CE0 (Canvas), GetLastError(): 6 (Неверный дескриптор). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FFED9ECF199 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 1 0x00007FFED9ECF163 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 2 0x00007FFED9ED7EE2 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 3 0x00007FFED9ED81CA in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 4 0x00007FFED9EDDE51 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 5 0x00007FFED9DF5BF0 in C:\Windows\SYSTEM32\ntdll.dll: RtlGetCurrentServiceSessionId()
+# 6 0x00007FFED9DF47B1 in C:\Windows\SYSTEM32\ntdll.dll: RtlFreeHeap()
+# 7 0x00007FFED8A29C9C in C:\Windows\System32\msvcrt.dll: free()
+# 8 0x000000006606A295 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 9 0x0000000066044532 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x000000006606B84A in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#11 0x000000006604430B in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#12 0x0000000066044636 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#13 0x00000000660573D1 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#14 0x0000000066043773 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymCleanup()
+#15 0x00000000004123A9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#16 0x0000000000405A4A in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCleanup()
+#17 0x0000000000408004 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCanvas_ThreadProc()
+#18 0x00007FFED8A4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#19 0x00007FFED8A4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#20 0x00007FFED83C7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#21 0x00007FFED9E22651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 20 2021 23:37:39, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 20 2021 23:41:05
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: #1: Куча была повреждена. (0xC0000374) при выполнении кода по адресу 0x00007FFED9ECF199 в функции RtlIsZeroMemory(). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+Ой, всё (EXCEPTION_NONCONTINUABLE).
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdrE0, Thread: 0x1AC (Canvas), GetLastError(): 6 (Неверный дескриптор). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FFED9ECF199 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 1 0x00007FFED9ECF163 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 2 0x00007FFED9ED7EE2 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 3 0x00007FFED9ED81CA in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 4 0x00007FFED9EDDE51 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 5 0x00007FFED9DF5BF0 in C:\Windows\SYSTEM32\ntdll.dll: RtlGetCurrentServiceSessionId()
+# 6 0x00007FFED9DF47B1 in C:\Windows\SYSTEM32\ntdll.dll: RtlFreeHeap()
+# 7 0x00007FFED8A29C9C in C:\Windows\System32\msvcrt.dll: free()
+# 8 0x000000006606A295 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 9 0x0000000066044532 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x000000006606B84A in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#11 0x000000006604430B in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#12 0x0000000066044636 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#13 0x00000000660573D1 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#14 0x0000000066043773 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymCleanup()
+#15 0x0000000000412309 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#16 0x00000000004059AA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCleanup()
+#17 0x0000000000407F64 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCanvas_ThreadProc()
+#18 0x00007FFED8A4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#19 0x00007FFED8A4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#20 0x00007FFED83C7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#21 0x00007FFED9E22651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 21 2021 01:01:08, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 21 2021 01:11:03
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: #1: Куча была повреждена. (0xC0000374) при выполнении кода по адресу 0x00007FFED9ECF199 в функции RtlIsZeroMemory(). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+Ой, всё (EXCEPTION_NONCONTINUABLE).
+
+С помощью функции _set_se_translator() вы можете сами обработать эту ошибку.
+
+#3: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdrE0, Thread: 0x1AC (Canvas), GetLastError(): 6 (Неверный дескриптор). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FFED9ECF199 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 1 0x00007FFED9ECF163 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 2 0x00007FFED9ED7EE2 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 3 0x00007FFED9ED81CA in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 4 0x00007FFED9EDDE51 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 5 0x00007FFED9DF5BF0 in C:\Windows\SYSTEM32\ntdll.dll: RtlGetCurrentServiceSessionId()
+# 6 0x00007FFED9DF47B1 in C:\Windows\SYSTEM32\ntdll.dll: RtlFreeHeap()
+# 7 0x00007FFED8A29C9C in C:\Windows\System32\msvcrt.dll: free()
+# 8 0x000000006606A295 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 9 0x0000000066044532 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x000000006606B84A in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#11 0x000000006604430B in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#12 0x0000000066044636 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#13 0x00000000660573D1 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#14 0x0000000066043773 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymCleanup()
+#15 0x0000000000412309 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#16 0x00000000004059AA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCleanup()
+#17 0x0000000000407F64 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCanvas_ThreadProc()
+#18 0x00007FFED8A4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#19 0x00007FFED8A4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#20 0x00007FFED83C7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#21 0x00007FFED9E22651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 21 2021 01:01:08, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 21 2021 01:11:03
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: #1: Куча была повреждена. (0xC0000374) при выполнении кода по адресу 0x00007FFED9ECF199 в функции RtlIsZeroMemory(). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+Ой, всё (EXCEPTION_NONCONTINUABLE).
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdrE0, Thread: 0x38D0 (Canvas), GetLastError(): 6 (Неверный дескриптор). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FFED9ECF199 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 1 0x00007FFED9ECF163 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 2 0x00007FFED9ED7EE2 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 3 0x00007FFED9ED81CA in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 4 0x00007FFED9EDDE51 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 5 0x00007FFED9DF5BF0 in C:\Windows\SYSTEM32\ntdll.dll: RtlGetCurrentServiceSessionId()
+# 6 0x00007FFED9DF47B1 in C:\Windows\SYSTEM32\ntdll.dll: RtlFreeHeap()
+# 7 0x00007FFED8A29C9C in C:\Windows\System32\msvcrt.dll: free()
+# 8 0x000000006606A295 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 9 0x000000006604433C in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x0000000066044636 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#11 0x00000000660573D1 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#12 0x0000000066043773 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymCleanup()
+#13 0x0000000000412309 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#14 0x00000000004059AA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCleanup()
+#15 0x0000000000407F64 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCanvas_ThreadProc()
+#16 0x00007FFED8A4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#17 0x00007FFED8A4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#18 0x00007FFED83C7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#19 0x00007FFED9E22651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 21 2021 01:01:08, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 21 2021 01:19:50
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: #1: Куча была повреждена. (0xC0000374) при выполнении кода по адресу 0x00007FFED9ECF199 в функции RtlIsZeroMemory(). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+Ой, всё (EXCEPTION_NONCONTINUABLE).
+
+С помощью функции _set_se_translator() вы можете сами обработать эту ошибку.
+
+#3: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000043E900 (64-bit), Flags: CMdrE0, Thread: 0x38D0 (Canvas), GetLastError(): 6 (Неверный дескриптор). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FFED9ECF199 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 1 0x00007FFED9ECF163 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 2 0x00007FFED9ED7EE2 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 3 0x00007FFED9ED81CA in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 4 0x00007FFED9EDDE51 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 5 0x00007FFED9DF5BF0 in C:\Windows\SYSTEM32\ntdll.dll: RtlGetCurrentServiceSessionId()
+# 6 0x00007FFED9DF47B1 in C:\Windows\SYSTEM32\ntdll.dll: RtlFreeHeap()
+# 7 0x00007FFED8A29C9C in C:\Windows\System32\msvcrt.dll: free()
+# 8 0x000000006606A295 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 9 0x000000006604433C in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x0000000066044636 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#11 0x00000000660573D1 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#12 0x0000000066043773 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymCleanup()
+#13 0x0000000000412309 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#14 0x00000000004059AA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCleanup()
+#15 0x0000000000407F64 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCanvas_ThreadProc()
+#16 0x00007FFED8A4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#17 0x00007FFED8A4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#18 0x00007FFED83C7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#19 0x00007FFED9E22651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 21 2021 01:01:08, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 21 2021 01:19:50
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
