@@ -123,6 +123,7 @@ BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, 
     render->drawRectangle(0, 0, x_size, y_size, border_color, thickness);
     //cerr << "constructed: [" << this << "]\n";
 };
+
     
 void BorderWindow::draw(Renderer* render) const {
     //cerr << "started drawing: [" << this << "]\n";
@@ -132,28 +133,32 @@ void BorderWindow::draw(Renderer* render) const {
     //cerr << "ended drawing: [" << this << "]\n";
 };
 
-/*
+ClockWindow::ClockWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
+                         ManagerWindow* parent, COLORREF border_color, int thickness) : 
+    ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent) {
+    this->updateTime();
+    //cerr << "constructed: [" << this << "]\n";
+};
+
 void ClockWindow::draw(Renderer* render) const {
     ClockWindow* nc_this = const_cast<ClockWindow*>(this);
-    render->setWindow(nc_this);
-    render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
-    nc_this->updateTime();
-
+    
     char buf[1024];
-    strftime(buf, 1024, "%R", *curr_time);
-
-    render->drawText(size.x / 10, 3 * size.y / 4, )
-
-    //this->drawChilds(render);
+    std::strftime(buf, 1024, "%H:%M:%S", &curr_time);
+    
+    render->setWindow(nc_this);
+    render->drawRectangle(0, 0, size.x, size.y, color, 1);
+    nc_this->updateTime();
+    
+    render->drawText(size.x / 20, size.y / 6, buf, "Helvetica", 2 * size.y / 3, size.y / 4, silver_c);
+    this->drawChilds(render);
 };
-*/
 
 /*
 CanvasWindow::CanvasWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
                            ManagerWindow* parent, COLORREF border_color, int thickness) : 
     BorderWindow(x_size, y_size, color, coord_x, coord_y, functor, parent, border_color, thickness) {};
 */
-
 
 int WindowMouse::getState() const {
     return state;
@@ -183,6 +188,12 @@ void WindowMouse::setToParent() {
     }
 };
 
+PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, const char* pic_name, ManagerWindow* parent) :
+    ManagerWindow(x_size, y_size, 0, coord_x, coord_y, functor, parent) {
+    Texture pic(x_size, y_size, pic_name, 0, 0);
+    pic.showOn(this);
+};
+
 PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, char* pic_name, ManagerWindow* parent) :
     ManagerWindow(x_size, y_size, 0, coord_x, coord_y, functor, parent) {
     Texture pic(x_size, y_size, pic_name, 0, 0);
@@ -191,5 +202,20 @@ PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor*
     
 void PicWindow::draw(Renderer* render) const {
     render->setWindow(const_cast<PicWindow*>(this));
+    this->drawChilds(render);
+};
+
+ThicknessWindow::ThicknessWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, Renderer* render, Feather* feather, 
+                                 ManagerWindow* parent, COLORREF border_color, int thickness) : 
+    BorderWindow(x_size, y_size, color, coord_x, coord_y, functor, render, parent, border_color, thickness), feather(feather) {
+    render->setWindow(this);
+    render->drawRectangle(0, 0, x_size, y_size, border_color, thickness);
+    //cerr << "constructed: [" << this << "]\n";
+};
+
+void ThicknessWindow::draw(Renderer* render) const {
+    render->setWindow(const_cast<ThicknessWindow*>(this));
+    render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
+    render->drawLine(3, size.y / 2, size.x - 3, size.y / 2, feather->getColor(), feather->getThickness());
     this->drawChilds(render);
 };

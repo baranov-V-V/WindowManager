@@ -23,22 +23,25 @@ using std::cout;
 
 //string main_font = "montserrat";
 
-static char* img_close  = "img\\close.bmp";
-static char* img_close2 = "img\\close2.bmp";
-static char* img_hide   = "img\\hide.bmp";
-static char* img_hide2  = "img\\hide2.bmp";
-static char* img_scale  = "img\\scale.bmp";
-static char* img_scale2 = "img\\scale2.bmp";
+static const char* img_close  = "img\\close.bmp";
+static const char* img_close2 = "img\\close2.bmp";
+static const char* img_hide   = "img\\hide.bmp";
+static const char* img_hide2  = "img\\hide2.bmp";
+static const char* img_scale  = "img\\scale.bmp";
+static const char* img_scale2 = "img\\scale2.bmp";
 
-static char* img_file  = "img\\file.bmp";
-static char* img_file2 = "img\\file2.bmp";
-static char* img_help  = "img\\help.bmp";
-static char* img_help2 = "img\\help2.bmp";
+static const char* img_file  = "img\\file.bmp";
+static const char* img_file2 = "img\\file2.bmp";
+static const char* img_help  = "img\\help.bmp";
+static const char* img_help2 = "img\\help2.bmp";
 
-static char* img_palette   = "img\\palette.bmp";
-static char* img_menu_bar  = "img\\menu_bar.bmp";
-static char* img_canvas    = "img\\canvas.bmp";
-static char* img_back_font = "img\\back_font.bmp";
+static const char* img_palette   = "img\\palette.bmp";
+static const char* img_menu_bar  = "img\\menu_bar.bmp";
+static const char* img_canvas    = "img\\canvas.bmp";
+static const char* img_back_font = "img\\back_font.bmp";
+
+static const char* img_feather = "img\\feather.bmp";
+static const char* img_eraser  = "img\\eraser.bmp";
 
 enum WINDOW_TYPES {
     TYPE_WINDOW = 1,
@@ -69,6 +72,11 @@ enum MOUSE_STATES {
     RIGHT_CLICK = 2
 };
 
+enum FEATHER_MODE {
+    MODE_ERASE = 1,
+    MODE_DRAW   = 2
+};
+
 const int comp_x = 26;
 const int comp_y = 23;
 
@@ -77,16 +85,42 @@ const int comp_y = 23;
 //
 
 
-const COLORREF black_c  = RGB(  0,   0,   0);
-const COLORREF white_c  = RGB(255, 255, 255); 
-const COLORREF canvas_c = RGB( 85,  86, 179);
-const COLORREF blue_c   = RGB( 85,  86, 179);
-const COLORREF red_c    = RGB(  4,   2, 255);
-const COLORREF grey_c   = RGB( 153, 76,   0);
-const COLORREF green_c  = RGB(  4, 135,   0);
-const COLORREF dgrey_c  = RGB( 38,  38,  38);
-const COLORREF lgrey_c  = RGB( 77,  77,  77);
-const COLORREF mgrey_c  = RGB( 60,  60,  60);
+const COLORREF black_c     = RGB(  0,   0,   0);
+const COLORREF white_c     = RGB(255, 255, 255); 
+const COLORREF canvas_c    = RGB( 85,  86, 179);
+const COLORREF blue_c      = RGB( 85,  86, 179);
+const COLORREF red_c       = RGB(  4,   2, 255);
+const COLORREF grey_c      = RGB(153,  76,   0);
+const COLORREF green_c     = RGB(  0, 128,   0);
+const COLORREF dgrey_c     = RGB( 38,  38,  38);
+const COLORREF lgrey_c     = RGB( 77,  77,  77);
+const COLORREF llgrey_c    = RGB(137, 137, 137);
+const COLORREF silver_c    = RGB(192, 192, 192);
+const COLORREF mgrey_c     = RGB( 60,  60,  60);
+const COLORREF yellow_c    = RGB(255, 255,   0);
+const COLORREF brown_c     = RGB(153,  75,   0);
+const COLORREF lavender_c  = RGB(230, 230, 250);
+const COLORREF lime_c      = RGB(  0, 255,   0);
+const COLORREF cyan_c      = RGB(  0, 255, 255);
+const COLORREF navy_c      = RGB(  0,   0, 128);
+const COLORREF purple_c    = RGB(128,   0, 128);
+const COLORREF magenta_c   = RGB(255,   0, 255);
+const COLORREF alice_b_c   = RGB(240, 248, 255);
+const COLORREF honeydew_c  = RGB(240, 255, 240);
+const COLORREF sand_br_c   = RGB(244, 164,  96);
+const COLORREF coral_c     = RGB(255, 127,  80);
+
+
+const int x_count_c = 5;
+const int y_count_c = 4;
+
+static COLORREF palette_colors[y_count_c][x_count_c] = {
+    {black_c, mgrey_c, lgrey_c, silver_c, white_c},
+    {red_c, lime_c, blue_c, yellow_c, cyan_c},
+    {navy_c, magenta_c, purple_c, brown_c, green_c},
+    {lavender_c, alice_b_c, honeydew_c, sand_br_c, coral_c}
+};
+
 
 class VFunctor {
   public:
@@ -118,20 +152,22 @@ class WindowMouse {
 
 class Feather {
   public:
-    Feather(COLORREF color = black_c, int thickness = 2) : color(color), thickness(thickness) {};
+    Feather(COLORREF color = black_c, int thickness = 2) : color(color), thickness(thickness), mode(MODE_DRAW) {};
 
     void setColor(COLORREF color) { Feather::color = color; };
     void setThickness(int thickness) { Feather::thickness = thickness; };
+    void setMode(int mode) { Feather::mode = mode; };
 
     COLORREF getColor() const { return color; };
     int getThickness() const { return thickness; };
+    int getMode() const { return mode; };
 
     //void setTheme();
 
   private:
     COLORREF color;
     int thickness;
-    //int type;
+    int mode;
 };
 
 class Renderer {
@@ -147,8 +183,7 @@ class Renderer {
     void drawCircle(double x, double y, double r, COLORREF color = black_c, int thickness = 1) const;
     void drawRectangle(double x1, double y1, double x2, double y2, COLORREF color = black_c, int thinkness = 1) const;
     void drawRoundRect(double x1, double y1, double x2, double y2, double width, double height, COLORREF color = black_c, int thinkness = 1) const;
-    void drawText(double x, double y, string text, string font_name, int size_y, int size_x, COLORREF color = black_c);
-    //void lo
+    void drawText(double x, double y, const char* text, const char* font_name, int size_y, int size_x, COLORREF color = black_c);
 
     int toPixelX(double coord) const;
     int toPixelY(double coord) const;
@@ -259,6 +294,7 @@ class ManagerWindow : public Texture {
 class PicWindow : public ManagerWindow {
   public:
     PicWindow();
+    PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, const char* pic_name, ManagerWindow* parent = nullptr);
     PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, char* pic_name, ManagerWindow* parent = nullptr);
     
     void draw(Renderer* render) const override;
@@ -276,6 +312,18 @@ class BorderWindow : public ManagerWindow {
   protected:
     int thickness;
     COLORREF border_color;
+};
+
+class ThicknessWindow : public BorderWindow {
+  public:
+    ThicknessWindow();
+    ThicknessWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, Renderer* render, Feather* feather,
+                    ManagerWindow* parent = nullptr, COLORREF border_color = black_c, int thickness = 2);
+
+    void draw(Renderer* render) const override;
+  
+  private:
+    Feather* feather;
 };
 
 class CanvasWindow : public BorderWindow {
@@ -310,7 +358,7 @@ class MenuWindow : public BorderWindow {
 
 };
 
-class ClockWindow : public BorderWindow {
+class ClockWindow : public ManagerWindow {
   public:
     ClockWindow();
     ClockWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
@@ -340,7 +388,7 @@ class App {
 
     Pair<int> app_size;
     Window users_window;
-    BorderWindow app_window;
+    PicWindow app_window;
     Feather feather;
     WindowMouse mouse;
     Renderer render;
@@ -403,6 +451,20 @@ class ChangeColor : public VFunctor {
     COLORREF color;  
 };
 
+class ChangeMode : public VFunctor {
+  public:
+    ChangeMode() : feather(nullptr) { mode = MODE_DRAW; };
+
+    ChangeMode(Feather* feather, int mode) : feather(feather), mode(mode) {};
+    virtual ~ChangeMode() {};
+
+    bool action() override { feather->setMode(mode); return true; };
+
+  private:
+    Feather* feather;
+    int mode;
+};
+
 class ChangeThickness : public VFunctor {
   public:
     ChangeThickness() : feather(nullptr), thickness(0) {};
@@ -424,7 +486,17 @@ class DrawFunctor : public VFunctor {
 
     bool action() override {
         render->setWindow(window);
-        render->drawCircle(mouse->getRelCoord().x, mouse->getRelCoord().y, 3, feather->getColor(), 1);
+        switch (feather->getMode()) {
+            case MODE_ERASE:
+                render->drawCircle(mouse->getRelCoord().x, mouse->getRelCoord().y, 3, white_c, 1);        
+                break;
+            case MODE_DRAW:
+                render->drawCircle(mouse->getRelCoord().x, mouse->getRelCoord().y, feather->getThickness() / 2, feather->getColor(), 1);
+                break;
+            default:
+                cerr << "unsupported mod: " << feather->getMode() << " in draw" << "\n";
+                break;
+        }
         return true;
     };
 
@@ -459,6 +531,43 @@ class HideFunctor : public VFunctor {
     ManagerWindow* window;
 };
 
+class FileFunctor : public VFunctor {
+  public:
+    FileFunctor();
+    FileFunctor(ManagerWindow* window) : window(window) {};
+    virtual ~FileFunctor() {};
+
+    bool action() override { /*cout << "Click true on " << window << "\n";*/ return true; };
+
+  private:
+    ManagerWindow* window;
+};
+
+class HelpFunctor : public VFunctor {
+  public:
+    HelpFunctor();
+    HelpFunctor(ManagerWindow* window) : window(window) {};
+    virtual ~HelpFunctor() {};
+
+    bool action() override { /*cout << "Click true on " << window << "\n";*/ return true; };
+
+  private:
+    ManagerWindow* window;
+};
+
+class MoveFunctor : public VFunctor {
+  public:
+    MoveFunctor();
+    MoveFunctor(ManagerWindow* window) : window(window) {};
+    virtual ~HelpFunctor() {};
+
+    bool action() override { /*cout << "Click true on " << window << "\n";*/ return true; };
+
+  private:
+    ManagerWindow* window;
+    WindowMouse* mouse;
+};
+
 
 RGBQUAD ToRGBQUAD(COLORREF color);
 
@@ -469,7 +578,8 @@ void GetMouse(double& x, double& y, const Renderer& render);
 RGBQUAD ToRGBQUAD(COLORREF color);
 RGBQUAD ToRGBQUAD(BYTE red, BYTE green, BYTE blue);
 
-PicWindow* MakeCanvas(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse);
-PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent);
-PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent);
-PicWindow* MakeLayout(int x_size, int y_size, ManagerWindow* parent);
+PicWindow* MakeCanvas(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent,
+                      Renderer* render, Feather* feather, WindowMouse* mouse);
+PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x);
+PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather);
+PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x);
