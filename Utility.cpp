@@ -1,31 +1,24 @@
 #include "WindowManager.h"
 
-PicWindow* MakeCanvas(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent,
-                      Renderer* render, Feather* feather, WindowMouse* mouse) {
-    
-    PicWindow*   canvas  = new PicWindow(x_size, y_size, coord_x, coord_y, nullptr, img_canvas, parent);
-    DrawFunctor* canvas_functor = new DrawFunctor(canvas, render, feather, mouse);
-    canvas->setFunctor(canvas_functor);
-
-    PicWindow* menu = MakeBasicMenu(x_size, 5 + y_size / 15, 0, 0, canvas, 10);
-    canvas->addChild(menu);
-
-    return canvas;
-}
-
 PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x) {
     int but_x = x_size / comp_x;
     int but_y = y_size;  
 
-    PicWindow* menu  = new PicWindow(x_size, y_size, coord_x, coord_y, nullptr, img_menu_bar, parent);
-    PicWindow* hide  = new PicWindow(but_x, but_y, x_size - but_x * 2, 0, nullptr, img_hide, menu);
-    PicWindow* close = new PicWindow(but_x, but_y, x_size - but_x * 1, 0, nullptr, img_close, menu);
+    PicWindow* menu  = new PicWindow(x_size, y_size, coord_x, coord_y, img_menu_bar, parent);
+    PicWindow* hide  = new PicWindow(but_x, but_y, x_size - but_x * 2, 0, img_hide, menu);
+    PicWindow* close = new PicWindow(but_x, but_y, x_size - but_x * 1, 0, img_close, menu);
 
-    CloseFunctor* close_f  = new CloseFunctor(close); 
-    HideFunctor*  hide_f   = new HideFunctor(hide); 
+    CloseCanvasFunctor* close_f  = new CloseCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent)); 
+    HideCanvasFunctor*  hide_f   = new HideCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent)); 
+    
+    GlowPicFunctor* close_glow = new GlowPicFunctor(close, img_close2);
+    GlowPicFunctor* hide_glow = new GlowPicFunctor(hide, img_hide2);
 
-    hide->setFunctor(hide_f);
-    close->setFunctor(close_f);
+    hide->setPressUp(hide_f);
+    close->setPressUp(close_f);
+
+    hide->setPointed(hide_glow);
+    close->setPointed(close_glow);
 
     menu->addChild(hide);
     menu->addChild(close);
@@ -35,7 +28,7 @@ PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, Manag
 
 PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather) {
 
-    PicWindow* palette = new PicWindow(x_size, y_size, coord_x, coord_y, nullptr, img_palette, parent);
+    PicWindow* palette = new PicWindow(x_size, y_size, coord_x, coord_y, img_palette, parent);
     
     int c_box_x = 5 * x_size / (6 * x_count_c + 1);
     int c_box_y = c_box_x;
@@ -48,7 +41,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     for (int i = 0; i < y_count_c; ++i) {
         for (int j = 0; j < x_count_c; ++j) {
             ChangeColor* change_f   = new ChangeColor(feather, palette_colors[i][j]);
-            BorderWindow* color_button = new BorderWindow(c_box_x, c_box_y, palette_colors[i][j], c_box_dx + (c_box_dx + c_box_x) * j, start_boxes_y + (c_box_y + c_box_dy) * i, change_f, render, palette, black_c, 1);
+            BorderWindow* color_button = new BorderWindow(c_box_x, c_box_y, c_box_dx + (c_box_dx + c_box_x) * j, start_boxes_y + (c_box_y + c_box_dy) * i, palette_colors[i][j], black_c, 1, render, palette, change_f);
             palette->addChild(color_button);
         }
     }
@@ -63,10 +56,10 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
 
     ChangeMode* change_to_feather = new ChangeMode(feather, MODE_DRAW);
     ChangeMode* change_to_eraser  = new ChangeMode(feather, MODE_ERASE);
-    PicWindow* feather_button = new PicWindow(inst_x, inst_y, inst_dx, feather_y                         , change_to_feather, img_feather, palette);
-    PicWindow* eraser_button  = new PicWindow(inst_x, inst_y, inst_dx, feather_y + (inst_dy + inst_y) * 1, change_to_eraser , img_eraser , palette); 
-    ThicknessWindow* thick_ind_w = new ThicknessWindow(2 * inst_x, inst_y, white_c, 2 * inst_dx + inst_x, feather_y                         , nullptr, render, feather, palette, mgrey_c, 1);
-    ThicknessWindow* thick_ind_b = new ThicknessWindow(2 * inst_x, inst_y, black_c, 2 * inst_dx + inst_x, feather_y + (inst_dy + inst_y) * 1, nullptr, render, feather, palette, mgrey_c, 1);
+    PicWindow* feather_button = new PicWindow(inst_x, inst_y, inst_dx, feather_y                         ,img_feather, palette, change_to_feather);
+    PicWindow* eraser_button  = new PicWindow(inst_x, inst_y, inst_dx, feather_y + (inst_dy + inst_y) * 1,img_eraser , palette, change_to_eraser ); 
+    ThicknessWindow* thick_ind_w = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y                         , white_c, mgrey_c, 1, feather, render, palette);
+    ThicknessWindow* thick_ind_b = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y + (inst_dy + inst_y) * 1, black_c, mgrey_c, 1, feather, render, palette);
 
     palette->addChild(thick_ind_w);
     palette->addChild(thick_ind_b);
@@ -89,15 +82,15 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     int clock_y = y_size;
 
     //file->help->(to be continued...)
-    PicWindow* file = new PicWindow(file_x, file_y, 0, 0, nullptr, img_file, menu);
-    PicWindow* help = new PicWindow(help_x, help_y, file_x, 0, nullptr, img_help, menu);
-    ClockWindow* clock = new ClockWindow(clock_x, clock_y, mgrey_c, x_size - menu->getChild(0)->getSizeX() * menu->getCount() - clock_x, 0, nullptr, menu, mgrey_c, 1);
+    PicWindow* file = new PicWindow(file_x, file_y, 0, 0, img_file, menu);
+    PicWindow* help = new PicWindow(help_x, help_y, file_x, 0, img_help, menu);
+    ClockWindow* clock = new ClockWindow(clock_x, clock_y, x_size - menu->getChild(0)->getSizeX() * menu->getCount() - clock_x, 0, mgrey_c, menu);
     
     FileFunctor* file_f  = new FileFunctor(file); 
     HelpFunctor* help_f  = new HelpFunctor(help); 
     
-    file->setFunctor(file_f);
-    help->setFunctor(help_f);
+    file->setPressUp(file_f);
+    help->setPressUp(help_f);
 
     menu->addChild(clock);
     menu->addChild(file);

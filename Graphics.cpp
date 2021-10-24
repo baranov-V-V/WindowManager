@@ -92,6 +92,9 @@ void Renderer::clear() const {
 }
 
 void WindowMouse::update() {
+    int dx = abs_coord.x - rel_coord.x;
+    int dy = abs_coord.y - rel_coord.y;
+
     abs_coord.x = txMouseX();
     abs_coord.y = txMouseY();
     state = txMouseButtons();
@@ -100,7 +103,8 @@ void WindowMouse::update() {
         assert("Wrong call of Mouse::update()");
     }
 
-    rel_coord = abs_coord;
+    rel_coord.x = abs_coord.x;
+    rel_coord.y = abs_coord.y;
 }
 
 void App::sleep(int millisec) const {

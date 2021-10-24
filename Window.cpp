@@ -35,13 +35,30 @@ double Renderer::toCoordY(int y) const {
     return double(y) / scale.y + min.y;
 };
 
-ManagerWindow::ManagerWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, ManagerWindow* parent) :
-    Texture(x_size, y_size, color, coord_x, coord_y), parent(parent) {
-    if (functor == nullptr) {
-        ManagerWindow::functor = new DebugFunctorTrue(this);
+ManagerWindow::ManagerWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, ManagerWindow* parent,
+                             VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
+    Texture(x_size, y_size, color, coord_x, coord_y), parent(parent), base_img(x_size, y_size, color, 0, 0) {
+
+    if (press_up_f == nullptr) {
+        ManagerWindow::press_up_f = new DebugFunctorTrue(this);
     } else {
-        ManagerWindow::functor = functor;
+        ManagerWindow::press_up_f = press_up_f;
     }
+    
+    if (press_down_f == nullptr) {
+        ManagerWindow::press_down_f = new DebugFunctorTrue(this);
+    } else {
+        ManagerWindow::press_down_f = press_down_f;
+    }
+
+    if (press_up_f == nullptr) {
+        ManagerWindow::pointed_f = new DebugFunctorTrue(this);
+    } else {
+        ManagerWindow::pointed_f = pointed_f;
+    }
+
+    is_clicked = false;
+    is_pointed = false;
     max_size = 100;
     count = 0;
     ManagerWindow::children = new ManagerWindow*[max_size];
@@ -52,7 +69,9 @@ ManagerWindow::~ManagerWindow() {
         this->delLast();
     }
     delete[] children;
-    delete functor;
+    delete pointed_f;
+    delete press_down_f;
+    delete press_up_f;
 };
 
 void ManagerWindow::drawChilds(Renderer* renderer) const {
@@ -90,21 +109,27 @@ void ManagerWindow::delLast() {
 };
 
 bool ManagerWindow::checkLeftClick(WindowMouse* mouse) {
-    int x = mouse->getRelCoord().x;
-    int y = mouse->getRelCoord().y;
-    return (x > 0 && x < this->getSizeX()) && (y > 0 && y < this->getSizeY()) && (mouse->getState() & LEFT_CLICK != 0);
+    return this->checkPointed(mouse) && (mouse->getState() & LEFT_CLICK != 0);
 };
 
-bool ManagerWindow::proceedClicks(WindowMouse* mouse) {
+bool ManagerWindow::checkPointed(WindowMouse* mouse) {
+    int x = mouse->getRelCoord().x;
+    int y = mouse->getRelCoord().y;
+    return (x > 0 && x < this->getSizeX()) && (y > 0 && y < this->getSizeY());
+}
+
+bool ManagerWindow::proceedPressDown(WindowMouse* mouse) {
     mouse->setWindow(this);
-    if (this->checkLeftClick(mouse)) {
+
+    if (this->checkPointed(mouse)) {
         for (int i = count - 1; i >= 0; --i) {
-            if (children[i]->proceedClicks(mouse)) {
-                //mouse->setToParent();
+            if (children[i]->proceedPressDown(mouse)) {
                 return true;
             }
         }
-        bool result = this->action();
+        is_clicked = true;
+        cout << "action down!" << "\n";
+        bool result = press_down_f->action();
         mouse->setToParent();
         return result;
     }
@@ -112,13 +137,67 @@ bool ManagerWindow::proceedClicks(WindowMouse* mouse) {
     return false;
 };
 
-bool ManagerWindow::action() {
-    return functor->action();
+bool ManagerWindow::proceedPressUp(WindowMouse* mouse) {
+    mouse->setWindow(this);
+
+    if (this->checkPointed(mouse)) {
+        for (int i = count - 1; i >= 0; --i) {
+            if (children[i]->proceedPressUp(mouse)) {
+                return true;
+            }
+        }
+        bool result = false;
+        if (is_clicked) {
+            cout << "action up!" << "\n";
+            result = press_up_f->action();
+            is_clicked = false;
+        }
+        mouse->setToParent();
+        return result;
+    }
+    is_clicked = false;
+    mouse->setToParent();
+    return false;
 };
 
-BorderWindow::BorderWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, Renderer* render,
-                           ManagerWindow* parent, COLORREF border_color, int thickness) : 
-    ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent), border_color(border_color), thickness(thickness) {
+bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
+    mouse->setWindow(this);
+
+    if (this->checkPointed(mouse)) {
+        for (int i = count - 1; i >= 0; --i) {
+            if (children[i]->proceedPointed(mouse)) {
+                return true;
+            }
+        }
+        is_pointed = true;
+        if (pointed_f != nullptr) {
+            pointed_f->action();
+        }
+        mouse->setToParent();
+        return true;
+    }
+    if (is_pointed) {
+        is_pointed = false;
+        if (pointed_f != nullptr) {
+            pointed_f->action();
+        }
+    }
+    mouse->setToParent();
+    return false;
+};
+
+void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
+
+};
+    
+void ManagerWindow::proceedPointedWindows() {
+
+    
+};
+
+BorderWindow::BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
+                 ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) : 
+    ManagerWindow(x_size, y_size, coord_x, coord_y, color, parent, press_up_f, pointed_f, press_down_f), border_color(border_color), thickness(thickness) {
     render->setWindow(this);
     render->drawRectangle(0, 0, x_size, y_size, border_color, thickness);
     //cerr << "constructed: [" << this << "]\n";
@@ -133,9 +212,9 @@ void BorderWindow::draw(Renderer* render) const {
     //cerr << "ended drawing: [" << this << "]\n";
 };
 
-ClockWindow::ClockWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
-                         ManagerWindow* parent, COLORREF border_color, int thickness) : 
-    ManagerWindow(x_size, y_size, color, coord_x, coord_y, functor, parent) {
+ClockWindow::ClockWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, ManagerWindow* parent,
+                         VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) : 
+    ManagerWindow(x_size, y_size, coord_x, coord_y, color, parent, press_up_f, pointed_f, press_down_f) {
     this->updateTime();
     //cerr << "constructed: [" << this << "]\n";
 };
@@ -188,28 +267,31 @@ void WindowMouse::setToParent() {
     }
 };
 
-PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, const char* pic_name, ManagerWindow* parent) :
-    ManagerWindow(x_size, y_size, 0, coord_x, coord_y, functor, parent) {
+PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, const char* pic_name, ManagerWindow* parent,
+                     VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
+    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
     Texture pic(x_size, y_size, pic_name, 0, 0);
     pic.showOn(this);
+    this->showOn(&base_img);
 };
 
-PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, VFunctor* functor, char* pic_name, ManagerWindow* parent) :
-    ManagerWindow(x_size, y_size, 0, coord_x, coord_y, functor, parent) {
+PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic_name, ManagerWindow* parent,
+                     VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
+    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
     Texture pic(x_size, y_size, pic_name, 0, 0);
     pic.showOn(this);
+    this->showOn(&base_img);
 };
     
 void PicWindow::draw(Renderer* render) const {
     render->setWindow(const_cast<PicWindow*>(this));
+    //base_img.showOn(this);
     this->drawChilds(render);
 };
 
-ThicknessWindow::ThicknessWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor, Renderer* render, Feather* feather, 
-                                 ManagerWindow* parent, COLORREF border_color, int thickness) : 
-    BorderWindow(x_size, y_size, color, coord_x, coord_y, functor, render, parent, border_color, thickness), feather(feather) {
-    render->setWindow(this);
-    render->drawRectangle(0, 0, x_size, y_size, border_color, thickness);
+ThicknessWindow::ThicknessWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Feather* feather, Renderer* render,
+                                 ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) : 
+    BorderWindow(x_size, y_size, coord_x, coord_y, color, border_color, thickness, render, parent, press_up_f, pointed_f, press_down_f), feather(feather) {
     //cerr << "constructed: [" << this << "]\n";
 };
 
@@ -218,4 +300,15 @@ void ThicknessWindow::draw(Renderer* render) const {
     render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
     render->drawLine(3, size.y / 2, size.x - 3, size.y / 2, feather->getColor(), feather->getThickness());
     this->drawChilds(render);
+};
+
+CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
+             Renderer* render, Feather* feather, WindowMouse* mouse) :
+    PicWindow(x_size, y_size, coord_x, coord_y, img_canvas, parent), name(name), on_display(true) {
+    
+    DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
+    this->setPointed(canvas_functor);
+
+    PicWindow* menu = MakeBasicMenu(x_size, 5 + y_size / 15, 0, 0, this, 10);
+    this->addChild(menu);
 };
