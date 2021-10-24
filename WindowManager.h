@@ -40,8 +40,10 @@ static const char* img_menu_bar  = "img\\menu_bar.bmp";
 static const char* img_canvas    = "img\\canvas.bmp";
 static const char* img_back_font = "img\\back_font.bmp";
 
-static const char* img_feather = "img\\feather.bmp";
-static const char* img_eraser  = "img\\eraser.bmp";
+static const char* img_feather  = "img\\feather.bmp";
+static const char* img_eraser   = "img\\eraser.bmp";
+static const char* img_feather2 = "img\\feather2.bmp";
+static const char* img_eraser2  = "img\\eraser2.bmp";
 
 enum WINDOW_TYPES {
     TYPE_WINDOW = 1,
@@ -114,7 +116,11 @@ enum ACTION_TYPE {
 #define IS_GLOWABLE(type) (type & TYPE_GLOWABLE)
 
 //-----------------------------------------TODO--------------------------------------------
+/*
+   if (pointer_f != nullptr) -- FIXXX BUG
 
+  добавить поле изменений в PicWindow чтобы не перекладываться base_img по кд.
+*/
 
 const COLORREF black_c     = RGB(  0,   0,   0);
 const COLORREF white_c     = RGB(255, 255, 255); 
@@ -253,7 +259,8 @@ class BasicWindow {
   public:
     BasicWindow();
     BasicWindow(int x_size, int y_size, COLORREF color);
-  
+    virtual ~BasicWindow() {};
+
     int getSizeX() const { return size.x; };
     int getSizeY() const { return size.y; };
 
@@ -278,7 +285,7 @@ class Texture : public BasicWindow {
     Texture();
     Texture(int x_size, int y_size, COLORREF color, int coord_x, int coord_y);
     Texture(int x_size, int y_size, const char* file_name, int coord_x, int coord_y);
-    ~Texture();
+    virtual ~Texture();
     
     int getCoordX() const { return coord.x; };
     int getCoordY() const { return coord.y; };
@@ -305,6 +312,7 @@ class ManagerWindow : public Texture {
     //general part
     virtual void draw(Renderer* render) const = 0;
     void updateBasicImg(const Texture& new_img) { new_img.showOn(&base_img); };
+    Texture& getBasicImg() { return base_img; };
 
     //!mouse press part
     bool isPointed() const { return is_pointed; };
@@ -326,6 +334,7 @@ class ManagerWindow : public Texture {
     ManagerWindow* getParent() const { return parent; };
     void drawChilds(Renderer* render) const;
     void addChild(ManagerWindow* window);
+    void makeFirst(ManagerWindow* window);
     ManagerWindow* getChild(int pos) const { return children[pos]; };
     int getCount() const { return count; };
     void delChild(ManagerWindow* window);
@@ -333,7 +342,7 @@ class ManagerWindow : public Texture {
 
   private:
     void markPointedWindows(WindowMouse* mouse);
-    void proceedPointedWindows();
+    void proceedPointedWindows(WindowMouse* mouse);
 
     ManagerWindow* parent;
     ManagerWindow** children;
@@ -354,13 +363,13 @@ class PicWindow : public ManagerWindow {
   public:
     PicWindow();
     PicWindow(int x_size, int y_size, int coord_x, int coord_y, const char* pic_name, ManagerWindow* parent = nullptr,
-              VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+              VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic_name, ManagerWindow* parent = nullptr,
-              VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
-    
+              VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     void draw(Renderer* render) const override;
 
   private:
+    bool need_redraw;
 };
 
 class BorderWindow : public ManagerWindow {
@@ -448,6 +457,7 @@ class App {
     App(int app_x, int app_y, const string& skin_name);
     
     void run();
+    void stop() { on_run = false; };
 
   private:
     void initWindows();
@@ -460,6 +470,7 @@ class App {
     Feather feather;
     WindowMouse mouse;
     Renderer render;
+    bool on_run;
 };
 
 class DummyFunctor : public VFunctor {
@@ -495,6 +506,18 @@ class DebugFunctorTrue : public VFunctor {
     ManagerWindow* window;
 };
 
+class StopAppFunctor : public VFunctor {
+  public:
+    StopAppFunctor();
+    StopAppFunctor(App* app) : app(app) {};
+    virtual ~StopAppFunctor() {};
+
+    bool action() override { app->stop(); exit(0); return true; };
+
+  private:
+    App* app;
+};
+
 class DebugFunctorFalse : public VFunctor {
   public:
     DebugFunctorFalse();
@@ -512,7 +535,7 @@ class ChangeColor : public VFunctor {
     ChangeColor(Feather* feather, COLORREF color) : feather(feather), color(color) {};
     virtual ~ChangeColor() {};
 
-    bool action() override { cout << "changed!" << "\n"; feather->setColor(color); return true; };
+    bool action() override { feather->setColor(color); return true; };
 
   private:
     Feather* feather;
@@ -553,8 +576,10 @@ class DrawFunctor : public VFunctor {
     virtual ~DrawFunctor() {};
 
     bool action() override {
+        //cout << "in draw!" << "\n";
         render->setWindow(window);
         if (mouse->getState() & LEFT_CLICK) {
+            //cout << "in draw2!" << "\n";
             switch (feather->getMode()) {
                 case MODE_ERASE:
                     render->drawCircle(mouse->getRelCoord().x, mouse->getRelCoord().y, 3, white_c, 1);        
@@ -636,27 +661,52 @@ class HelpFunctor : public VFunctor {
 class MoveFunctor : public VFunctor {
   public:
     MoveFunctor();
-    MoveFunctor(ManagerWindow* window, WindowMouse* mouse) : window(window), mouse(mouse) {};
+    MoveFunctor(ManagerWindow* window, WindowMouse* mouse) : move_window(window), mouse(mouse), on_move(false), old_coord(0, 0) {};
     virtual ~MoveFunctor() {};
 
+    void startMove() { on_move = true; old_coord = mouse->getAbsCoord(); };
+    void endMove() { on_move = false; };
+
     bool action() override {
-        Pair<int> old_coord = mouse->getAbsCoord();
-        Pair<int> new_coord = mouse->getAbsCoord();
-
-        while(old_coord == new_coord && mouse->isLeftClick()) {
-            mouse->update();
-            new_coord = mouse->getAbsCoord();
+        if (on_move) {
+            move_window->setCoord(move_window->getCoord() + (mouse->getAbsCoord() - old_coord));
+            old_coord = mouse->getAbsCoord();
         }
-
-        ManagerWindow* parent = window->getParent();
-        parent->setCoord(parent->getCoord() + (new_coord - old_coord));
 
         return true;
     };
 
   private:
-    ManagerWindow* window;
+    ManagerWindow* move_window;
     WindowMouse* mouse;
+    Pair<int> old_coord;
+    bool on_move;
+};
+
+class StartMove : public VFunctor {
+  public:
+    StartMove();
+    StartMove(MoveFunctor* move_f, ManagerWindow* move_window) : move_f(move_f) {
+        move_window->getParent()->makeFirst(move_window);
+    };
+    virtual ~StartMove() {};
+
+    bool action() override { move_f->startMove(); return true; };
+
+  private:
+    MoveFunctor* move_f;
+};
+
+class EndMove : public VFunctor {
+  public:
+    EndMove();
+    EndMove(MoveFunctor* move_f) : move_f(move_f) {};
+    virtual ~EndMove() {};
+
+    bool action() override { move_f->endMove(); return true; };
+
+  private:
+    MoveFunctor* move_f;
 };
 
 class GlowPicFunctor : public VFunctor {
@@ -665,7 +715,7 @@ class GlowPicFunctor : public VFunctor {
     GlowPicFunctor(PicWindow* window, const char* glowing_name) : glow_window(window),
         default_wnd(window->getSizeX(), window->getSizeY(), window->getColor(), 0, 0),
         glowing_wnd(window->getSizeX(), window->getSizeY(), glowing_name, 0, 0) {
-        window->showOn(&default_wnd);
+        window->getBasicImg().showOn(&default_wnd);
         curr_state = STATE_DEFAULT;
     };
 
@@ -674,13 +724,13 @@ class GlowPicFunctor : public VFunctor {
     bool action() override {
         //cout << "In glow!!" << "\n";
         if (glow_window->isPointed() && curr_state != STATE_GLOWING) {
-            cout << "changed to glow!" << "\n";
+            //cout << "changed to glow!" << "\n";
             glowing_wnd.showOn(glow_window);
             glow_window->updateBasicImg(glowing_wnd);
             curr_state = STATE_GLOWING;
         }
         if (!glow_window->isPointed() && curr_state == STATE_GLOWING) {
-            cout << "changed to default!" << "\n";
+            //cout << "changed to default!" << "\n";
             default_wnd.showOn(glow_window);
             glow_window->updateBasicImg(default_wnd);
             curr_state = STATE_DEFAULT;
@@ -693,6 +743,18 @@ class GlowPicFunctor : public VFunctor {
     Texture default_wnd;
     Texture glowing_wnd;
     int curr_state;
+};
+
+class MakeFirst : public VFunctor {
+  public:
+    MakeFirst();
+    MakeFirst(ManagerWindow* window) : window(window) {};
+    virtual ~MakeFirst() {};
+
+    bool action() override { window->getParent()->makeFirst(window); return true; };
+
+  private:
+    ManagerWindow* window;
 };
 
 RGBQUAD ToRGBQUAD(COLORREF color);

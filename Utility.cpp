@@ -20,8 +20,8 @@ PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, Manag
     hide->setPointed(hide_glow);
     close->setPointed(close_glow);
 
-    menu->addChild(hide);
     menu->addChild(close);
+    menu->addChild(hide);
 
     return menu;
 }
@@ -61,6 +61,12 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     ThicknessWindow* thick_ind_w = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y                         , white_c, mgrey_c, 1, feather, render, palette);
     ThicknessWindow* thick_ind_b = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y + (inst_dy + inst_y) * 1, black_c, mgrey_c, 1, feather, render, palette);
 
+    GlowPicFunctor* feather_glow = new GlowPicFunctor(feather_button, img_feather2);
+    GlowPicFunctor* eraser_glow  = new GlowPicFunctor(eraser_button , img_eraser2);
+
+    feather_button->setPointed(feather_glow);
+    eraser_button->setPointed(eraser_glow); 
+
     palette->addChild(thick_ind_w);
     palette->addChild(thick_ind_b);
     palette->addChild(feather_button);
@@ -88,9 +94,14 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     
     FileFunctor* file_f  = new FileFunctor(file); 
     HelpFunctor* help_f  = new HelpFunctor(help); 
+
+    GlowPicFunctor* file_glow = new GlowPicFunctor(file, img_file2);
+    GlowPicFunctor* help_glow = new GlowPicFunctor(help, img_help2);
     
     file->setPressUp(file_f);
     help->setPressUp(help_f);
+    file->setPointed(file_glow);
+    help->setPointed(help_glow);
 
     menu->addChild(clock);
     menu->addChild(file);

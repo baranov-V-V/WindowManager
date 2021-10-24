@@ -4682,3 +4682,369 @@ Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main
 Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
 
 --------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00000000004027A4 в функции proceedPointedWindows() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 197. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000443900 (64-bit), Flags: CMdRe0, Thread: 0x934 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00000000004027A4 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (197):
+
+    195:     
+    196:     if (is_pointed) {
+=>  197:        pointed_f->action(); 
+    198:     }
+    199: };
+
+# 1 0x0000000000402782 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191: 
+    192:     for (int i = count - 1; i >= 0; --i) {
+=>  193:         children[i]->proceedPointedWindows();
+    194:     }
+    195:     
+
+# 2 0x0000000000402782 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191: 
+    192:     for (int i = count - 1; i >= 0; --i) {
+=>  193:         children[i]->proceedPointedWindows();
+    194:     }
+    195:     
+
+# 3 0x0000000000402671 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointed() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (165):
+
+    163: bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
+    164:     this->markPointedWindows(mouse);
+=>  165:     this->proceedPointedWindows();
+    166: 
+    167:     return true;
+
+# 4 0x0000000000401B44 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (52):
+
+     50: 
+     51:     if (mouse.getAbsCoord() != abs_coord) {
+=>   52:         app_window.proceedPointed(&mouse);
+     53:     }
+     54: 
+
+# 5 0x00000000004016F3 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         //this->sleep(5);
+     15:     }
+
+# 6 0x00000000004210CF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 24 2021 19:12:34, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 24 2021 19:12:45
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00000000004027A4 в функции proceedPointedWindows() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp на строке 197. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000443900 (64-bit), Flags: CMdRe0, Thread: 0x934 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00000000004027A4 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (197):
+
+    195:     
+    196:     if (is_pointed) {
+=>  197:        pointed_f->action(); 
+    198:     }
+    199: };
+
+# 1 0x0000000000402782 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191: 
+    192:     for (int i = count - 1; i >= 0; --i) {
+=>  193:         children[i]->proceedPointedWindows();
+    194:     }
+    195:     
+
+# 2 0x0000000000402782 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191: 
+    192:     for (int i = count - 1; i >= 0; --i) {
+=>  193:         children[i]->proceedPointedWindows();
+    194:     }
+    195:     
+
+# 3 0x0000000000402671 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointed() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (165):
+
+    163: bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
+    164:     this->markPointedWindows(mouse);
+=>  165:     this->proceedPointedWindows();
+    166: 
+    167:     return true;
+
+# 4 0x0000000000401B44 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (52):
+
+     50: 
+     51:     if (mouse.getAbsCoord() != abs_coord) {
+=>   52:         app_window.proceedPointed(&mouse);
+     53:     }
+     54: 
+
+# 5 0x00000000004016F3 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         //this->sleep(5);
+     15:     }
+
+# 6 0x00000000004210CF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 24 2021 19:12:34, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 24 2021 19:12:44
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (22, 0x00): SIGABRT: Аварийное завершение программы, вызвана функция abort(). 
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000443900 (64-bit), Flags: CMdRe0, Thread: 0x4618 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040CEA9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+# 1 0x000000000040D193 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txOnSignal() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10770)
+# 2 0x00007FFDBDC3ADFB in C:\Windows\System32\msvcrt.dll: raise()
+# 3 0x00007FFDBDC3F1FB in C:\Windows\System32\msvcrt.dll: abort()
+# 4 0x0000000000423716 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _wassert()
+# 5 0x00000000004237C6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _assert()
+
+# 6 0x000000000042A642 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (312):
+
+    310:     virtual void draw(Renderer* render) const = 0;
+    311:     void updateBasicImg(const Texture& new_img) { new_img.showOn(&base_img); };
+=>  312:     Texture& getBasicImg() { return base_img; };
+    313: 
+    314:     //!mouse press part
+
+# 7 0x000000000040260B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (152):
+
+    150:         if (is_clicked) {
+    151:             cout << "action up!" << "\n";
+=>  152:             result = press_up_f->action();
+    153:             is_clicked = false;
+    154:         }
+
+# 8 0x00000000004025A6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (145):
+
+    143:     if (this->checkPointed(mouse)) {
+    144:         for (int i = count - 1; i >= 0; --i) {
+=>  145:             if (children[i]->proceedPressUp(mouse)) {
+    146:                 return true;
+    147:             }
+
+# 9 0x00000000004025A6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (145):
+
+    143:     if (this->checkPointed(mouse)) {
+    144:         for (int i = count - 1; i >= 0; --i) {
+=>  145:             if (children[i]->proceedPressUp(mouse)) {
+    146:                 return true;
+    147:             }
+
+#10 0x0000000000401B04 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (48):
+
+     46:     if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {
+     47:         cout << "pressed_up!" << "\n";
+=>   48:         app_window.proceedPressUp(&mouse);
+     49:     }
+     50: 
+
+#11 0x00000000004016FB in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         //this->sleep(5);
+     15:     }
+
+#12 0x000000000042112F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 24 2021 19:34:00, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 24 2021 19:34:11
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (22, 0x00): SIGABRT: Аварийное завершение программы, вызвана функция abort(). 
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000443900 (64-bit), Flags: CMdRe0, Thread: 0x22EC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040CEA9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+# 1 0x000000000040D193 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txOnSignal() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10770)
+# 2 0x00007FFDBDC3ADFB in C:\Windows\System32\msvcrt.dll: raise()
+# 3 0x00007FFDBDC3F1FB in C:\Windows\System32\msvcrt.dll: abort()
+# 4 0x0000000000423716 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _wassert()
+# 5 0x00000000004237C6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _assert()
+
+# 6 0x000000000042A642 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (312):
+
+    310:     virtual void draw(Renderer* render) const = 0;
+    311:     void updateBasicImg(const Texture& new_img) { new_img.showOn(&base_img); };
+=>  312:     Texture& getBasicImg() { return base_img; };
+    313: 
+    314:     //!mouse press part
+
+# 7 0x000000000040260B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (152):
+
+    150:         if (is_clicked) {
+    151:             cout << "action up!" << "\n";
+=>  152:             result = press_up_f->action();
+    153:             is_clicked = false;
+    154:         }
+
+# 8 0x00000000004025A6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (145):
+
+    143:     if (this->checkPointed(mouse)) {
+    144:         for (int i = count - 1; i >= 0; --i) {
+=>  145:             if (children[i]->proceedPressUp(mouse)) {
+    146:                 return true;
+    147:             }
+
+# 9 0x00000000004025A6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (145):
+
+    143:     if (this->checkPointed(mouse)) {
+    144:         for (int i = count - 1; i >= 0; --i) {
+=>  145:             if (children[i]->proceedPressUp(mouse)) {
+    146:                 return true;
+    147:             }
+
+#10 0x0000000000401B04 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (48):
+
+     46:     if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {
+     47:         cout << "pressed_up!" << "\n";
+=>   48:         app_window.proceedPressUp(&mouse);
+     49:     }
+     50: 
+
+#11 0x00000000004016FB in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (13):
+
+     11:         app_window.draw(&render);
+     12:         app_window.showOn(&users_window);
+=>   13:         this->proceedMouseEvent();
+     14:         //this->sleep(5);
+     15:     }
+
+#12 0x000000000042112F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 24 2021 19:34:00, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 24 2021 19:37:05
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------

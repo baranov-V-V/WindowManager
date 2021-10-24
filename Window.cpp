@@ -76,7 +76,7 @@ ManagerWindow::~ManagerWindow() {
 
 void ManagerWindow::drawChilds(Renderer* renderer) const {
     //cerr << "trying draw childs for: [" << this << "]\n";
-    for (int i = count - 1; i >= 0; --i) {
+    for (int i = 0; i < count; ++i) {
         children[i]->draw(renderer);
         children[i]->showOn(this);
     }
@@ -99,6 +99,19 @@ void ManagerWindow::delChild(ManagerWindow* window) {
             }
             count--;
             delete window;
+            break;
+        }
+    }
+};
+
+void ManagerWindow::makeFirst(ManagerWindow* window) {
+    int pos = 0;
+    for (int i = 0; i < count; ++i) {
+        if (children[i] == window) {
+            for (int j = i; j < count - 1; ++j) {
+                children[j] = children[j + 1];   
+            }
+            children[count - 1] = window;
             break;
         }
     }
@@ -128,7 +141,7 @@ bool ManagerWindow::proceedPressDown(WindowMouse* mouse) {
             }
         }
         is_clicked = true;
-        cout << "action down!" << "\n";
+        //cout << "action down!" << "\n";
         bool result = press_down_f->action();
         mouse->setToParent();
         return result;
@@ -148,7 +161,7 @@ bool ManagerWindow::proceedPressUp(WindowMouse* mouse) {
         }
         bool result = false;
         if (is_clicked) {
-            cout << "action up!" << "\n";
+            //cout << "action up!" << "\n";
             result = press_up_f->action();
             is_clicked = false;
         }
@@ -161,38 +174,48 @@ bool ManagerWindow::proceedPressUp(WindowMouse* mouse) {
 };
 
 bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
-    mouse->setWindow(this);
+    this->markPointedWindows(mouse);
+    this->proceedPointedWindows(mouse);
 
-    if (this->checkPointed(mouse)) {
-        for (int i = count - 1; i >= 0; --i) {
-            if (children[i]->proceedPointed(mouse)) {
-                return true;
-            }
-        }
-        is_pointed = true;
-        if (pointed_f != nullptr) {
-            pointed_f->action();
-        }
-        mouse->setToParent();
-        return true;
-    }
-    if (is_pointed) {
-        is_pointed = false;
-        if (pointed_f != nullptr) {
-            pointed_f->action();
-        }
-    }
-    mouse->setToParent();
-    return false;
+    return true;
 };
 
 void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
+    mouse->setWindow(this);
+    
+    for (int i = count - 1; i >= 0; --i) {
+        children[i]->markPointedWindows(mouse);
+    }
 
+    if (this->checkPointed(mouse)) {
+        is_pointed = true;
+    } else {
+        if (is_pointed) {
+            is_pointed = false;
+            if (pointed_f != nullptr) {
+                pointed_f->action();
+            }
+        }
+        is_pointed = false;
+    }
+    
+    mouse->setToParent();
 };
     
-void ManagerWindow::proceedPointedWindows() {
+void ManagerWindow::proceedPointedWindows(WindowMouse* mouse) {
+    mouse->setWindow(this);
 
+    for (int i = count - 1; i >= 0; --i) {
+        children[i]->proceedPointedWindows(mouse);
+    }
     
+    if (is_pointed) {
+        if (pointed_f != nullptr) {
+            pointed_f->action();
+        }
+    }
+
+    mouse->setToParent();
 };
 
 BorderWindow::BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
@@ -233,12 +256,6 @@ void ClockWindow::draw(Renderer* render) const {
     this->drawChilds(render);
 };
 
-/*
-CanvasWindow::CanvasWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
-                           ManagerWindow* parent, COLORREF border_color, int thickness) : 
-    BorderWindow(x_size, y_size, color, coord_x, coord_y, functor, parent, border_color, thickness) {};
-*/
-
 int WindowMouse::getState() const {
     return state;
 };
@@ -268,24 +285,26 @@ void WindowMouse::setToParent() {
 };
 
 PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, const char* pic_name, ManagerWindow* parent,
-                     VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
+                     VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
     ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
     Texture pic(x_size, y_size, pic_name, 0, 0);
     pic.showOn(this);
-    this->showOn(&base_img);
+    pic.showOn(&base_img);
 };
 
 PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic_name, ManagerWindow* parent,
-                     VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
-    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
+                     VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
+    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f), need_redraw(need_redraw) {
     Texture pic(x_size, y_size, pic_name, 0, 0);
     pic.showOn(this);
-    this->showOn(&base_img);
+    pic.showOn(&base_img);
 };
     
 void PicWindow::draw(Renderer* render) const {
     render->setWindow(const_cast<PicWindow*>(this));
-    //base_img.showOn(this);
+    if (need_redraw) {
+        base_img.showOn(this);
+    }
     this->drawChilds(render);
 };
 
@@ -303,12 +322,23 @@ void ThicknessWindow::draw(Renderer* render) const {
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
-             Renderer* render, Feather* feather, WindowMouse* mouse) :
+                           Renderer* render, Feather* feather, WindowMouse* mouse) :
     PicWindow(x_size, y_size, coord_x, coord_y, img_canvas, parent), name(name), on_display(true) {
     
     DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
+    MakeFirst* make_first = new MakeFirst(this);
+    this->setPressDown(make_first);
     this->setPointed(canvas_functor);
 
     PicWindow* menu = MakeBasicMenu(x_size, 5 + y_size / 15, 0, 0, this, 10);
+
+    MoveFunctor* move_f = new MoveFunctor(this, mouse);
+    StartMove* start_move_f = new StartMove(move_f, this);
+    EndMove*   end_move_f   = new EndMove(move_f);
+
+    menu->setPointed(move_f);
+    menu->setPressDown(start_move_f);
+    menu->setPressUp(end_move_f);
+
     this->addChild(menu);
 };
