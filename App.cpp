@@ -23,7 +23,7 @@ void App::initWindows() {
     CanvasWindow* canvas   = new CanvasWindow(400, 300, 400, 200, "Canvas1", &(this->app_window), &render, &feather, &mouse);
     CanvasWindow* canvas_2 = new CanvasWindow(200, 400, 850, 200, "Canvas2", &(this->app_window), &render, &feather, &mouse);
     PicWindow* menu      = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26); //menu->children[0] == close_button;
-    PicWindow* palette   = MakePalette(app_size.x / 8, app_size.y - app_size.y / 23, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->feather));
+    PicWindow* palette   = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->feather), &(this->mouse));
 
     StopAppFunctor* stop_app = new StopAppFunctor(this);
     menu->getChild(0)->setPressUp(stop_app);

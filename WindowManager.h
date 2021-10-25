@@ -34,6 +34,8 @@ static const char* img_file  = "img\\file.bmp";
 static const char* img_file2 = "img\\file2.bmp";
 static const char* img_help  = "img\\help.bmp";
 static const char* img_help2 = "img\\help2.bmp";
+static const char* img_view  = "img\\view.bmp";
+static const char* img_view2 = "img\\view2.bmp";
 
 static const char* img_palette   = "img\\palette.bmp";
 static const char* img_menu_bar  = "img\\menu_bar.bmp";
@@ -44,6 +46,9 @@ static const char* img_feather  = "img\\feather.bmp";
 static const char* img_eraser   = "img\\eraser.bmp";
 static const char* img_feather2 = "img\\feather2.bmp";
 static const char* img_eraser2  = "img\\eraser2.bmp";
+
+static const char* img_arrow_up = "img\\feather.bmp";
+static const char* img_arrow_down = "img\\eraser.bmp";
 
 enum WINDOW_TYPES {
     TYPE_WINDOW = 1,
@@ -111,6 +116,10 @@ enum ACTION_TYPE {
     TYPE_CLICKABLE = 1,
     TYPE_GLOWABLE = 2,
 };
+
+const int MAX_THICKNESS = 20;
+const int MIN_THICKNESS = 2;
+
 
 #define IS_CLICKABLE(type) (type & TYPE_CLICKABLE)
 #define IS_GLOWABLE(type) (type & TYPE_GLOWABLE)
@@ -342,7 +351,7 @@ class ManagerWindow : public Texture {
 
   private:
     void markPointedWindows(WindowMouse* mouse);
-    void proceedPointedWindows(WindowMouse* mouse);
+    bool proceedPointedWindows(WindowMouse* mouse);
 
     ManagerWindow* parent;
     ManagerWindow** children;
@@ -556,17 +565,38 @@ class ChangeMode : public VFunctor {
     int mode;
 };
 
-class ChangeThickness : public VFunctor {
+class IncThickness : public VFunctor {
   public:
-    ChangeThickness() : feather(nullptr), thickness(0) {};
-    ChangeThickness(Feather* feather, int thickness) : feather(feather), thickness(thickness) {};
-    virtual ~ChangeThickness() {};
+    IncThickness() : feather(nullptr) {};
+    IncThickness(Feather* feather) : feather(feather) {};
+    virtual ~IncThickness() {};
 
-    bool action() override { feather->setThickness(thickness); return true; };
+    bool action() override { 
+        if (feather->getThickness() < MAX_THICKNESS) {
+            feather->setThickness(feather->getThickness() + 1);  
+        }
+        return true;
+    };
 
   private:
-    Feather* feather;
-    int thickness;  
+    Feather* feather;  
+};
+
+class DecThickness : public VFunctor {
+  public:
+    DecThickness() : feather(nullptr) {};
+    DecThickness(Feather* feather) : feather(feather) {};
+    virtual ~DecThickness() {};
+
+    bool action() override { 
+        if (feather->getThickness() > MIN_THICKNESS) {
+            feather->setThickness(feather->getThickness() - 1);  
+        }
+        return true;
+    };
+
+  private:
+    Feather* feather;  
 };
 
 class DrawFunctor : public VFunctor {
@@ -658,7 +688,19 @@ class HelpFunctor : public VFunctor {
     ManagerWindow* window;
 };
 
-class MoveFunctor : public VFunctor {
+class ViewFunctor : public VFunctor {
+  public:
+    ViewFunctor();
+    ViewFunctor(ManagerWindow* window) : window(window) {};
+    virtual ~ViewFunctor() {};
+
+    bool action() override { /*cout << "Click true on " << window << "\n";*/ return true; };
+
+  private:
+    ManagerWindow* window;
+};
+
+class  MoveFunctor : public VFunctor {
   public:
     MoveFunctor();
     MoveFunctor(ManagerWindow* window, WindowMouse* mouse) : move_window(window), mouse(mouse), on_move(false), old_coord(0, 0) {};
@@ -686,15 +728,14 @@ class MoveFunctor : public VFunctor {
 class StartMove : public VFunctor {
   public:
     StartMove();
-    StartMove(MoveFunctor* move_f, ManagerWindow* move_window) : move_f(move_f) {
-        move_window->getParent()->makeFirst(move_window);
-    };
+    StartMove(MoveFunctor* move_f, ManagerWindow* move_window) : move_f(move_f), move_window(move_window) {};
     virtual ~StartMove() {};
 
-    bool action() override { move_f->startMove(); return true; };
+    bool action() override { move_window->getParent()->makeFirst(move_window); move_f->startMove(); return true; };
 
   private:
     MoveFunctor* move_f;
+    ManagerWindow* move_window;
 };
 
 class EndMove : public VFunctor {
@@ -770,5 +811,6 @@ CanvasWindow* MakeCanvas(int x_size, int y_size, int coord_x, int coord_y, Manag
                          Renderer* render, Feather* feather, WindowMouse* mouse);
 */
 PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x);
-PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather);
+PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse);
 PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x);
+void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse);

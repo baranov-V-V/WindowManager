@@ -26,17 +26,29 @@ PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, Manag
     return menu;
 }
 
-PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather) {
+void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse) {
+    MoveFunctor* move_f = new MoveFunctor(move_wnd, mouse);
+    StartMove* start_move_f = new StartMove(move_f, move_wnd);
+    EndMove*   end_move_f   = new EndMove(move_f);
+
+    activate_wnd->setPointed(move_f);
+    activate_wnd->setPressDown(start_move_f);
+    activate_wnd->setPressUp(end_move_f);
+}
+
+PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse) {
 
     PicWindow* palette = new PicWindow(x_size, y_size, coord_x, coord_y, img_palette, parent);
-    
+    MakeMovable(palette, palette, mouse);
+
+
     int c_box_x = 5 * x_size / (6 * x_count_c + 1);
     int c_box_y = c_box_x;
     
     int c_box_dx = x_size / (6 * x_count_c + 1);
     int c_box_dy = x_size / (6 * x_count_c + 1);
 
-    int start_boxes_y = y_size / 8;
+    int start_boxes_y = y_size / 16;
 
     for (int i = 0; i < y_count_c; ++i) {
         for (int j = 0; j < x_count_c; ++j) {
@@ -56,21 +68,28 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
 
     ChangeMode* change_to_feather = new ChangeMode(feather, MODE_DRAW);
     ChangeMode* change_to_eraser  = new ChangeMode(feather, MODE_ERASE);
-    PicWindow* feather_button = new PicWindow(inst_x, inst_y, inst_dx, feather_y                         ,img_feather, palette, change_to_feather);
-    PicWindow* eraser_button  = new PicWindow(inst_x, inst_y, inst_dx, feather_y + (inst_dy + inst_y) * 1,img_eraser , palette, change_to_eraser ); 
+    PicWindow* feather_button = new PicWindow(inst_x, inst_y, inst_dx, feather_y                         , img_feather, palette, change_to_feather);
+    PicWindow* eraser_button  = new PicWindow(inst_x, inst_y, inst_dx, feather_y + (inst_dy + inst_y) * 1, img_eraser , palette, change_to_eraser ); 
     ThicknessWindow* thick_ind_w = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y                         , white_c, mgrey_c, 1, feather, render, palette);
     ThicknessWindow* thick_ind_b = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y + (inst_dy + inst_y) * 1, black_c, mgrey_c, 1, feather, render, palette);
 
     GlowPicFunctor* feather_glow = new GlowPicFunctor(feather_button, img_feather2);
     GlowPicFunctor* eraser_glow  = new GlowPicFunctor(eraser_button , img_eraser2);
-
     feather_button->setPointed(feather_glow);
     eraser_button->setPointed(eraser_glow); 
 
+    IncThickness* inc_thickness = new IncThickness(feather);
+    DecThickness* dec_thickness = new DecThickness(feather);
+    PicWindow* inc_thickness_button = new PicWindow(inst_x, inst_y, inst_dx,              feather_y + (inst_dy + inst_y) * 2, img_arrow_up, palette, inc_thickness);
+    PicWindow* dec_thickness_button = new PicWindow(inst_x, inst_y, 2 * inst_dx + inst_x, feather_y + (inst_dy + inst_y) * 2, img_arrow_up, palette, dec_thickness);
+
+    
     palette->addChild(thick_ind_w);
     palette->addChild(thick_ind_b);
     palette->addChild(feather_button);
     palette->addChild(eraser_button);
+    palette->addChild(inc_thickness_button);
+    palette->addChild(dec_thickness_button);
 
     return palette;
 };
@@ -84,28 +103,37 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     int help_x = x_size / 28;    
     int help_y = y_size;
 
+    int view_x = help_x;
+    int view_y = help_y;
+    
     int clock_x = x_size / 15;
     int clock_y = y_size;
 
     //file->help->(to be continued...)
     PicWindow* file = new PicWindow(file_x, file_y, 0, 0, img_file, menu);
     PicWindow* help = new PicWindow(help_x, help_y, file_x, 0, img_help, menu);
+    PicWindow* view = new PicWindow(view_x, view_y, file_x + help_x, 0, img_view, menu);
     ClockWindow* clock = new ClockWindow(clock_x, clock_y, x_size - menu->getChild(0)->getSizeX() * menu->getCount() - clock_x, 0, mgrey_c, menu);
     
     FileFunctor* file_f  = new FileFunctor(file); 
     HelpFunctor* help_f  = new HelpFunctor(help); 
+    ViewFunctor* view_f  = new ViewFunctor(view); 
 
     GlowPicFunctor* file_glow = new GlowPicFunctor(file, img_file2);
     GlowPicFunctor* help_glow = new GlowPicFunctor(help, img_help2);
+    GlowPicFunctor* view_glow = new GlowPicFunctor(view, img_view2);
     
     file->setPressUp(file_f);
     help->setPressUp(help_f);
+    help->setPressUp(view_f);
     file->setPointed(file_glow);
     help->setPointed(help_glow);
+    view->setPointed(view_glow);
 
     menu->addChild(clock);
     menu->addChild(file);
     menu->addChild(help);
+    menu->addChild(view);
 
     return menu;
 };

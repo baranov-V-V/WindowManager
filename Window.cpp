@@ -105,7 +105,6 @@ void ManagerWindow::delChild(ManagerWindow* window) {
 };
 
 void ManagerWindow::makeFirst(ManagerWindow* window) {
-    int pos = 0;
     for (int i = 0; i < count; ++i) {
         if (children[i] == window) {
             for (int j = i; j < count - 1; ++j) {
@@ -202,20 +201,27 @@ void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
     mouse->setToParent();
 };
     
-void ManagerWindow::proceedPointedWindows(WindowMouse* mouse) {
+bool ManagerWindow::proceedPointedWindows(WindowMouse* mouse) {
     mouse->setWindow(this);
 
     for (int i = count - 1; i >= 0; --i) {
-        children[i]->proceedPointedWindows(mouse);
+        if(children[i]->proceedPointedWindows(mouse)) {
+            mouse->setToParent();
+            return true;
+        };
     }
     
     if (is_pointed) {
         if (pointed_f != nullptr) {
-            pointed_f->action();
+            if(pointed_f->action()) {
+                mouse->setToParent();
+                return true;
+            };
         }
     }
 
     mouse->setToParent();
+    return false;
 };
 
 BorderWindow::BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
@@ -245,7 +251,7 @@ ClockWindow::ClockWindow(int x_size, int y_size, int coord_x, int coord_y, COLOR
 void ClockWindow::draw(Renderer* render) const {
     ClockWindow* nc_this = const_cast<ClockWindow*>(this);
     
-    char buf[1024];
+    char buf[24];
     std::strftime(buf, 1024, "%H:%M:%S", &curr_time);
     
     render->setWindow(nc_this);
@@ -317,7 +323,7 @@ ThicknessWindow::ThicknessWindow(int x_size, int y_size, int coord_x, int coord_
 void ThicknessWindow::draw(Renderer* render) const {
     render->setWindow(const_cast<ThicknessWindow*>(this));
     render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
-    render->drawLine(3, size.y / 2, size.x - 3, size.y / 2, feather->getColor(), feather->getThickness());
+    render->drawLine(6, size.y / 2, size.x - 6, size.y / 2, feather->getColor(), feather->getThickness());
     this->drawChilds(render);
 };
 
@@ -330,15 +336,15 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
     this->setPressDown(make_first);
     this->setPointed(canvas_functor);
 
-    PicWindow* menu = MakeBasicMenu(x_size, 5 + y_size / 15, 0, 0, this, 10);
+    int menu_x = x_size;
+    int menu_y = 5 + y_size / 15;
 
-    MoveFunctor* move_f = new MoveFunctor(this, mouse);
-    StartMove* start_move_f = new StartMove(move_f, this);
-    EndMove*   end_move_f   = new EndMove(move_f);
+    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, 0, 0, this, 10);
 
-    menu->setPointed(move_f);
-    menu->setPressDown(start_move_f);
-    menu->setPressUp(end_move_f);
+    render->setWindow(menu);
+    render->drawText(menu_x /2 - strlen(name) * menu_y / 4, menu_y / 6, name, "Helvetica", 2 * menu_y / 3, menu_y / 4, silver_c);
+
+    MakeMovable(menu, this, mouse);
 
     this->addChild(menu);
 };
