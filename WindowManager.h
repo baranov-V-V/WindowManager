@@ -12,7 +12,7 @@
 #include "Functors.h"
 
 //in each window there is texture.
-//2 текстуры в кнопки: одна фулл прозарчная другая фулл не прозрачная и менять прозрачность у первой
+//2 ???????? ? ??????: ???? ???? ?????????? ?????? ???? ?? ?????????? ? ?????? ???????????? ? ??????
 
 using std::string;
 
@@ -47,8 +47,15 @@ static const char* img_eraser   = "img\\eraser.bmp";
 static const char* img_feather2 = "img\\feather2.bmp";
 static const char* img_eraser2  = "img\\eraser2.bmp";
 
-static const char* img_arrow_up = "img\\feather.bmp";
-static const char* img_arrow_down = "img\\eraser.bmp";
+static const char* img_arrow_up    = "img\\arrow_up.bmp";
+static const char* img_arrow_down  = "img\\arrow_down.bmp";
+static const char* img_arrow_left  = "img\\arrow_left.bmp";
+static const char* img_arrow_right = "img\\arrow_right.bmp";
+
+static const char* img_arrow_up2    = "img\\arrow_up2.bmp";
+static const char* img_arrow_down2  = "img\\arrow_down2.bmp";
+static const char* img_arrow_left2  = "img\\arrow_left2.bmp";
+static const char* img_arrow_right2 = "img\\arrow_right2.bmp";
 
 enum WINDOW_TYPES {
     TYPE_WINDOW = 1,
@@ -117,6 +124,12 @@ enum ACTION_TYPE {
     TYPE_GLOWABLE = 2,
 };
 
+enum TEXT_BUTTON_ALIGN {
+    ALIGN_LEFT = 0,
+    ALIGN_MID = 1,
+    ALIGN_RIGHT = 2,
+};
+
 const int MAX_THICKNESS = 20;
 const int MIN_THICKNESS = 2;
 
@@ -127,8 +140,7 @@ const int MIN_THICKNESS = 2;
 //-----------------------------------------TODO--------------------------------------------
 /*
    if (pointer_f != nullptr) -- FIXXX BUG
-
-  добавить поле изменений в PicWindow чтобы не перекладываться base_img по кд.
+  ???????? ???? ????????? ? PicWindow ????? ?? ??????????????? base_img ?? ??.
 */
 
 const COLORREF black_c     = RGB(  0,   0,   0);
@@ -217,6 +229,21 @@ class Feather {
     int mode;
 };
 
+/*
+class Eraser {
+  public:
+    Eraser() : color(white_c), thickness(5) {};
+
+    COLORREF getColor() const { return color; };
+    int getThickness()  const { return thickness; };
+    //void setTheme();
+
+  private:
+    COLORREF color;
+    int thickness;
+};
+*/
+
 class Renderer {
   public:
     Renderer(BasicWindow* window, double min_x, double min_y, double max_x, double max_y);
@@ -229,6 +256,7 @@ class Renderer {
     void setPixel(double x, double y, COLORREF color) const;
     void drawCircle(double x, double y, double r, COLORREF color = black_c, int thickness = 1) const;
     void drawRectangle(double x1, double y1, double x2, double y2, COLORREF color = black_c, int thinkness = 1) const;
+    void drawFilledRectangle(double x1, double y1, double x2, double y2, COLORREF fill_color, COLORREF color, int thickness = 1) const;
     void drawRoundRect(double x1, double y1, double x2, double y2, double width, double height, COLORREF color = black_c, int thinkness = 1) const;
     void drawText(double x, double y, const char* text, const char* font_name, int size_y, int size_x, COLORREF color = black_c);
 
@@ -276,6 +304,7 @@ class BasicWindow {
     HDC getHdc() const;
     int getType() const { return type; };
     COLORREF getColor() const;
+    void setColor(COLORREF new_color) { color = new_color; };
 
   protected:
     int type;
@@ -305,6 +334,7 @@ class Texture : public BasicWindow {
     void setCoord(Pair<int> new_coord) { coord = new_coord; };
 
     void showOn(const BasicWindow* target) const;
+    void showOn(const BasicWindow* target, int coord_x, int coord_y);
 
   protected:
     Pair<int> coord;
@@ -320,8 +350,8 @@ class ManagerWindow : public Texture {
 
     //general part
     virtual void draw(Renderer* render) const = 0;
-    void updateBasicImg(const Texture& new_img) { new_img.showOn(&base_img); };
-    Texture& getBasicImg() { return base_img; };
+    void setRedraw(bool state) { need_redraw = state; };
+    bool isRedraw() const { return need_redraw; };
 
     //!mouse press part
     bool isPointed() const { return is_pointed; };
@@ -329,7 +359,6 @@ class ManagerWindow : public Texture {
 
     bool checkPointed(WindowMouse* mouse); 
     bool checkLeftClick(WindowMouse* mouse);   //nullptr if it doesn't have click on it, coords of mouse on window if has click on it.
-    //bool proceedMouseEv(WindowMouse* mouse);    //go and check all children
     
     bool proceedPointed(WindowMouse* mouse);
     bool proceedPressDown(WindowMouse* mouse);
@@ -362,10 +391,21 @@ class ManagerWindow : public Texture {
     VFunctor* press_down_f;
 
   protected:
+    bool need_redraw = false;
     int window_type;
     bool is_clicked;
     bool is_pointed;
-    Texture base_img;
+};
+
+class InvisibleWindow : public ManagerWindow {
+  public:
+    InvisibleWindow();
+    InvisibleWindow(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent = nullptr,
+                    VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
+    
+    void draw(Renderer* render) const override;
+
+  private:
 };
 
 class PicWindow : public ManagerWindow {
@@ -375,10 +415,11 @@ class PicWindow : public ManagerWindow {
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic_name, ManagerWindow* parent = nullptr,
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
+    
     void draw(Renderer* render) const override;
 
   private:
-    bool need_redraw;
+    Texture base_img;
 };
 
 class BorderWindow : public ManagerWindow {
@@ -387,6 +428,9 @@ class BorderWindow : public ManagerWindow {
     BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
                  ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
     void draw(Renderer* render) const override;
+
+    COLORREF getBorderColor() const { return border_color; };
+    void setBorderColor(COLORREF new_color) { border_color = new_color; };
 
   protected:
     int thickness;
@@ -403,6 +447,24 @@ class ThicknessWindow : public BorderWindow {
   
   private:
     Feather* feather;
+};
+
+class TextButtonWindow : public BorderWindow {
+  public:
+    TextButtonWindow();
+    TextButtonWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness,
+                     COLORREF text_color, const char* text, const char* font_name, int ch_size_x, int ch_size_y, int align, Renderer* render,
+                     ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+
+    void draw(Renderer* render) const override;
+  
+  private:
+    COLORREF text_color;
+    const char* text;
+    const char* font_name;
+    int ch_size_x;
+    int ch_size_y;
+    int align;
 };
 
 class CanvasWindow : public PicWindow {
@@ -426,9 +488,7 @@ class PaletteWindow : public BorderWindow {
     PaletteWindow();
     PaletteWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Feather* feather,
                     ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
-
   private:
-
 };
 */
 
@@ -438,9 +498,7 @@ class MenuWindow : public BorderWindow {
     MenuWindow();
     MenuWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
                ManagerWindow* parent = nullptr, COLORREF border_color = black_c, int thickness = 2);
-
   private:
-
 };
 */
 
@@ -458,6 +516,24 @@ class ClockWindow : public ManagerWindow {
         curr_time = *std::localtime(&time);
     };
     std::tm curr_time;
+};
+
+class DisplayManager {
+  public:
+    DisplayManager(int max_count = 100);
+    ~DisplayManager();
+
+    void addWindow(ManagerWindow* window);
+    void showWindow(ManagerWindow* window);
+    void hideWindow(ManagerWindow* window);
+    int getCount() const { return count; };
+    void delWindow(ManagerWindow* window);
+    void delLast();
+
+  private:
+    ManagerWindow** windows;
+    int count;
+    int size;
 };
 
 class App {
@@ -513,6 +589,16 @@ class DebugFunctorTrue : public VFunctor {
 
   private:
     ManagerWindow* window;
+};
+
+class InvFunctorTrue : public VFunctor {
+  public:
+    InvFunctorTrue() {};
+    virtual ~InvFunctorTrue() {};
+
+    bool action() override { cout << "Click true on invs_wnd\n"; return true; };
+
+  private:
 };
 
 class StopAppFunctor : public VFunctor {
@@ -601,7 +687,7 @@ class DecThickness : public VFunctor {
 
 class DrawFunctor : public VFunctor {
   public:
-    DrawFunctor() : feather(nullptr), render(nullptr), window(nullptr), mouse(nullptr) {};
+    DrawFunctor() : feather(nullptr), render(nullptr), window(nullptr), mouse(nullptr), old_coord(0, 0) {};
     DrawFunctor(ManagerWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) : feather(feather), render(render), window(window), mouse(mouse) {};
     virtual ~DrawFunctor() {};
 
@@ -612,16 +698,18 @@ class DrawFunctor : public VFunctor {
             //cout << "in draw2!" << "\n";
             switch (feather->getMode()) {
                 case MODE_ERASE:
-                    render->drawCircle(mouse->getRelCoord().x, mouse->getRelCoord().y, 3, white_c, 1);        
+                    render->drawLine(old_coord.x, old_coord.y, mouse->getRelCoord().x, mouse->getRelCoord().y, white_c, feather->getThickness());
                     break;
                 case MODE_DRAW:
-                    render->drawCircle(mouse->getRelCoord().x, mouse->getRelCoord().y, feather->getThickness() / 2, feather->getColor(), 1);
+                    render->drawLine(old_coord.x, old_coord.y, mouse->getRelCoord().x, mouse->getRelCoord().y, feather->getColor(), feather->getThickness());
+                    //render->drawCircle(mouse->getRelCoord().x, mouse->getRelCoord().y, feather->getThickness() / 2, feather->getColor(), 1);
                     break;
                 default:
                     cerr << "unsupported mod: " << feather->getMode() << " in draw" << "\n";
                     break;
             }
         }
+        old_coord = mouse->getRelCoord();
         return true;
     };
 
@@ -630,6 +718,7 @@ class DrawFunctor : public VFunctor {
     Renderer* render;
     ManagerWindow* window;
     WindowMouse* mouse;
+    Pair<int> old_coord;
 };
 
 class CloseCanvasFunctor : public VFunctor {
@@ -700,7 +789,9 @@ class ViewFunctor : public VFunctor {
     ManagerWindow* window;
 };
 
-class  MoveFunctor : public VFunctor {
+
+
+class MoveFunctor : public VFunctor {
   public:
     MoveFunctor();
     MoveFunctor(ManagerWindow* window, WindowMouse* mouse) : move_window(window), mouse(mouse), on_move(false), old_coord(0, 0) {};
@@ -718,7 +809,7 @@ class  MoveFunctor : public VFunctor {
         return true;
     };
 
-  private:
+  protected:
     ManagerWindow* move_window;
     WindowMouse* mouse;
     Pair<int> old_coord;
@@ -733,8 +824,10 @@ class StartMove : public VFunctor {
 
     bool action() override { move_window->getParent()->makeFirst(move_window); move_f->startMove(); return true; };
 
-  private:
+  protected:
     MoveFunctor* move_f;
+
+  private:
     ManagerWindow* move_window;
 };
 
@@ -750,13 +843,209 @@ class EndMove : public VFunctor {
     MoveFunctor* move_f;
 };
 
+class RecalcThickness : public VFunctor {
+  public:
+    RecalcThickness(int min_coord, int max_coord, ManagerWindow* bar, Feather* feather) : bar(bar), feather(feather), min_coord(min_coord), max_coord(max_coord) {};
+    virtual ~RecalcThickness() {};
+
+    bool action () override {
+        feather->setThickness(MIN_THICKNESS + (bar->getCoordX() - min_coord) * (MAX_THICKNESS - MIN_THICKNESS) / (max_coord - min_coord));    
+        return true;
+    }; 
+
+  private:
+    ManagerWindow* bar;
+    Feather* feather;
+    int min_coord;
+    int max_coord;
+};
+
+class PlaceBar {
+  public:
+    PlaceBar() {};
+    PlaceBar(int min_coord, int max_coord, char type, ManagerWindow* bar, VFunctor* action) : bar(bar), min_coord(min_coord), max_coord(max_coord), action(action), type(type) {};
+    ~PlaceBar() {};
+
+    void place(int new_coord) {
+        if (new_coord < min_coord) {
+            new_coord = min_coord;
+        }
+        if (new_coord > max_coord) {
+            new_coord = max_coord;
+        }
+        if (type == 'X') {
+            bar->setCoordX(new_coord);
+        } else if (type == 'Y') {
+            bar->setCoordY(new_coord);
+        }
+        action->action();
+    }
+
+    ManagerWindow* getBar() const { return bar; };
+
+  private: 
+    VFunctor* action;
+    char type;
+    int min_coord;
+    int max_coord;
+    ManagerWindow* bar;
+};
+
+class MoveBarLeft : public VFunctor {
+  public:
+    MoveBarLeft(PlaceBar* placer) : placer(placer) {};
+    virtual ~MoveBarLeft() {};
+
+    bool action() override {
+        ManagerWindow* bar = placer->getBar();
+        placer->place(bar->getCoordX() - 5);
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;  
+};
+
+class MoveBarRight : public VFunctor {
+  public:
+    MoveBarRight(PlaceBar* placer) : placer(placer) {};
+    virtual ~MoveBarRight() {};
+
+    bool action() override {
+        ManagerWindow* bar = placer->getBar();
+        placer->place(bar->getCoordX() + 5);
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;  
+};
+
+class MoveBarUp : public VFunctor {
+  public:
+    MoveBarUp(PlaceBar* placer) : placer(placer) {};
+    virtual ~MoveBarUp() {};
+
+    bool action() override {
+        ManagerWindow* bar = placer->getBar();
+        placer->place(bar->getCoordY() - 5);
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;  
+};
+
+class MoveBarDown : public VFunctor {
+  public:
+    MoveBarDown(PlaceBar* placer) : placer(placer) {};
+    virtual ~MoveBarDown() {};
+
+    bool action() override {
+        ManagerWindow* bar = placer->getBar();
+        placer->place(bar->getCoordY() + 5);
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;  
+};
+
+class PlaceBarOnClickX : public StartMove {
+  public:
+    PlaceBarOnClickX() {};
+    PlaceBarOnClickX(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, MoveFunctor* functor) : placer(placer), mouse(mouse), StartMove(functor, nullptr) {};
+    virtual ~PlaceBarOnClickX() {};
+
+    bool action() override {
+        ManagerWindow* bar = placer->getBar();
+        placer->place(mouse->getRelCoord().x + placer->getBar()->getSizeX() / 2);
+        move_f->startMove();
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;
+    WindowMouse* mouse;
+};
+
+class PlaceBarOnClickY : public StartMove {
+  public:
+    PlaceBarOnClickY() {};
+    PlaceBarOnClickY(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, MoveFunctor* functor) : placer(placer), mouse(mouse), StartMove(functor, nullptr) {};
+    virtual ~PlaceBarOnClickY() {};
+
+    bool action() override {
+        ManagerWindow* bar = placer->getBar();
+        placer->place(mouse->getRelCoord().y + placer->getBar()->getSizeY() / 2);
+        move_f->startMove();
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;
+    WindowMouse* mouse;
+};
+
+class MoveBarRandomX : public MoveFunctor {
+  public:
+    MoveBarRandomX() {};
+    MoveBarRandomX(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse) : placer(placer), MoveFunctor(window, mouse) {};
+
+    bool action() override {
+        if (on_move) {
+            placer->place(placer->getBar()->getCoordX() + (mouse->getAbsCoord().x - old_coord.x));
+            old_coord = mouse->getAbsCoord();
+        }
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;
+};
+
+class MoveBarRandomY : public MoveFunctor {
+  public:
+    MoveBarRandomY() {};
+    MoveBarRandomY(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse) : placer(placer), MoveFunctor(window, mouse) {};
+
+    bool action() override {
+        if (on_move) {
+            placer->place(placer->getBar()->getCoordY() + (mouse->getAbsCoord().y - old_coord.y));
+        }
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;
+};
+
+/*
+class MoveBarRandom : public VFunctor {
+  public:
+    MoveBarRandom() {};
+    MoveBarRandom(PlaceBar* placer, WindowMouse* mouse) : placer(placer), mouse(mouse) {};
+
+    bool action() override {
+        if (mouse->isLeftClick()) {
+            placer->place(mouse->getRelCoord().x + placer->getBar()->getSizeX() / 2);
+        }
+        return true;
+    };
+
+  private:
+    PlaceBar* placer;
+    WindowMouse* mouse;
+};
+*/
+
 class GlowPicFunctor : public VFunctor {
   public:
     GlowPicFunctor() {};
-    GlowPicFunctor(PicWindow* window, const char* glowing_name) : glow_window(window),
-        default_wnd(window->getSizeX(), window->getSizeY(), window->getColor(), 0, 0),
+    GlowPicFunctor(PicWindow* window, const char* default_name, const char* glowing_name) : glow_window(window),
+        default_wnd(window->getSizeX(), window->getSizeY(), default_name, 0, 0),
         glowing_wnd(window->getSizeX(), window->getSizeY(), glowing_name, 0, 0) {
-        window->getBasicImg().showOn(&default_wnd);
+        window->showOn(&default_wnd);
         curr_state = STATE_DEFAULT;
     };
 
@@ -767,13 +1056,11 @@ class GlowPicFunctor : public VFunctor {
         if (glow_window->isPointed() && curr_state != STATE_GLOWING) {
             //cout << "changed to glow!" << "\n";
             glowing_wnd.showOn(glow_window);
-            glow_window->updateBasicImg(glowing_wnd);
             curr_state = STATE_GLOWING;
         }
         if (!glow_window->isPointed() && curr_state == STATE_GLOWING) {
             //cout << "changed to default!" << "\n";
             default_wnd.showOn(glow_window);
-            glow_window->updateBasicImg(default_wnd);
             curr_state = STATE_DEFAULT;
         }
         return true;
@@ -783,6 +1070,47 @@ class GlowPicFunctor : public VFunctor {
     PicWindow* glow_window;
     Texture default_wnd;
     Texture glowing_wnd;
+    int curr_state;
+};
+
+class GlowBorderFunctor : public VFunctor {
+  public:
+    GlowBorderFunctor() {};
+    GlowBorderFunctor(BorderWindow* window, COLORREF glowing_main_c, COLORREF glowing_bord_c) : 
+        glowing_main_c(glowing_main_c), glowing_bord_c(glowing_bord_c), glow_window(window) {
+        default_main_c = window->getColor();
+        default_bord_c = window->getBorderColor();
+        curr_state = STATE_DEFAULT;
+    };
+
+    virtual ~GlowBorderFunctor() {};
+
+    bool action() override {
+        //cout << "In glow!!" << "\n";
+        if (glow_window->isPointed() && curr_state != STATE_GLOWING) {
+            //cout << "changed to glow!" << "\n";
+            glow_window->setColor(glowing_main_c);
+            glow_window->setBorderColor(glowing_bord_c);
+            glow_window->setRedraw(true);
+            curr_state = STATE_GLOWING;
+        }
+        else if (!glow_window->isPointed() && curr_state == STATE_GLOWING) {
+            //cout << "changed to default!" << "\n";
+            glow_window->setColor(default_main_c);
+            glow_window->setBorderColor(default_bord_c);
+            glow_window->setRedraw(true);
+            curr_state = STATE_DEFAULT;
+        }
+
+        return true;
+    };
+
+  private:
+    BorderWindow* glow_window;
+    COLORREF default_main_c;
+    COLORREF default_bord_c;
+    COLORREF glowing_main_c;
+    COLORREF glowing_bord_c;
     int curr_state;
 };
 
@@ -810,7 +1138,7 @@ RGBQUAD ToRGBQUAD(BYTE red, BYTE green, BYTE blue);
 CanvasWindow* MakeCanvas(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent,
                          Renderer* render, Feather* feather, WindowMouse* mouse);
 */
-PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x);
+PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int but_x = 30);
 PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse);
 PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x);
 void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse);

@@ -35,9 +35,65 @@ double Renderer::toCoordY(int y) const {
     return double(y) / scale.y + min.y;
 };
 
+DisplayManager::DisplayManager(int max_count) {
+    
+};
+
+DisplayManager::~DisplayManager() {
+    for (int i = 0; i < count; ++i) {
+        this->delLast();
+    }
+    delete[] windows;
+};
+
+void DisplayManager::addWindow(ManagerWindow* window) {
+    if (count < size) {
+        windows[count++] = window;
+    } else {
+        std::cerr << "Overflow!!" << std::endl;
+    }
+};
+
+void DisplayManager::showWindow(ManagerWindow* window) {
+    int pos = 0;
+    for (int i = 0; i < count; ++i) {
+        if (windows[i] == window) {
+            
+        }
+    }
+};
+
+void DisplayManager::hideWindow(ManagerWindow* window) {
+    int pos = 0;
+    for (int i = 0; i < count; ++i) {
+        if (windows[i] == window) {
+            for (int j = i; j < count - 1; ++j) {
+                windows[j] = windows[j + 1];   
+            }
+        }
+    }
+};
+
+void DisplayManager::delWindow(ManagerWindow* window) {
+    int pos = 0;
+    for (int i = 0; i < count; ++i) {
+        if (windows[i] == window) {
+            for (int j = i; j < count - 1; ++j) {
+                windows[j] = windows[j + 1];   
+            }
+            count--;
+            break;
+        }
+    }
+};
+
+void DisplayManager::delLast() {
+    windows[--count] = nullptr;
+};
+
 ManagerWindow::ManagerWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, ManagerWindow* parent,
                              VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
-    Texture(x_size, y_size, color, coord_x, coord_y), parent(parent), base_img(x_size, y_size, color, 0, 0) {
+    Texture(x_size, y_size, color, coord_x, coord_y), parent(parent) {
 
     if (press_up_f == nullptr) {
         ManagerWindow::press_up_f = new DebugFunctorTrue(this);
@@ -78,7 +134,6 @@ void ManagerWindow::drawChilds(Renderer* renderer) const {
     //cerr << "trying draw childs for: [" << this << "]\n";
     for (int i = 0; i < count; ++i) {
         children[i]->draw(renderer);
-        children[i]->showOn(this);
     }
 };
 
@@ -236,8 +291,11 @@ BorderWindow::BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COL
 void BorderWindow::draw(Renderer* render) const {
     //cerr << "started drawing: [" << this << "]\n";
     render->setWindow(const_cast<BorderWindow*>(this));
-    //render->drawRectangle(0, 0, size.x, size.y, border_color, thickness); CHANGE!!!
+    if (need_redraw) {
+        render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
+    }
     this->drawChilds(render);
+    this->showOn(this->getParent());
     //cerr << "ended drawing: [" << this << "]\n";
 };
 
@@ -260,6 +318,7 @@ void ClockWindow::draw(Renderer* render) const {
     
     render->drawText(size.x / 20, size.y / 6, buf, "Helvetica", 2 * size.y / 3, size.y / 4, silver_c);
     this->drawChilds(render);
+    this->showOn(this->getParent());
 };
 
 int WindowMouse::getState() const {
@@ -292,26 +351,32 @@ void WindowMouse::setToParent() {
 
 PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, const char* pic_name, ManagerWindow* parent,
                      VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
-    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
+    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f), base_img(x_size, y_size, pic_name, 0, 0) {
+    PicWindow::need_redraw = need_redraw;
     Texture pic(x_size, y_size, pic_name, 0, 0);
     pic.showOn(this);
-    pic.showOn(&base_img);
 };
 
 PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic_name, ManagerWindow* parent,
                      VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
-    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f), need_redraw(need_redraw) {
+    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f), base_img(x_size, y_size, pic_name, 0, 0) {
+    PicWindow::need_redraw = need_redraw;
     Texture pic(x_size, y_size, pic_name, 0, 0);
     pic.showOn(this);
-    pic.showOn(&base_img);
 };
     
 void PicWindow::draw(Renderer* render) const {
     render->setWindow(const_cast<PicWindow*>(this));
+    
     if (need_redraw) {
         base_img.showOn(this);
     }
+    
     this->drawChilds(render);
+
+    if (this->getParent()) {
+        this->showOn(this->getParent());
+    }
 };
 
 ThicknessWindow::ThicknessWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Feather* feather, Renderer* render,
@@ -325,24 +390,89 @@ void ThicknessWindow::draw(Renderer* render) const {
     render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
     render->drawLine(6, size.y / 2, size.x - 6, size.y / 2, feather->getColor(), feather->getThickness());
     this->drawChilds(render);
+    this->showOn(this->getParent());
+};
+
+InvisibleWindow::InvisibleWindow(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent,
+                                 VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
+    ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
+};
+    
+void InvisibleWindow::draw(Renderer* render) const {
+    
+    for (int i = 0; i < this->getCount(); ++i) {
+        this->getChild(i)->draw(render);
+        render->setWindow(this->getParent());
+        this->getChild(i)->showOn(this->getParent(), this->getChild(i)->getCoordX() + coord.x, this->getChild(i)->getCoordY() + coord.y);
+    }
+    
+};
+
+TextButtonWindow::TextButtonWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness,
+                                   COLORREF text_color, const char* text, const char* font_name, int ch_size_x, int ch_size_y, int align, Renderer* render,
+                                   ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) : 
+    BorderWindow(x_size, y_size, coord_x, coord_y, color, border_color, thickness, render, parent, press_up_f, pointed_f, press_down_f), 
+    text(text), font_name(font_name), ch_size_x(ch_size_x), ch_size_y(ch_size_y), align(align), text_color(text_color) {
+    need_redraw = true;
+    this->draw(render);
+    need_redraw = false;
+};
+
+void TextButtonWindow::draw(Renderer* render) const {
+    
+    render->setWindow(const_cast<TextButtonWindow*>(this));
+    if (need_redraw) {
+        render->drawFilledRectangle(0, 0, size.x, size.y, color, border_color, thickness);
+        
+        int text_size = strlen(text) * ch_size_x;
+        int x_ident = ch_size_x * 2;
+        int y_ident = (this->getSizeY() - ch_size_y) / 2;
+        switch (align) {
+            case ALIGN_LEFT:
+                render->drawText(x_ident, y_ident, text, font_name, ch_size_y, ch_size_x, text_color);       
+                break;
+
+            case ALIGN_MID:
+                render->drawText(this->getSizeX() / 2 - text_size / 2, y_ident, text, font_name, ch_size_y, ch_size_x, text_color);       
+                break;
+                
+            case ALIGN_RIGHT:
+                render->drawText(this->getSizeX() - text_size - x_ident, y_ident, text, font_name, ch_size_y, ch_size_x, text_color);       
+                break;
+
+            default:
+                fprintf(stderr, "Not correct align [%d] in button with label <%s>\n", align, text);
+                break;
+        }
+        const_cast<TextButtonWindow*>(this)->setRedraw(false);
+    }
+    this->showOn(this->getParent());
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
                            Renderer* render, Feather* feather, WindowMouse* mouse) :
     PicWindow(x_size, y_size, coord_x, coord_y, img_canvas, parent), name(name), on_display(true) {
-    
+    need_redraw = false;
+
     DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
     MakeFirst* make_first = new MakeFirst(this);
     this->setPressDown(make_first);
     this->setPointed(canvas_functor);
 
     int menu_x = x_size;
-    int menu_y = 5 + y_size / 15;
+    int menu_y = 25;
 
-    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, 0, 0, this, 10);
+    int but_x = 30;
+    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, 0, 0, this, but_x);
 
     render->setWindow(menu);
-    render->drawText(menu_x /2 - strlen(name) * menu_y / 4, menu_y / 6, name, "Helvetica", 2 * menu_y / 3, menu_y / 4, silver_c);
+    int text_size = strlen(name) * menu_y / 4;
+    if (text_size < menu_x - 2 * but_x) {
+        int text_y = 4 * menu_y / 5;
+        int text_x = text_y / 3;
+        int ident_y = (menu_y - text_y) / 2;
+        render->drawText(menu_x / 2 - 30 * 2 - text_size / 2, ident_y, name, "Helvetica", text_y, text_x, silver_c);
+    }
 
     MakeMovable(menu, this, mouse);
 

@@ -49,6 +49,10 @@ void Texture::showOn(const BasicWindow* target) const {
     txBitBlt(target->getHdc(), coord.x, coord.y, 0, 0, this->getHdc());
 }
 
+void Texture::showOn(const BasicWindow* target, int coord_x, int coord_y) {
+    txBitBlt(target->getHdc(), coord_x, coord_y, 0, 0, this->getHdc());
+};
+
 void Renderer::drawLine(double x_begin, double y_begin, double x_end, double y_end, COLORREF color, int thickness) const {
     txSetColor(color, thickness, window->getHdc());
     txLine(this->toPixelX(x_begin), this->toPixelY(y_begin),
@@ -70,6 +74,13 @@ void Renderer::drawCircle(double x, double y, double r, COLORREF color, int thic
 
 void Renderer::drawRectangle(double x1, double y1, double x2, double y2, COLORREF color, int thickness) const {
     txSetColor(color, thickness, window->getHdc());
+    txRectangle(this->toPixelX(x1), this->toPixelY(y1),
+                this->toPixelX(x2), this->toPixelY(y2), window->getHdc());
+};
+
+void Renderer::drawFilledRectangle(double x1, double y1, double x2, double y2, COLORREF fill_color, COLORREF color, int thickness) const {
+    txSetColor(color, thickness, window->getHdc());
+    txSetFillColor(fill_color, window->getHdc());
     txRectangle(this->toPixelX(x1), this->toPixelY(y1),
                 this->toPixelX(x2), this->toPixelY(y2), window->getHdc());
 };

@@ -5048,3 +5048,1268 @@ Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main
 Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
 
 --------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: Graphics.cpp, строка: 41, функция: Texture::Texture(int, int, const char*, int, int),
+
+Сообщение: ВНЕЗАПНО: Логическая ошибка: Неверно, что "screen".
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000445900 (64-bit), Flags: CMdRe0, Thread: 0x3C18 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040D009 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+
+# 1 0x000000000041F7A9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (41):
+
+     39:     screen_buf = nullptr;
+     40:     screen = txLoadImage(file_name, x_size, y_size);
+=>   41:     assert(screen);
+     42: };
+     43: 
+
+# 2 0x0000000000402E37 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (296):
+
+    294:                      VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
+    295:     ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
+=>  296:     Texture pic(x_size, y_size, pic_name, 0, 0);
+    297:     pic.showOn(this);
+    298:     pic.showOn(&base_img);
+
+# 3 0x000000000040324F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (332):
+
+    330: CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
+    331:                            Renderer* render, Feather* feather, WindowMouse* mouse) :
+=>  332:     PicWindow(x_size, y_size, coord_x, coord_y, img_canvas, parent), name(name), on_display(true) {
+    333:     
+    334:     DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
+
+# 4 0x0000000000401830 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: initWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (23):
+
+     21:     const int palette_y = 2 * app_size.y / 3;
+     22: 
+=>   23:     CanvasWindow* canvas   = new CanvasWindow(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
+     24:     //CanvasWindow* canvas_2 = new CanvasWindow(400, 200, 850, 200, "Canvas2", &(this->app_window), &render, &feather, &mouse);
+     25:     PicWindow* menu        = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26); //menu->children[0] == close_button;
+
+# 5 0x00000000004016D2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (9):
+
+      7: void App::run() {
+      8:     on_run = true;
+=>    9:     this->initWindows();
+     10: 
+     11:     while (on_run) {
+
+# 6 0x000000000042137F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 25 2021 17:31:40, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 25 2021 17:37:52
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: Graphics.cpp, строка: 41, функция: Texture::Texture(int, int, const char*, int, int),
+
+Сообщение: ВНЕЗАПНО: Логическая ошибка: Неверно, что "screen".
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000445900 (64-bit), Flags: CMdRe0, Thread: 0x235C (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040D009 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+
+# 1 0x000000000041F7A9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (41):
+
+     39:     screen_buf = nullptr;
+     40:     screen = txLoadImage(file_name, x_size, y_size);
+=>   41:     assert(screen);
+     42: };
+     43: 
+
+# 2 0x0000000000402E37 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (296):
+
+    294:                      VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
+    295:     ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
+=>  296:     Texture pic(x_size, y_size, pic_name, 0, 0);
+    297:     pic.showOn(this);
+    298:     pic.showOn(&base_img);
+
+# 3 0x000000000040324F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (332):
+
+    330: CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
+    331:                            Renderer* render, Feather* feather, WindowMouse* mouse) :
+=>  332:     PicWindow(x_size, y_size, coord_x, coord_y, img_canvas, parent), name(name), on_display(true) {
+    333:     
+    334:     DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
+
+# 4 0x0000000000401830 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: initWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (23):
+
+     21:     const int palette_y = 2 * app_size.y / 3;
+     22: 
+=>   23:     CanvasWindow* canvas   = new CanvasWindow(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
+     24:     //CanvasWindow* canvas_2 = new CanvasWindow(400, 200, 850, 200, "Canvas2", &(this->app_window), &render, &feather, &mouse);
+     25:     PicWindow* menu        = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26); //menu->children[0] == close_button;
+
+# 5 0x00000000004016D2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (9):
+
+      7: void App::run() {
+      8:     on_run = true;
+=>    9:     this->initWindows();
+     10: 
+     11:     while (on_run) {
+
+# 6 0x000000000042137F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 25 2021 17:31:40, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 25 2021 17:38:13
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: Graphics.cpp, строка: 41, функция: Texture::Texture(int, int, const char*, int, int),
+
+Сообщение: ВНЕЗАПНО: Логическая ошибка: Неверно, что "screen".
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000445900 (64-bit), Flags: CMdRe0, Thread: 0x464 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040D009 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+
+# 1 0x000000000041F7A9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (41):
+
+     39:     screen_buf = nullptr;
+     40:     screen = txLoadImage(file_name, x_size, y_size);
+=>   41:     assert(screen);
+     42: };
+     43: 
+
+# 2 0x0000000000402E37 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (296):
+
+    294:                      VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
+    295:     ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
+=>  296:     Texture pic(x_size, y_size, pic_name, 0, 0);
+    297:     pic.showOn(this);
+    298:     pic.showOn(&base_img);
+
+# 3 0x000000000040324F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (332):
+
+    330: CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
+    331:                            Renderer* render, Feather* feather, WindowMouse* mouse) :
+=>  332:     PicWindow(x_size, y_size, coord_x, coord_y, img_canvas, parent), name(name), on_display(true) {
+    333:     
+    334:     DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
+
+# 4 0x0000000000401830 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: initWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (23):
+
+     21:     const int palette_y = 2 * app_size.y / 3;
+     22: 
+=>   23:     CanvasWindow* canvas   = new CanvasWindow(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
+     24:     //CanvasWindow* canvas_2 = new CanvasWindow(400, 200, 850, 200, "Canvas2", &(this->app_window), &render, &feather, &mouse);
+     25:     PicWindow* menu        = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26); //menu->children[0] == close_button;
+
+# 5 0x00000000004016D2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (9):
+
+      7: void App::run() {
+      8:     on_run = true;
+=>    9:     this->initWindows();
+     10: 
+     11:     while (on_run) {
+
+# 6 0x000000000042137F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 25 2021 17:31:40, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 25 2021 17:40:34
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#508: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FFEAF73440A в функции memcpy(). Попытка прочесть данные по адресу 0x0000000006916200. Дополнительно, превышен лимит исключений _TX_EXCEPTIONS_LIMIT (16). Также превышен лимит фатальных исключений _TX_FATAL_EXCEPTIONS_LIMIT (16). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000446900 (64-bit), Flags: CMdrE0, Thread: 0x37BC (Canvas). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040D709 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txError()
+# 1 0x000000000040E546 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+# 2 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+# 3 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+# 4 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+# 5 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+# 6 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+# 7 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 8 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#11 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#12 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#13 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+#14 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+#15 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+#16 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+#17 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+#18 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+#19 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#20 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#22 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#23 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#24 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#25 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+#26 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+#27 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+#28 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+#29 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+#30 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+#31 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#32 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#34 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#35 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#36 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#37 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+#38 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+#39 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+#40 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+#41 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+#42 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+#43 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#44 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#46 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#47 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#48 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#49 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+#50 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+#51 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+#52 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+#53 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+#54 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+#55 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#56 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#58 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#59 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#60 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#61 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 30 2021 16:57:55, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 30 2021 16:58:03
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#508: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FFEAF73440A в функции memcpy(). Попытка прочесть данные по адресу 0x0000000006916200. Дополнительно, превышен лимит исключений _TX_EXCEPTIONS_LIMIT (16). Также превышен лимит фатальных исключений _TX_FATAL_EXCEPTIONS_LIMIT (16). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции _set_se_translator() вы можете сами обработать эту ошибку.
+
+#3: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000446900 (64-bit), Flags: CMdrE0, Thread: 0x37BC (Canvas). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040D709 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txError()
+# 1 0x000000000040E5DF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+# 2 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+# 3 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+# 4 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+# 5 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+# 6 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+# 7 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 8 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#11 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#12 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#13 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+#14 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+#15 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+#16 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+#17 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+#18 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+#19 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#20 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#22 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#23 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#24 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#25 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+#26 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+#27 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+#28 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+#29 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+#30 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+#31 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#32 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#34 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#35 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#36 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#37 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+#38 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+#39 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+#40 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+#41 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+#42 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+#43 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#44 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#46 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#47 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#48 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#49 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+#50 0x000000000040DEAE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txVectoredExceptionHandler()
+#51 0x00007FFEB02A8A3C in C:\Windows\SYSTEM32\ntdll.dll: RtlDeleteAce()
+#52 0x00007FFEB0281276 in C:\Windows\SYSTEM32\ntdll.dll: RtlRaiseException()
+#53 0x00007FFEB02D0BFE in C:\Windows\SYSTEM32\ntdll.dll: KiUserExceptionDispatcher()
+#54 0x00007FFEAF73440A in C:\Windows\System32\msvcrt.dll: memcpy()
+#55 0x0000000066044CAD in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#56 0x0000000066045316 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#58 0x0000000066042D72 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymFromAddr()
+#59 0x00000000004131A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#60 0x00000000004125A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCaptureStackBackTrace()
+#61 0x000000000040E476 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txOnExceptionSEH()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 30 2021 16:57:55, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 30 2021 16:58:04
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000042D252 в функции setThickness() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h на строке 217. Попытка записать данные по адресу 0x0000000000000004. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000447900 (64-bit), Flags: CMdRe0, Thread: 0x3494 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000042D252 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: setThickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (217):
+
+    215: 
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+=>  217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+    218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+
+# 1 0x000000000042DD54 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: calc_thickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (857):
+
+    855:         bar->setCoordX(new_coord);
+    856:         this->calc_thickness();
+=>  857:     }
+    858: 
+    859:     ManagerWindow* getBar() const { return bar; };
+
+# 2 0x000000000042D367 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: place() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (218):
+
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+    217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+=>  218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+    220:     COLORREF getColor() const { return color; };
+
+# 3 0x000000000042C91B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (647):
+
+    645:     virtual ~ChangeMode() {};
+    646: 
+=>  647:     bool action() override { feather->setMode(mode); return true; };
+    648: 
+    649:   private:
+
+# 4 0x0000000000402A66 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressDown() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (199):
+
+    197:         is_clicked = true;
+    198:         //cout << "action down!" << "\n";
+=>  199:         bool result = press_down_f->action();
+    200:         mouse->setToParent();
+    201:         return result;
+
+# 5 0x0000000000402A2E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressDown() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191:     if (this->checkPointed(mouse)) {
+    192:         for (int i = count - 1; i >= 0; --i) {
+=>  193:             if (children[i]->proceedPressDown(mouse)) {
+    194:                 return true;
+    195:             }
+
+# 6 0x0000000000402A2E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressDown() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191:     if (this->checkPointed(mouse)) {
+    192:         for (int i = count - 1; i >= 0; --i) {
+=>  193:             if (children[i]->proceedPressDown(mouse)) {
+    194:                 return true;
+    195:             }
+
+# 7 0x0000000000402A2E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressDown() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191:     if (this->checkPointed(mouse)) {
+    192:         for (int i = count - 1; i >= 0; --i) {
+=>  193:             if (children[i]->proceedPressDown(mouse)) {
+    194:                 return true;
+    195:             }
+
+# 8 0x0000000000401D13 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (56):
+
+     54:     if ((mouse.getState() & LEFT_CLICK) && !(state & LEFT_CLICK)) {
+     55:         //cout << "pressed_down!" << "\n";
+=>   56:         app_window.proceedPressDown(&mouse);
+     57:     }
+     58: 
+
+# 9 0x000000000040171D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (14):
+
+     12:         app_window.draw(&render);
+     13:         app_window.showOn(&users_window);
+=>   14:         this->proceedMouseEvent();
+     15:         //this->sleep(5);
+     16:     }
+
+#10 0x000000000042217F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 30 2021 21:49:04, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 30 2021 21:49:13
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000042D252 в функции setThickness() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h на строке 217. Попытка записать данные по адресу 0x0000000000000004. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000447900 (64-bit), Flags: CMdRe0, Thread: 0x3494 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000042D252 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: setThickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (217):
+
+    215: 
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+=>  217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+    218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+
+# 1 0x000000000042DD54 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: calc_thickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (857):
+
+    855:         bar->setCoordX(new_coord);
+    856:         this->calc_thickness();
+=>  857:     }
+    858: 
+    859:     ManagerWindow* getBar() const { return bar; };
+
+# 2 0x000000000042D367 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: place() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (218):
+
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+    217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+=>  218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+    220:     COLORREF getColor() const { return color; };
+
+# 3 0x000000000042C91B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (647):
+
+    645:     virtual ~ChangeMode() {};
+    646: 
+=>  647:     bool action() override { feather->setMode(mode); return true; };
+    648: 
+    649:   private:
+
+# 4 0x0000000000402A66 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressDown() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (199):
+
+    197:         is_clicked = true;
+    198:         //cout << "action down!" << "\n";
+=>  199:         bool result = press_down_f->action();
+    200:         mouse->setToParent();
+    201:         return result;
+
+# 5 0x0000000000402A2E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressDown() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191:     if (this->checkPointed(mouse)) {
+    192:         for (int i = count - 1; i >= 0; --i) {
+=>  193:             if (children[i]->proceedPressDown(mouse)) {
+    194:                 return true;
+    195:             }
+
+# 6 0x0000000000402A2E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressDown() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191:     if (this->checkPointed(mouse)) {
+    192:         for (int i = count - 1; i >= 0; --i) {
+=>  193:             if (children[i]->proceedPressDown(mouse)) {
+    194:                 return true;
+    195:             }
+
+# 7 0x0000000000402A2E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressDown() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (193):
+
+    191:     if (this->checkPointed(mouse)) {
+    192:         for (int i = count - 1; i >= 0; --i) {
+=>  193:             if (children[i]->proceedPressDown(mouse)) {
+    194:                 return true;
+    195:             }
+
+# 8 0x0000000000401D13 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (56):
+
+     54:     if ((mouse.getState() & LEFT_CLICK) && !(state & LEFT_CLICK)) {
+     55:         //cout << "pressed_down!" << "\n";
+=>   56:         app_window.proceedPressDown(&mouse);
+     57:     }
+     58: 
+
+# 9 0x000000000040171D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (14):
+
+     12:         app_window.draw(&render);
+     13:         app_window.showOn(&users_window);
+=>   14:         this->proceedMouseEvent();
+     15:         //this->sleep(5);
+     16:     }
+
+#10 0x000000000042217F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 30 2021 21:49:04, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 30 2021 21:49:12
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000042D252 в функции setThickness() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h на строке 217. Попытка записать данные по адресу 0x0000000000706D66. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000447900 (64-bit), Flags: CMdRe0, Thread: 0x1ABC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000042D252 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: setThickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (217):
+
+    215: 
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+=>  217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+    218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+
+# 1 0x000000000042DD54 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: calc_thickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (857):
+
+    855:         bar->setCoordX(new_coord);
+    856:         this->calc_thickness();
+=>  857:     }
+    858: 
+    859:     ManagerWindow* getBar() const { return bar; };
+
+# 2 0x000000000042D367 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: place() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (218):
+
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+    217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+=>  218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+    220:     COLORREF getColor() const { return color; };
+
+# 3 0x000000000042C36B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (647):
+
+    645:     virtual ~ChangeMode() {};
+    646: 
+=>  647:     bool action() override { feather->setMode(mode); return true; };
+    648: 
+    649:   private:
+
+# 4 0x0000000000402C72 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: markPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (250):
+
+    248:             is_pointed = false;
+    249:             if (pointed_f != nullptr) {
+=>  250:                 pointed_f->action();
+    251:             }
+    252:         }
+
+# 5 0x0000000000402C0E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: markPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (241):
+
+    239:     
+    240:     for (int i = count - 1; i >= 0; --i) {
+=>  241:         children[i]->markPointedWindows(mouse);
+    242:     }
+    243: 
+
+# 6 0x0000000000402C0E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: markPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (241):
+
+    239:     
+    240:     for (int i = count - 1; i >= 0; --i) {
+=>  241:         children[i]->markPointedWindows(mouse);
+    242:     }
+    243: 
+
+# 7 0x0000000000402C0E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: markPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (241):
+
+    239:     
+    240:     for (int i = count - 1; i >= 0; --i) {
+=>  241:         children[i]->markPointedWindows(mouse);
+    242:     }
+    243: 
+
+# 8 0x0000000000402B9C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointed() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (231):
+
+    229: 
+    230: bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
+=>  231:     this->markPointedWindows(mouse);
+    232:     this->proceedPointedWindows(mouse);
+    233: 
+
+# 9 0x0000000000401DAC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (65):
+
+     63: 
+     64:     if (mouse.getAbsCoord() != abs_coord) {
+=>   65:         app_window.proceedPointed(&mouse);
+     66:     }
+     67: 
+
+#10 0x000000000040171D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (14):
+
+     12:         app_window.draw(&render);
+     13:         app_window.showOn(&users_window);
+=>   14:         this->proceedMouseEvent();
+     15:         //this->sleep(5);
+     16:     }
+
+#11 0x000000000042217F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 30 2021 21:49:04, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 30 2021 21:49:28
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000042D252 в функции setThickness() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h на строке 217. Попытка записать данные по адресу 0x0000000000706D66. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000447900 (64-bit), Flags: CMdRe0, Thread: 0x1ABC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000042D252 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: setThickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (217):
+
+    215: 
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+=>  217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+    218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+
+# 1 0x000000000042DD54 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: calc_thickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (857):
+
+    855:         bar->setCoordX(new_coord);
+    856:         this->calc_thickness();
+=>  857:     }
+    858: 
+    859:     ManagerWindow* getBar() const { return bar; };
+
+# 2 0x000000000042D367 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: place() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (218):
+
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+    217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+=>  218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+    220:     COLORREF getColor() const { return color; };
+
+# 3 0x000000000042C36B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (647):
+
+    645:     virtual ~ChangeMode() {};
+    646: 
+=>  647:     bool action() override { feather->setMode(mode); return true; };
+    648: 
+    649:   private:
+
+# 4 0x0000000000402C72 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: markPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (250):
+
+    248:             is_pointed = false;
+    249:             if (pointed_f != nullptr) {
+=>  250:                 pointed_f->action();
+    251:             }
+    252:         }
+
+# 5 0x0000000000402C0E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: markPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (241):
+
+    239:     
+    240:     for (int i = count - 1; i >= 0; --i) {
+=>  241:         children[i]->markPointedWindows(mouse);
+    242:     }
+    243: 
+
+# 6 0x0000000000402C0E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: markPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (241):
+
+    239:     
+    240:     for (int i = count - 1; i >= 0; --i) {
+=>  241:         children[i]->markPointedWindows(mouse);
+    242:     }
+    243: 
+
+# 7 0x0000000000402C0E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: markPointedWindows() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (241):
+
+    239:     
+    240:     for (int i = count - 1; i >= 0; --i) {
+=>  241:         children[i]->markPointedWindows(mouse);
+    242:     }
+    243: 
+
+# 8 0x0000000000402B9C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPointed() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (231):
+
+    229: 
+    230: bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
+=>  231:     this->markPointedWindows(mouse);
+    232:     this->proceedPointedWindows(mouse);
+    233: 
+
+# 9 0x0000000000401DAC in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (65):
+
+     63: 
+     64:     if (mouse.getAbsCoord() != abs_coord) {
+=>   65:         app_window.proceedPointed(&mouse);
+     66:     }
+     67: 
+
+#10 0x000000000040171D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (14):
+
+     12:         app_window.draw(&render);
+     13:         app_window.showOn(&users_window);
+=>   14:         this->proceedMouseEvent();
+     15:         //this->sleep(5);
+     16:     }
+
+#11 0x000000000042217F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 30 2021 21:49:04, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 30 2021 21:49:28
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000042D252 в функции setThickness() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h на строке 217. Попытка записать данные по адресу 0x0000000000000004. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000447900 (64-bit), Flags: CMdRe0, Thread: 0xEEC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000042D252 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: setThickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (217):
+
+    215: 
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+=>  217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+    218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+
+# 1 0x000000000042DD54 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: calc_thickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (857):
+
+    855:         bar->setCoordX(new_coord);
+    856:         this->calc_thickness();
+=>  857:     }
+    858: 
+    859:     ManagerWindow* getBar() const { return bar; };
+
+# 2 0x000000000042D367 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: place() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (218):
+
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+    217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+=>  218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+    220:     COLORREF getColor() const { return color; };
+
+# 3 0x000000000042C137 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (647):
+
+    645:     virtual ~ChangeMode() {};
+    646: 
+=>  647:     bool action() override { feather->setMode(mode); return true; };
+    648: 
+    649:   private:
+
+# 4 0x0000000000402B40 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (219):
+
+    217:         if (is_clicked) {
+    218:             //cout << "action up!" << "\n";
+=>  219:             result = press_up_f->action();
+    220:             is_clicked = false;
+    221:         }
+
+# 5 0x0000000000402B00 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (212):
+
+    210:     if (this->checkPointed(mouse)) {
+    211:         for (int i = count - 1; i >= 0; --i) {
+=>  212:             if (children[i]->proceedPressUp(mouse)) {
+    213:                 return true;
+    214:             }
+
+# 6 0x0000000000402B00 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (212):
+
+    210:     if (this->checkPointed(mouse)) {
+    211:         for (int i = count - 1; i >= 0; --i) {
+=>  212:             if (children[i]->proceedPressUp(mouse)) {
+    213:                 return true;
+    214:             }
+
+# 7 0x0000000000402B00 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (212):
+
+    210:     if (this->checkPointed(mouse)) {
+    211:         for (int i = count - 1; i >= 0; --i) {
+=>  212:             if (children[i]->proceedPressUp(mouse)) {
+    213:                 return true;
+    214:             }
+
+# 8 0x0000000000401D64 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59:     if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {
+     60:         //cout << "pressed_up!" << "\n";
+=>   61:         app_window.proceedPressUp(&mouse);
+     62:     }
+     63: 
+
+# 9 0x000000000040171D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (14):
+
+     12:         app_window.draw(&render);
+     13:         app_window.showOn(&users_window);
+=>   14:         this->proceedMouseEvent();
+     15:         //this->sleep(5);
+     16:     }
+
+#10 0x000000000042217F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 30 2021 21:49:04, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 30 2021 21:49:37
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000042D252 в функции setThickness() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h на строке 217. Попытка записать данные по адресу 0x0000000000000004. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000447900 (64-bit), Flags: CMdRe0, Thread: 0xEEC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000042D252 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: setThickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (217):
+
+    215: 
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+=>  217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+    218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+
+# 1 0x000000000042DD54 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: calc_thickness() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (857):
+
+    855:         bar->setCoordX(new_coord);
+    856:         this->calc_thickness();
+=>  857:     }
+    858: 
+    859:     ManagerWindow* getBar() const { return bar; };
+
+# 2 0x000000000042D367 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: place() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (218):
+
+    216:     void setColor(COLORREF color) { Feather::color = color; };
+    217:     void setThickness(int thickness) { Feather::thickness = thickness; };
+=>  218:     void setMode(int mode) { Feather::mode = mode; };
+    219: 
+    220:     COLORREF getColor() const { return color; };
+
+# 3 0x000000000042C137 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (647):
+
+    645:     virtual ~ChangeMode() {};
+    646: 
+=>  647:     bool action() override { feather->setMode(mode); return true; };
+    648: 
+    649:   private:
+
+# 4 0x0000000000402B40 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (219):
+
+    217:         if (is_clicked) {
+    218:             //cout << "action up!" << "\n";
+=>  219:             result = press_up_f->action();
+    220:             is_clicked = false;
+    221:         }
+
+# 5 0x0000000000402B00 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (212):
+
+    210:     if (this->checkPointed(mouse)) {
+    211:         for (int i = count - 1; i >= 0; --i) {
+=>  212:             if (children[i]->proceedPressUp(mouse)) {
+    213:                 return true;
+    214:             }
+
+# 6 0x0000000000402B00 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (212):
+
+    210:     if (this->checkPointed(mouse)) {
+    211:         for (int i = count - 1; i >= 0; --i) {
+=>  212:             if (children[i]->proceedPressUp(mouse)) {
+    213:                 return true;
+    214:             }
+
+# 7 0x0000000000402B00 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedPressUp() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (212):
+
+    210:     if (this->checkPointed(mouse)) {
+    211:         for (int i = count - 1; i >= 0; --i) {
+=>  212:             if (children[i]->proceedPressUp(mouse)) {
+    213:                 return true;
+    214:             }
+
+# 8 0x0000000000401D64 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (61):
+
+     59:     if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {
+     60:         //cout << "pressed_up!" << "\n";
+=>   61:         app_window.proceedPressUp(&mouse);
+     62:     }
+     63: 
+
+# 9 0x000000000040171D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (14):
+
+     12:         app_window.draw(&render);
+     13:         app_window.showOn(&users_window);
+=>   14:         this->proceedMouseEvent();
+     15:         //this->sleep(5);
+     16:     }
+
+#10 0x000000000042217F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 30 2021 21:49:04, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 30 2021 21:49:36
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: #1: Куча была повреждена. (0xC0000374) при выполнении кода по адресу 0x00007FFEB032F199 в функции RtlIsZeroMemory(). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+Ой, всё (EXCEPTION_NONCONTINUABLE).
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000447900 (64-bit), Flags: CMdrE0, Thread: 0x4A7C (Canvas), GetLastError(): 6 (Неверный дескриптор). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FFEB032F199 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 1 0x00007FFEB032F163 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 2 0x00007FFEB0337EE2 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 3 0x00007FFEB03381CA in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 4 0x00007FFEB033DE51 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 5 0x00007FFEB0255BF0 in C:\Windows\SYSTEM32\ntdll.dll: RtlGetCurrentServiceSessionId()
+# 6 0x00007FFEB02547B1 in C:\Windows\SYSTEM32\ntdll.dll: RtlFreeHeap()
+# 7 0x00007FFEAF6D9C9C in C:\Windows\System32\msvcrt.dll: free()
+# 8 0x000000006606A295 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 9 0x000000006604433C in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x0000000066044636 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#11 0x00000000660573D1 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#12 0x0000000066043773 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymCleanup()
+#13 0x0000000000413819 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#14 0x0000000000406EBA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCleanup()
+#15 0x0000000000409474 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCanvas_ThreadProc()
+#16 0x00007FFEAF6FAF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#17 0x00007FFEAF6FB02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#18 0x00007FFEAEAD7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#19 0x00007FFEB0282651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 31 2021 02:28:04, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 31 2021 02:28:13
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe,
+
+ВНЕЗАПНО: #1: Куча была повреждена. (0xC0000374) при выполнении кода по адресу 0x00007FFEB032F199 в функции RtlIsZeroMemory(). Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+Ой, всё (EXCEPTION_NONCONTINUABLE).
+
+С помощью функции _set_se_translator() вы можете сами обработать эту ошибку.
+
+#3: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000447900 (64-bit), Flags: CMdrE0, Thread: 0x4A7C (Canvas), GetLastError(): 6 (Неверный дескриптор). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FFEB032F199 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 1 0x00007FFEB032F163 in C:\Windows\SYSTEM32\ntdll.dll: RtlIsZeroMemory()
+# 2 0x00007FFEB0337EE2 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 3 0x00007FFEB03381CA in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 4 0x00007FFEB033DE51 in C:\Windows\SYSTEM32\ntdll.dll: RtlpNtSetValueKey()
+# 5 0x00007FFEB0255BF0 in C:\Windows\SYSTEM32\ntdll.dll: RtlGetCurrentServiceSessionId()
+# 6 0x00007FFEB02547B1 in C:\Windows\SYSTEM32\ntdll.dll: RtlFreeHeap()
+# 7 0x00007FFEAF6D9C9C in C:\Windows\System32\msvcrt.dll: free()
+# 8 0x000000006606A295 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+# 9 0x000000006604433C in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#10 0x0000000066044636 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#11 0x00000000660573D1 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymGetLineFromAddrW64()
+#12 0x0000000066043773 in C:\Users\VBAR\Documents\Programs_C\TX\Windows\MgwHelp64.dll: SymCleanup()
+#13 0x0000000000413819 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txSymGetFromAddr()
+#14 0x0000000000406EBA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCleanup()
+#15 0x0000000000409474 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: (anonymous namespace)::TX::_txCanvas_ThreadProc()
+#16 0x00007FFEAF6FAF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#17 0x00007FFEAF6FB02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#18 0x00007FFEAEAD7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#19 0x00007FFEB0282651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Oct 31 2021 02:28:04, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Oct 31 2021 02:28:14
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
