@@ -27,7 +27,7 @@ PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, Manag
 
 void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse) {
     MoveFunctor* move_f = new MoveFunctor(move_wnd, mouse);
-    StartMove* start_move_f = new StartMove(move_f, move_wnd);
+    StartMove* start_move_f = new StartMove(move_f);
     EndMove*   end_move_f   = new EndMove(move_f);
 
     activate_wnd->setPointed(move_f);
@@ -93,7 +93,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     MoveBarLeft*  move_left  = new MoveBarLeft (placer);
     MoveBarRandomX* move_x_axis = new MoveBarRandomX(placer, moving_bar, mouse);
     PlaceBarOnClickX* start_move = new PlaceBarOnClickX(placer, moving_bar, mouse, move_x_axis);
-    StartMove* start_move_bar = new StartMove(move_x_axis, moving_bar);
+    StartMove* start_move_bar = new StartMove(move_x_axis);
     EndMove* end_move = new EndMove(move_x_axis);
 
     dec_thickness_button->setPressUp(move_left);
@@ -182,3 +182,49 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
 
     return menu;
 };
+
+void MakeResizeable(InvisibleWindow* canvas_layer) {
+
+}
+
+void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs) {
+    lhs->setPointed(rhs->getPointed());
+    lhs->setPressDown(rhs->getPressDown());
+    lhs->setPressUp(rhs->getPressUp());
+}
+
+InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse) {
+    InvisibleWindow* canvas_layer = new InvisibleWindow(size_x + 2 * grab_len, size_y + 2 * grab_len, coord_x - grab_len, coord_y - grab_len, parent);
+    CanvasWindow* canvas = new CanvasWindow(size_x, size_y, grab_len, grab_len, name, canvas_layer, render, feather, mouse, img_canvas);
+    
+    InvFunctorTrue* invs_f = new InvFunctorTrue();
+    canvas_layer->setPressUp(invs_f);
+    // invest resize functors here
+
+    canvas_layer->addChild(canvas);
+
+    return canvas_layer;
+}
+
+InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse) {
+    InvisibleWindow* canvas_layer = new InvisibleWindow(size_x, size_y, coord_x, coord_y, parent);
+    CanvasWindow* canvas = new CanvasWindow(size_x, size_y, 0, 0, name, canvas_layer, render, feather, mouse);
+
+    canvas_layer->addChild(canvas);
+
+    return canvas_layer;
+}
+
+InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* render, Feather* feather, WindowMouse* mouse, const Pair<int>& new_size, const Pair<int>& new_coord) {
+    CanvasWindow* canvas = dynamic_cast<CanvasWindow*>(canvas_layer->getChild(0));
+
+    CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas, render, feather, mouse);
+    InvisibleWindow* new_canvas_layer = new InvisibleWindow(new_size.x, new_size.y, new_coord.x, new_coord.y, canvas_layer->getParent());
+    new_canvas_layer->addChild(new_canvas);
+
+    ReplaceFunctors(new_canvas, canvas);
+    ReplaceFunctors(new_canvas_layer, canvas_layer);
+
+    //delete canvas_layer;
+    return new_canvas_layer;
+}

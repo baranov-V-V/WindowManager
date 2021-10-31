@@ -191,11 +191,11 @@ bool ManagerWindow::proceedPressDown(WindowMouse* mouse) {
     if (this->checkPointed(mouse)) {
         for (int i = count - 1; i >= 0; --i) {
             if (children[i]->proceedPressDown(mouse)) {
+                mouse->setToParent();
                 return true;
             }
         }
         is_clicked = true;
-        //cout << "action down!" << "\n";
         bool result = press_down_f->action();
         mouse->setToParent();
         return result;
@@ -210,6 +210,7 @@ bool ManagerWindow::proceedPressUp(WindowMouse* mouse) {
     if (this->checkPointed(mouse)) {
         for (int i = count - 1; i >= 0; --i) {
             if (children[i]->proceedPressUp(mouse)) {
+                mouse->setToParent();
                 return true;
             }
         }
@@ -228,7 +229,12 @@ bool ManagerWindow::proceedPressUp(WindowMouse* mouse) {
 };
 
 bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
+    Pair<int> rel_coord_old = mouse->getRelCoord();
     this->markPointedWindows(mouse);
+   
+    mouse->setRelCoord(rel_coord_old);
+    //cout << "start process pointed! (" << mouse->getRelCoord().x << ","<< mouse->getRelCoord().y << ")\n";
+
     this->proceedPointedWindows(mouse);
 
     return true;
@@ -242,6 +248,7 @@ void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
     }
 
     if (this->checkPointed(mouse)) {
+        //cout << "mark pointed! (" << mouse->getRelCoord().x << "," << mouse->getRelCoord().y << ")\n";
         is_pointed = true;
     } else {
         if (is_pointed) {
@@ -258,6 +265,7 @@ void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
     
 bool ManagerWindow::proceedPointedWindows(WindowMouse* mouse) {
     mouse->setWindow(this);
+    //cout << "fining pointed! (" << mouse->getRelCoord().x << ","<< mouse->getRelCoord().y << ")\n";
 
     for (int i = count - 1; i >= 0; --i) {
         if(children[i]->proceedPointedWindows(mouse)) {
@@ -450,12 +458,14 @@ void TextButtonWindow::draw(Renderer* render) const {
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
-                           Renderer* render, Feather* feather, WindowMouse* mouse) :
-    PicWindow(x_size, y_size, coord_x, coord_y, img_canvas, parent), name(name), on_display(true) {
+                           Renderer* render, Feather* feather, WindowMouse* mouse, const char* pic_name) :
+    BorderWindow(x_size, y_size, coord_x, coord_y, white_c, mgrey_c, 1, render, parent), name(name), on_display(true),
+    base_img(x_size, y_size, white_c, 0, 0) {
+    
     need_redraw = false;
 
     DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
-    MakeFirst* make_first = new MakeFirst(this);
+    MakeFirst* make_first = new MakeFirst(parent);
     this->setPressDown(make_first);
     this->setPointed(canvas_functor);
 
@@ -474,7 +484,61 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
         render->drawText(menu_x / 2 - 30 * 2 - text_size / 2, ident_y, name, "Helvetica", text_y, text_x, silver_c);
     }
 
-    MakeMovable(menu, this, mouse);
+    MakeMovable(menu, parent, mouse);
+
+    if (pic_name != nullptr) {
+        Texture pic(x_size, y_size, pic_name, 0, 0);
+        pic.showOn(&base_img);
+        pic.showOn(this);
+    }
 
     this->addChild(menu);
+};
+
+CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, CanvasWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) :
+    BorderWindow(x_size, y_size, coord_x, coord_y,
+    white_c, mgrey_c, 1, render, window->getParent()), name(name), on_display(true),
+    base_img(window->getBaseImg().getSizeX(), window->getBaseImg().getSizeY(), white_c, 0, 0) {
+    
+    need_redraw = false;
+
+    DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
+    MakeFirst* make_first = new MakeFirst(this->getParent());
+    this->setPressDown(make_first);
+    this->setPointed(canvas_functor);
+
+    int menu_x = this->getSizeX();
+    int menu_y = 25;
+
+    int but_x = 30;
+    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, 0, 0, this, but_x);
+
+    render->setWindow(menu);
+    int text_size = strlen(name) * menu_y / 4;
+    if (text_size < menu_x - 2 * but_x) {
+        int text_y = 4 * menu_y / 5;
+        int text_x = text_y / 3;
+        int ident_y = (menu_y - text_y) / 2;
+        render->drawText(menu_x / 2 - 30 * 2 - text_size / 2, ident_y, name, "Helvetica", text_y, text_x, silver_c);
+    }
+
+    MakeMovable(menu, window->getParent(), mouse);
+
+    window->showOn(this);
+    window->getBaseImg().showOn(&base_img);
+
+    this->addChild(menu);
+
+};
+
+void CanvasWindow::draw(Renderer* render) const {
+    render->setWindow(const_cast<CanvasWindow*>(this));
+    
+    this->drawChilds(render);
+
+    if (this->getParent()) {
+        this->showOn(this->getParent());
+    } else {
+        cout << "no parent\n";
+    }
 };
