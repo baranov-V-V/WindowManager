@@ -528,7 +528,6 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, Can
     window->getBaseImg().showOn(&base_img);
 
     this->addChild(menu);
-
 };
 
 void CanvasWindow::draw(Renderer* render) const {
@@ -541,4 +540,38 @@ void CanvasWindow::draw(Renderer* render) const {
     } else {
         cout << "no parent\n";
     }
+};
+
+GraphWindow::GraphWindow(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render,
+                         COLORREF backgroud_c, COLORREF border_c, COLORREF line_c, COLORREF net_c) :
+    BorderWindow(x_size, y_size, coord_x, coord_y, backgroud_c, border_c, 2, render, parent),
+    line_color(line_c), net_color(net_c), left_dot_pos(y_size), right_dot_pos(0) {
+    need_redraw = true;
+    this->draw(render);
+};
+
+
+void GraphWindow::draw(Renderer* render) const {
+    render->setWindow(const_cast<GraphWindow*>(this));
+
+    if (need_redraw) {
+        render->drawFilledRectangle(0, 0, size.x, size.y, color, border_color, thickness);
+        int delta = 15;
+        for (int i = delta; i < size.y; i += delta) {     
+            render->drawLine(thickness, i, size.x - thickness, i, net_color, 1); //horizontal lines
+        }
+        for (int i = delta; i < size.x; i += delta) {
+            render->drawLine(i, thickness, i, size.y - thickness, net_color, 1); //vertical lines
+        }
+
+        int radius = 3;
+        int left_x  = thickness;
+        int right_x = size.x - (thickness);
+        //render->drawCircle(left_x , left_dot_pos , radius, black_c);
+        //render->drawCircle(right_x, right_dot_pos, radius, black_c);
+        render->drawLine(left_x, left_dot_pos, right_x, right_dot_pos, line_color, 2);
+        const_cast<GraphWindow*>(this)->setRedraw(false);
+    }
+
+    this->showOn(this->getParent());
 };

@@ -22,7 +22,8 @@ void App::initWindows() {
 
     //CanvasWindow* canvas   = new CanvasWindow(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
     //CanvasWindow* canvas_2 = new CanvasWindow(400, 200, 850, 200, "Canvas2", &(this->app_window), &render, &feather, &mouse);
-    InvisibleWindow* canvas_layer = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
+    //InvisibleWindow* canvas_layer = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
+    BorderWindow* graph    = MakeGraphWindow(500, 400, app_size.x / 4, app_size.y / 4, &(this->app_window), &(this->render), &(this->mouse));
     PicWindow* menu        = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26); //menu->children[0] == close_button;
     PicWindow* palette     = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->feather), &(this->mouse));
     
@@ -40,7 +41,8 @@ void App::initWindows() {
 
     this->app_window.addChild(palette);
     this->app_window.addChild(menu);
-    this->app_window.addChild(canvas_layer);
+    this->app_window.addChild(graph);
+    //this->app_window.addChild(canvas_layer);
     //this->app_window.addChild(canvas_2);
 };
 

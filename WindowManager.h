@@ -165,6 +165,7 @@ const int MIN_THICKNESS = 2;
   ???????? ???? ????????? ? PicWindow ????? ?? ??????????????? base_img ?? ??.
 */
 
+const COLORREF palette_c   = RGB( 37,  37,  38);
 const COLORREF black_c     = RGB(  0,   0,   0);
 const COLORREF white_c     = RGB(255, 255, 255); 
 const COLORREF canvas_c    = RGB( 85,  86, 179);
@@ -276,6 +277,7 @@ InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord
 InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse);
 void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs);
 InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* render, Feather* feather, WindowMouse* mouse, const Pair<int>& new_size, const Pair<int>& new_coord);
+BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse);
 
 class VFunctor {
   public:
@@ -570,23 +572,6 @@ class TextButtonWindow : public BorderWindow {
     int align;
 };
 
-/*
-class CanvasWindow : public PicWindow {
-  public:
-    CanvasWindow();
-    CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
-                 Renderer* render, Feather* feather, WindowMouse* mouse);
-
-    void draw(Renderer* render) const override;
-    void hide() { on_display = false; };
-    void show() { on_display = true;  };
-
-  private:
-    char* name;
-    bool on_display;
-};
-*/
-
 class CanvasWindow : public BorderWindow {
   public:
     CanvasWindow();
@@ -605,25 +590,26 @@ class CanvasWindow : public BorderWindow {
     Texture base_img;
 };
 
-/*
-class PaletteWindow : public BorderWindow {
+class GraphWindow : public BorderWindow {
   public:
-    PaletteWindow();
-    PaletteWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Feather* feather,
-                    ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
-  private:
-};
-*/
+    GraphWindow();
+    GraphWindow(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render,
+                COLORREF backgroud_c = white_c, COLORREF border_c = dgrey_c, COLORREF line_c = black_c, COLORREF net_c = lgrey_c);
 
-/*
-class MenuWindow : public BorderWindow {
-  public:
-    MenuWindow();
-    MenuWindow(int x_size, int y_size, COLORREF color, int coord_x, int coord_y, VFunctor* functor,
-               ManagerWindow* parent = nullptr, COLORREF border_color = black_c, int thickness = 2);
+    void draw(Renderer* render) const override;
+
+    void setLeftDot (int new_coord) { left_dot_pos  = new_coord; };
+    void setRightDot(int new_coord) { right_dot_pos = new_coord; };
+
+    int getLeftDot  () const { return left_dot_pos ; };
+    int getRightDot () const { return right_dot_pos; };
+
   private:
+    int left_dot_pos;
+    int right_dot_pos;
+    COLORREF line_color;
+    COLORREF net_color;
 };
-*/
 
 class ClockWindow : public ManagerWindow {
   public:
@@ -913,7 +899,6 @@ class ViewFunctor : public VFunctor {
     ManagerWindow* window;
 };
 
-
 class MoveFunctor : public VFunctor {
   public:
     MoveFunctor();
@@ -994,9 +979,9 @@ class PlaceBar {
             new_coord = max_coord;
         }
         if (type == 'X') {
-            bar->setCoordX(new_coord);
+            bar->setCoordX(min_coord + new_coord);
         } else if (type == 'Y') {
-            bar->setCoordY(new_coord);
+            bar->setCoordY(min_coord + new_coord);
         }
         action->action();
     }
@@ -1097,7 +1082,7 @@ class PlaceBarOnClickY : public StartMove {
 
     bool action() override {
         ManagerWindow* bar = placer->getBar();
-        placer->place(mouse->getRelCoord().y + placer->getBar()->getSizeY() / 2);
+        placer->place(mouse->getRelCoord().y - placer->getBar()->getSizeY() / 2);
         move_f->startMove();
         return true;
     };
@@ -1145,25 +1130,6 @@ class MoveBarRandomY : public MoveFunctor {
   private:
     PlaceBar* placer;
 };
-
-/*
-class MoveBarRandom : public VFunctor {
-  public:
-    MoveBarRandom() {};
-    MoveBarRandom(PlaceBar* placer, WindowMouse* mouse) : placer(placer), mouse(mouse) {};
-
-    bool action() override {
-        if (mouse->isLeftClick()) {
-            placer->place(mouse->getRelCoord().x + placer->getBar()->getSizeX() / 2);
-        }
-        return true;
-    };
-
-  private:
-    PlaceBar* placer;
-    WindowMouse* mouse;
-};
-*/
 
 class GlowPicFunctor : public VFunctor {
   public:
@@ -1319,4 +1285,40 @@ class ResizeCanvas : public MoveFunctor {
     WindowMouse* mouse;
     Feather* feather;
     int direction;
+};
+
+class CalcGraphDotLeft : public VFunctor {
+  public:
+    CalcGraphDotLeft(int min_coord, int max_coord, ManagerWindow* bar, GraphWindow* window) : window(window), bar(bar), min_coord(min_coord), max_coord(max_coord) {};
+    virtual ~CalcGraphDotLeft() {};
+
+    bool action () override {
+        window->setLeftDot((bar->getCoordY() - min_coord) * window->getSizeY() / (max_coord - min_coord)); 
+        window->setRedraw(true);
+        return true;
+    }; 
+
+  private:
+    GraphWindow* window;
+    ManagerWindow* bar;
+    int min_coord;
+    int max_coord;
+};
+
+class CalcGraphDotRight : public VFunctor {
+  public:
+    CalcGraphDotRight(int min_coord, int max_coord, ManagerWindow* bar, GraphWindow* window) : window(window), bar(bar), min_coord(min_coord), max_coord(max_coord) {};
+    virtual ~CalcGraphDotRight() {};
+
+    bool action () override {
+        window->setRightDot((bar->getCoordY() - min_coord) * window->getSizeY() / (max_coord - min_coord)); 
+        window->setRedraw(true);
+        return true;
+    }; 
+
+  private:
+    GraphWindow* window;
+    ManagerWindow* bar;
+    int min_coord;
+    int max_coord;
 };
