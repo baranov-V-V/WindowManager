@@ -82,13 +82,16 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     int arrow_size_y = 22;
     InvisibleWindow* layer = new InvisibleWindow(layer_size_x, layer_size_y, inst_dx, feather_y + (inst_dy + inst_y) * 2, palette);
     
+    int bar_size_x = layer_size_x - 2 * arrow_size_x;
+    int bar_size_y = arrow_size_y;
     PicWindow* dec_thickness_button = new PicWindow(arrow_size_x, arrow_size_y, 0                          , 0, img_arrow_left , layer);
     PicWindow* inc_thickness_button = new PicWindow(arrow_size_x, arrow_size_y, layer_size_x - arrow_size_x, 0, img_arrow_right, layer);
-    BorderWindow* thickness_bar     = new BorderWindow(layer_size_x - 2 * arrow_size_x, arrow_size_y, arrow_size_x, 0, dgrey_c, lgrey_c, 1, render, layer);
-    BorderWindow* moving_bar        = new BorderWindow(arrow_size_x - 2, arrow_size_y - 2, arrow_size_x, 1, lgrey_c, lgrey_c, 1, render, layer);
+    BorderWindow* thickness_bar     = new BorderWindow(bar_size_x, bar_size_y, arrow_size_x, 0, dgrey_c, lgrey_c, 1, render, layer);
+    BorderWindow* moving_bar        = new BorderWindow(arrow_size_x - 2, arrow_size_y - 2, 1, 1, lgrey_c, lgrey_c, 1, render, thickness_bar);
+    thickness_bar->setRedraw(true); //??
 
-    RecalcThickness* recalc_functor = new RecalcThickness(arrow_size_x, layer_size_x - 2 * arrow_size_x, moving_bar, feather);
-    PlaceBar* placer = new PlaceBar(arrow_size_x, layer_size_x - 2 * arrow_size_x, 'X', moving_bar, recalc_functor);
+    RecalcThickness* recalc_functor = new RecalcThickness(0, bar_size_x - arrow_size_x + 1, moving_bar, feather);
+    PlaceBar* placer = new PlaceBar(0, bar_size_x - arrow_size_x + 1, 'X', moving_bar, recalc_functor);
     MoveBarRight* move_right = new MoveBarRight(placer);
     MoveBarLeft*  move_left  = new MoveBarLeft (placer);
     MoveBarRandomX* move_x_axis = new MoveBarRandomX(placer, moving_bar, mouse);
@@ -106,7 +109,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     layer->addChild(dec_thickness_button);
     layer->addChild(inc_thickness_button);
     layer->addChild(thickness_bar);
-    layer->addChild(moving_bar);
+    thickness_bar->addChild(moving_bar);
 
     palette->addChild(layer);
     palette->addChild(thick_ind_w);
@@ -231,6 +234,8 @@ InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* rende
 
 BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse) {
     BorderWindow* graph_layer = new BorderWindow(size_x, size_y, coord_x, coord_y, palette_c, dgrey_c, 1, render, parent);
+    MakeMovable(graph_layer, graph_layer, mouse);
+
     int graph_size_x = 3 * size_y / 4;
     int graph_size_y = 3 * size_y / 4;
     int graph_coord_x = size_y / 8;
@@ -238,21 +243,24 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     GraphWindow* graph = new GraphWindow(graph_size_x, graph_size_y, graph_coord_x, graph_coord_y, graph_layer, render); 
     graph_layer->addChild(graph);
 
+    //general scrollbar info
     int arrow_size_x = 22;
     int arrow_size_y = 22;
     int layer_size_x = arrow_size_x;
     int layer_size_y = graph_size_y + 2 * arrow_size_y;
     int d_x = 3;
+    //left_scorllbar
     InvisibleWindow* layer_left  = new InvisibleWindow(layer_size_x, layer_size_y, graph_coord_x - arrow_size_x - d_x, graph_coord_y - arrow_size_y, graph_layer);
     
-    PicWindow* up_arrow_button      = new PicWindow(arrow_size_x, arrow_size_y, 0, 0                          , img_arrow_up  , layer_left);
-    PicWindow* down_arrow_button    = new PicWindow(arrow_size_x, arrow_size_y, 0, layer_size_y - arrow_size_y, img_arrow_down, layer_left);
+    PicWindow* up_arrow_button_l      = new PicWindow(arrow_size_x, arrow_size_y, 0, 0                          , img_arrow_up  , layer_left);
+    PicWindow* down_arrow_button_l    = new PicWindow(arrow_size_x, arrow_size_y, 0, layer_size_y - arrow_size_y, img_arrow_down, layer_left);
 
     BorderWindow* left_thickness_bar     = new BorderWindow(arrow_size_x, layer_size_y - 2 * arrow_size_y, 0, arrow_size_y, dgrey_c, lgrey_c, 1, render, layer_left);
-    BorderWindow* left_moving_bar        = new BorderWindow(arrow_size_x - 2, arrow_size_y / 2, 1, arrow_size_y, lgrey_c, lgrey_c, 1, render, layer_left);
+    BorderWindow* left_moving_bar        = new BorderWindow(arrow_size_x - 2, arrow_size_y / 2, 1, layer_size_y - 5 * arrow_size_y / 2 + 1, lgrey_c, lgrey_c, 1, render, left_thickness_bar);
+    left_thickness_bar->setRedraw(true);
 
-    CalcGraphDotLeft* calc_left_f = new CalcGraphDotLeft(arrow_size_y, layer_size_y - 3 * arrow_size_y / 2, left_moving_bar, graph);
-    PlaceBar*         left_placer = new PlaceBar        (arrow_size_y, layer_size_y - 3 * arrow_size_y / 2, 'Y', left_moving_bar, calc_left_f);
+    CalcGraphDotLeft* calc_left_f = new CalcGraphDotLeft(0, layer_size_y - 5 * arrow_size_y / 2, left_moving_bar, graph);
+    PlaceBar*         left_placer = new PlaceBar        (0, layer_size_y - 5 * arrow_size_y / 2, 'Y', left_moving_bar, calc_left_f);
     
     MoveBarUp*   left_move_up    = new MoveBarUp   (left_placer);
     MoveBarDown* left_move_down  = new MoveBarDown (left_placer);
@@ -263,19 +271,69 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     StartMove* left_start_move_bar = new StartMove(left_move_y);
     EndMove*   left_end_move       = new EndMove  (left_move_y);
 
-    up_arrow_button->setPressUp  (left_move_up);
-    down_arrow_button->setPressUp(left_move_down);
+    up_arrow_button_l->setPressUp  (left_move_up);
+    down_arrow_button_l->setPressUp(left_move_down);
     left_thickness_bar->setPressDown(left_start_move);
     left_moving_bar->setPressDown(left_start_move_bar);
     left_moving_bar->setPressUp(left_end_move);
     left_moving_bar->setPointed(left_move_y);
 
-    layer_left->addChild(up_arrow_button  );
-    layer_left->addChild(down_arrow_button);
+    layer_left->addChild(up_arrow_button_l  );
+    layer_left->addChild(down_arrow_button_l);
     layer_left->addChild(left_thickness_bar);
-    layer_left->addChild(left_moving_bar);
-
+    left_thickness_bar->addChild(left_moving_bar);
     graph_layer->addChild(layer_left);
+
+    //right scrollbar
+    InvisibleWindow* layer_right  = new InvisibleWindow(layer_size_x, layer_size_y, graph_coord_x + graph_size_x + d_x, graph_coord_y - arrow_size_y, graph_layer);
+    
+    PicWindow* up_arrow_button_r      = new PicWindow(arrow_size_x, arrow_size_y, 0, 0                          , img_arrow_up  , layer_right);
+    PicWindow* down_arrow_button_r    = new PicWindow(arrow_size_x, arrow_size_y, 0, layer_size_y - arrow_size_y, img_arrow_down, layer_right);
+
+    BorderWindow* right_thickness_bar     = new BorderWindow(arrow_size_x, layer_size_y - 2 * arrow_size_y, 0, arrow_size_y, dgrey_c, lgrey_c, 1, render, layer_right);
+    BorderWindow* right_moving_bar        = new BorderWindow(arrow_size_x - 2, arrow_size_y / 2, 1, 1, lgrey_c, lgrey_c, 1, render, right_thickness_bar);
+    right_thickness_bar->setRedraw(true);
+
+    CalcGraphDotRight* calc_right_f = new CalcGraphDotRight(0, layer_size_y - 5 * arrow_size_y / 2, right_moving_bar, graph);
+    PlaceBar*         right_placer = new PlaceBar        (0, layer_size_y - 5 * arrow_size_y / 2, 'Y', right_moving_bar, calc_right_f);
+    
+    MoveBarUp*   right_move_up    = new MoveBarUp   (right_placer);
+    MoveBarDown* right_move_down  = new MoveBarDown (right_placer);
+    
+    MoveBarRandomY*   right_move_y     = new MoveBarRandomY  (right_placer, right_moving_bar, mouse);
+    PlaceBarOnClickY* right_start_move = new PlaceBarOnClickY(right_placer, right_moving_bar, mouse, right_move_y);
+    
+    StartMove* right_start_move_bar = new StartMove(right_move_y);
+    EndMove*   right_end_move       = new EndMove  (right_move_y);
+
+    up_arrow_button_r->setPressUp  (right_move_up);
+    down_arrow_button_r->setPressUp(right_move_down);
+    right_thickness_bar->setPressDown(right_start_move);
+    right_moving_bar->setPressDown(right_start_move_bar);
+    right_moving_bar->setPressUp(right_end_move);
+    right_moving_bar->setPointed(right_move_y);
+
+    layer_right->addChild(up_arrow_button_r  );
+    layer_right->addChild(down_arrow_button_r);
+    layer_right->addChild(right_thickness_bar);
+    right_thickness_bar->addChild(right_moving_bar);
+
+    graph_layer->addChild(layer_right);
+
+    int buttons_x = graph_coord_x + graph_size_x + d_x + arrow_size_x + 5;
+    int buttons_size_y = 25;
+
+    ResetBars* reset_f = new ResetBars(left_placer, right_placer, layer_size_y - 5 * arrow_size_y / 2 + 1, 1);
+    MakeFixedBars* fix_f = new MakeFixedBars(left_placer, right_placer);
+    MakeUnFixedBars* unfix_f = new MakeUnFixedBars(left_placer, right_placer);
+
+    TextButtonWindow* button_fix_pos   = new TextButtonWindow(90, buttons_size_y, buttons_x, graph_coord_y, dgrey_c, lgrey_c, 1, white_c, "fix pos"  , "Helvetica", 8, 23, ALIGN_LEFT, render, graph_layer, fix_f);
+    TextButtonWindow* button_unfix_pos = new TextButtonWindow(90, buttons_size_y, buttons_x, graph_coord_y + buttons_size_y + 5, dgrey_c, lgrey_c, 1, white_c, "unfix pos", "Helvetica", 8, 23, ALIGN_LEFT, render, graph_layer, unfix_f);
+    TextButtonWindow* button_reset     = new TextButtonWindow(90, buttons_size_y, buttons_x, graph_size_y + graph_coord_y - buttons_size_y, dgrey_c, lgrey_c, 1, white_c, "reset"    , "Helvetica", 8, 23, ALIGN_LEFT, render, graph_layer, reset_f);
+
+    graph_layer->addChild(button_fix_pos);
+    graph_layer->addChild(button_unfix_pos);
+    graph_layer->addChild(button_reset);
 
     return graph_layer;
 }

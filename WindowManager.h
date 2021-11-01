@@ -968,28 +968,34 @@ class RecalcThickness : public VFunctor {
 class PlaceBar {
   public:
     PlaceBar() {};
-    PlaceBar(int min_coord, int max_coord, char type, ManagerWindow* bar, VFunctor* action) : bar(bar), min_coord(min_coord), max_coord(max_coord), action(action), type(type) {};
+    PlaceBar(int min_coord, int max_coord, char type, ManagerWindow* bar, VFunctor* action) : bar(bar), min_coord(min_coord), max_coord(max_coord), action(action), type(type), is_fixed_pos(false) {};
     ~PlaceBar() {};
 
+    void fixPos() { is_fixed_pos = true; };
+    void unfixPos() { is_fixed_pos = false; };
+
     void place(int new_coord) {
-        if (new_coord < min_coord) {
-            new_coord = min_coord;
+        if (!is_fixed_pos) {
+            if (new_coord < min_coord) {
+                new_coord = min_coord;
+            }
+            if (new_coord > max_coord) {
+                new_coord = max_coord;
+            }
+            if (type == 'X') {
+                bar->setCoordX(new_coord);
+            } else if (type == 'Y') {
+                bar->setCoordY(new_coord);
+            }
+            action->action();
         }
-        if (new_coord > max_coord) {
-            new_coord = max_coord;
-        }
-        if (type == 'X') {
-            bar->setCoordX(new_coord);
-        } else if (type == 'Y') {
-            bar->setCoordY(new_coord);
-        }
-        action->action();
     }
 
     ManagerWindow* getBar() const { return bar; };
 
   private: 
     VFunctor* action;
+    bool is_fixed_pos;
     char type;
     int min_coord;
     int max_coord;
@@ -1064,7 +1070,7 @@ class PlaceBarOnClickX : public StartMove {
 
     bool action() override {
         ManagerWindow* bar = placer->getBar();
-        placer->place(mouse->getRelCoord().x + placer->getBar()->getSizeX() / 2);
+        placer->place(mouse->getRelCoord().x - placer->getBar()->getSizeX() / 2);
         move_f->startMove();
         return true;
     };
@@ -1120,6 +1126,7 @@ class MoveBarRandomY : public MoveFunctor {
     bool action() override {
         if (on_move && mouse->isLeftClick()) {
             placer->place(placer->getBar()->getCoordY() + (mouse->getAbsCoord().y - old_coord.y));
+            old_coord = mouse->getAbsCoord();
         }
         if (on_move && !mouse->isLeftClick()) {
             on_move = false;
@@ -1321,4 +1328,50 @@ class CalcGraphDotRight : public VFunctor {
     ManagerWindow* bar;
     int min_coord;
     int max_coord;
+};
+
+class ResetBars : public VFunctor {
+  public:
+    ResetBars();
+    ResetBars(PlaceBar* placer_left, PlaceBar* placer_right, int reset_coord_left, int reset_coord_right) : 
+        placer_right(placer_right), placer_left(placer_left), reset_coord_left(reset_coord_left), reset_coord_right(reset_coord_right) {};
+    virtual ~ResetBars() {};
+
+    bool action() override { 
+        placer_left->unfixPos(); placer_right->unfixPos();
+        placer_left->place(reset_coord_left); placer_right->place(reset_coord_right); 
+        return true; 
+    };
+
+  private:
+    PlaceBar* placer_left;
+    PlaceBar* placer_right;
+    int reset_coord_left;
+    int reset_coord_right;
+};
+
+class MakeFixedBars : public VFunctor {
+  public:
+    MakeFixedBars();
+    MakeFixedBars(PlaceBar* placer_left, PlaceBar* placer_right) : placer_left(placer_left), placer_right(placer_right) {};
+    virtual ~MakeFixedBars() {};
+
+    bool action() override { placer_right->fixPos(); placer_left->fixPos(); return true; };
+
+  private:
+    PlaceBar* placer_left;
+    PlaceBar* placer_right;
+};
+
+class MakeUnFixedBars : public VFunctor {
+  public:
+    MakeUnFixedBars();
+    MakeUnFixedBars(PlaceBar* placer_left, PlaceBar* placer_right) : placer_left(placer_left), placer_right(placer_right) {};
+    virtual ~MakeUnFixedBars() {};
+
+    bool action() override { placer_right->unfixPos(); placer_left->unfixPos(); return true; };
+
+  private:
+    PlaceBar* placer_left;
+    PlaceBar* placer_right;
 };
