@@ -327,9 +327,9 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     MakeFixedBars* fix_f = new MakeFixedBars(left_placer, right_placer);
     MakeUnFixedBars* unfix_f = new MakeUnFixedBars(left_placer, right_placer);
 
-    TextButtonWindow* button_fix_pos   = new TextButtonWindow(90, buttons_size_y, buttons_x, graph_coord_y, dgrey_c, lgrey_c, 1, white_c, "fix pos"  , "Helvetica", 8, 23, ALIGN_LEFT, render, graph_layer, fix_f);
-    TextButtonWindow* button_unfix_pos = new TextButtonWindow(90, buttons_size_y, buttons_x, graph_coord_y + buttons_size_y + 5, dgrey_c, lgrey_c, 1, white_c, "unfix pos", "Helvetica", 8, 23, ALIGN_LEFT, render, graph_layer, unfix_f);
-    TextButtonWindow* button_reset     = new TextButtonWindow(90, buttons_size_y, buttons_x, graph_size_y + graph_coord_y - buttons_size_y, dgrey_c, lgrey_c, 1, white_c, "reset"    , "Helvetica", 8, 23, ALIGN_LEFT, render, graph_layer, reset_f);
+    TextButtonWindow* button_fix_pos   = new TextButtonWindow(60, buttons_size_y, buttons_x, graph_coord_y, dgrey_c, lgrey_c, 1, silver_c, "fix pos"  , "Helvetica", 7, 20, ALIGN_LEFT, render, graph_layer, fix_f);
+    TextButtonWindow* button_unfix_pos = new TextButtonWindow(75, buttons_size_y, buttons_x, graph_coord_y + buttons_size_y + 5, dgrey_c, lgrey_c, 1, silver_c, "unfix pos", "Helvetica", 7, 20, ALIGN_LEFT, render, graph_layer, unfix_f);
+    TextButtonWindow* button_reset     = new TextButtonWindow(55, buttons_size_y, buttons_x, graph_size_y + graph_coord_y - buttons_size_y, dgrey_c, lgrey_c, 1, silver_c, "reset"    , "Helvetica", 7, 20, ALIGN_LEFT, render, graph_layer, reset_f);
 
     graph_layer->addChild(button_fix_pos);
     graph_layer->addChild(button_unfix_pos);

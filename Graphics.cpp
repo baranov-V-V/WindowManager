@@ -91,7 +91,7 @@ void Renderer::drawRoundRect(double x1, double y1, double x2, double y2, double 
                      this->toPixelX(x2), this->toPixelY(y2), width * this->getScaleX(), height * this->getScaleY());
 };
 
-void Renderer::drawText(double x, double y, const char* text, const char* font_name, int size_y, int size_x, COLORREF color) {
+void Renderer::drawText(double x, double y, const char* text, const char* font_name, int size_y, int size_x, COLORREF color, int thickness) {
     txSetColor(color, 1, window->getHdc());
     assert(txFontExist(font_name));
     txSelectFont(font_name, size_y, size_x, FW_DONTCARE, false, false, false, 0, window->getHdc());

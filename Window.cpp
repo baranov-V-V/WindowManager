@@ -231,10 +231,7 @@ bool ManagerWindow::proceedPressUp(WindowMouse* mouse) {
 bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
     Pair<int> rel_coord_old = mouse->getRelCoord();
     this->markPointedWindows(mouse);
-   
     mouse->setRelCoord(rel_coord_old);
-    //cout << "start process pointed! (" << mouse->getRelCoord().x << ","<< mouse->getRelCoord().y << ")\n";
-
     this->proceedPointedWindows(mouse);
 
     return true;
@@ -248,7 +245,6 @@ void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
     }
 
     if (this->checkPointed(mouse)) {
-        //cout << "mark pointed! (" << mouse->getRelCoord().x << "," << mouse->getRelCoord().y << ")\n";
         is_pointed = true;
     } else {
         if (is_pointed) {
@@ -265,7 +261,6 @@ void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
     
 bool ManagerWindow::proceedPointedWindows(WindowMouse* mouse) {
     mouse->setWindow(this);
-    //cout << "fining pointed! (" << mouse->getRelCoord().x << ","<< mouse->getRelCoord().y << ")\n";
 
     for (int i = count - 1; i >= 0; --i) {
         if(children[i]->proceedPointedWindows(mouse)) {
@@ -433,7 +428,7 @@ void TextButtonWindow::draw(Renderer* render) const {
         render->drawFilledRectangle(0, 0, size.x, size.y, color, border_color, thickness);
         
         int text_size = strlen(text) * ch_size_x;
-        int x_ident = ch_size_x * 2;
+        int x_ident = ch_size_x;
         int y_ident = (this->getSizeY() - ch_size_y) / 2;
         switch (align) {
             case ALIGN_LEFT:
@@ -482,7 +477,14 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
         int text_x = text_y / 3;
         int ident_y = (menu_y - text_y) / 2;
         render->drawText(menu_x / 2 - 30 * 2 - text_size / 2, ident_y, name, "Helvetica", text_y, text_x, silver_c);
+        TextButtonWindow* button_reset  = new TextButtonWindow(7 * (text_x + 1), menu_y, 0, 0, mgrey_c, mgrey_c, 1, silver_c, "Clear", "Helvetica", text_x + 1, text_y - 2, ALIGN_LEFT, render, menu);
+        GlowBorderFunctor* glow_button_reset = new GlowBorderFunctor(button_reset, lgrey_c, lgrey_c);
+        ClearCanvas* clear_f = new ClearCanvas(this, render);
+        button_reset->setPointed(glow_button_reset);
+        button_reset->setPressUp(clear_f);
+        menu->addChild(button_reset);
     }
+
 
     MakeMovable(menu, parent, mouse);
 
@@ -565,11 +567,11 @@ void GraphWindow::draw(Renderer* render) const {
         }
 
         int radius = 3;
-        int left_x  = thickness;
+        int left_x  = 0;
         int right_x = size.x - (thickness);
         //render->drawCircle(left_x , left_dot_pos , radius, black_c);
         //render->drawCircle(right_x, right_dot_pos, radius, black_c);
-        render->drawLine(left_x, left_dot_pos, right_x, right_dot_pos, line_color, 2);
+        render->drawLine(left_x, left_dot_pos - thickness, right_x, right_dot_pos, line_color, 2);
         const_cast<GraphWindow*>(this)->setRedraw(false);
     }
 

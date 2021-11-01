@@ -174,7 +174,7 @@ const COLORREF red_c       = RGB(  4,   2, 255);
 const COLORREF grey_c      = RGB(153,  76,   0);
 const COLORREF green_c     = RGB(  0, 128,   0);
 const COLORREF dgrey_c     = RGB( 38,  38,  38);
-const COLORREF lgrey_c     = RGB( 77,  77,  77);
+const COLORREF lgrey_c     = RGB( 71,  71,  71);
 const COLORREF llgrey_c    = RGB(137, 137, 137);
 const COLORREF silver_c    = RGB(192, 192, 192);
 const COLORREF mgrey_c     = RGB( 60,  60,  60);
@@ -358,7 +358,7 @@ class Renderer {
     void drawRectangle(double x1, double y1, double x2, double y2, COLORREF color = black_c, int thinkness = 1) const;
     void drawFilledRectangle(double x1, double y1, double x2, double y2, COLORREF fill_color, COLORREF color, int thickness = 1) const;
     void drawRoundRect(double x1, double y1, double x2, double y2, double width, double height, COLORREF color = black_c, int thinkness = 1) const;
-    void drawText(double x, double y, const char* text, const char* font_name, int size_y, int size_x, COLORREF color = black_c);
+    void drawText(double x, double y, const char* text, const char* font_name, int size_y, int size_x, COLORREF color = black_c, int thickness = 100);
 
     int toPixelX(double coord) const;
     int toPixelY(double coord) const;
@@ -582,6 +582,11 @@ class CanvasWindow : public BorderWindow {
     void draw(Renderer* render) const override;
     void hide() { on_display = false; };
     void show() { on_display = true;  };
+    void clear(Renderer* render) {
+        render->setWindow(this);
+        render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
+        base_img.showOn(this);
+    }
     const Texture& getBaseImg() { return base_img; };
 
   private:
@@ -1374,4 +1379,17 @@ class MakeUnFixedBars : public VFunctor {
   private:
     PlaceBar* placer_left;
     PlaceBar* placer_right;
+};
+
+class ClearCanvas : public VFunctor {
+  public:
+    ClearCanvas();
+    ClearCanvas(CanvasWindow* canvas, Renderer* render) : canvas(canvas), render(render) {};
+    virtual ~ClearCanvas() {};
+
+    bool action() override { canvas->clear(render); return true; };
+
+  private:
+    CanvasWindow* canvas;
+    Renderer* render;
 };
