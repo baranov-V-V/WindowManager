@@ -979,9 +979,9 @@ class PlaceBar {
             new_coord = max_coord;
         }
         if (type == 'X') {
-            bar->setCoordX(min_coord + new_coord);
+            bar->setCoordX(new_coord);
         } else if (type == 'Y') {
-            bar->setCoordY(min_coord + new_coord);
+            bar->setCoordY(new_coord);
         }
         action->action();
     }
