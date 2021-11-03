@@ -12,7 +12,6 @@
 #include "Functors.h"
 
 //in each window there is texture.
-//2 ???????? ? ??????: ???? ???? ?????????? ?????? ???? ?? ?????????? ? ?????? ???????????? ? ??????
 
 using std::string;
 
@@ -39,7 +38,7 @@ static const char* img_view2 = "img\\view2.bmp";
 
 static const char* img_palette   = "img\\palette.bmp";
 static const char* img_menu_bar  = "img\\menu_bar.bmp";
-static const char* img_canvas    = "img\\canvas.bmp";
+static const char* img_canvas    = "img\\canvas2.bmp";
 static const char* img_back_font = "img\\back_font.bmp";
 
 static const char* img_feather  = "img\\feather.bmp";
@@ -174,7 +173,7 @@ const COLORREF red_c       = RGB(  4,   2, 255);
 const COLORREF grey_c      = RGB(153,  76,   0);
 const COLORREF green_c     = RGB(  0, 128,   0);
 const COLORREF dgrey_c     = RGB( 38,  38,  38);
-const COLORREF lgrey_c     = RGB( 71,  71,  71);
+const COLORREF lgrey_c     = RGB( 83,  83,  83);
 const COLORREF llgrey_c    = RGB(137, 137, 137);
 const COLORREF silver_c    = RGB(192, 192, 192);
 const COLORREF mgrey_c     = RGB( 60,  60,  60);
@@ -354,7 +353,7 @@ class Renderer {
     void clear() const;
     void drawLine(double x_begin, double y_begin, double x_end, double y_end, COLORREF color = black_c, int thickness = 1) const;
     void setPixel(double x, double y, COLORREF color) const;
-    void drawCircle(double x, double y, double r, COLORREF color = black_c, int thickness = 1) const;
+    void drawCircle(double x, double y, double r, COLORREF color = black_c,  COLORREF border_color = black_c, int thickness = 1) const;
     void drawRectangle(double x1, double y1, double x2, double y2, COLORREF color = black_c, int thinkness = 1) const;
     void drawFilledRectangle(double x1, double y1, double x2, double y2, COLORREF fill_color, COLORREF color, int thickness = 1) const;
     void drawRoundRect(double x1, double y1, double x2, double y2, double width, double height, COLORREF color = black_c, int thinkness = 1) const;
@@ -429,6 +428,7 @@ class Texture : public BasicWindow {
     int getCoordX() const { return coord.x; };
     int getCoordY() const { return coord.y; };
     Pair<int> getCoord() const { return coord; };
+    RGBQUAD* getBuf() const { return screen_buf; };
     
     void setCoordX(int coord_x) { coord.x = coord_x; };
     void setCoordY(int coord_y) { coord.y = coord_y; };
@@ -451,6 +451,7 @@ class ManagerWindow : public Texture {
 
     //general part
     virtual void draw(Renderer* render) const = 0;
+    void showOnTexture(const Texture* target) const;
     void setRedraw(bool state) { need_redraw = state; };
     bool isRedraw() const { return need_redraw; };
 
@@ -458,6 +459,7 @@ class ManagerWindow : public Texture {
     bool isPointed() const { return is_pointed; };
     bool isClicked() const { return is_clicked; };
 
+    virtual bool hitTest(int x, int y) const;
     bool checkPointed(WindowMouse* mouse); 
     bool checkLeftClick(WindowMouse* mouse);   //nullptr if it doesn't have click on it, coords of mouse on window if has click on it.
     
@@ -631,6 +633,22 @@ class ClockWindow : public ManagerWindow {
     };
     std::tm curr_time;
 };
+
+class RoundWindow : public ManagerWindow {
+  public:
+    RoundWindow();
+    RoundWindow(int radius, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
+                ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+
+    void draw(Renderer* render) const override;
+    bool hitTest(int x, int y) const override;
+
+  private:
+    int radius;
+    int thickness;
+    COLORREF border_color;
+};
+
 
 class DisplayManager {
   public:

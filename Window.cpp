@@ -175,14 +175,43 @@ void ManagerWindow::delLast() {
     children[--count] = nullptr;
 };
 
+void ManagerWindow::showOnTexture(const Texture* target) const {
+    RGBQUAD* target_buf = target->getBuf();
+    RGBQUAD* source_buf = this->getBuf();
+    RGBQUAD pixel = {};
+
+    int x1 = 0;
+    int x2 = this->getSizeX();
+    int y1 = 0;
+    int y2 = this->getSizeY();
+    
+    for(int ix = x1; ix < x2; ++ix) {
+        for(int iy = y1; iy < y2; ++iy) {
+            if (this->hitTest(ix, iy)) {
+                pixel = source_buf[ix + (-iy + this->getSizeY()) * this->getSizeX()];
+                int target_pos = ix + coord.x + (-iy - coord.y + target->getSizeY()) * target->getSizeX();
+                if ((target_pos < target->getSizeX() * target->getSizeY()) && target_pos >= 0) {
+                    //cout << "old_x: " << ix << " old_y: " << iy << "\n";
+                    //cout << "new_x: " << ix + << "new_y: " << iy << "\n";
+                    target_buf[target_pos] = pixel;
+                }
+            }
+        }
+    }
+};
+
 bool ManagerWindow::checkLeftClick(WindowMouse* mouse) {
     return this->checkPointed(mouse) && (mouse->getState() & LEFT_CLICK != 0);
+};
+
+bool ManagerWindow::hitTest(int x, int y) const {
+    return (x > 0 && x < this->getSizeX()) && (y > 0 && y < this->getSizeY());
 };
 
 bool ManagerWindow::checkPointed(WindowMouse* mouse) {
     int x = mouse->getRelCoord().x;
     int y = mouse->getRelCoord().y;
-    return (x > 0 && x < this->getSizeX()) && (y > 0 && y < this->getSizeY());
+    return hitTest(x, y);
 }
 
 bool ManagerWindow::proceedPressDown(WindowMouse* mouse) {
@@ -576,4 +605,27 @@ void GraphWindow::draw(Renderer* render) const {
     }
 
     this->showOn(this->getParent());
+};
+
+RoundWindow::RoundWindow(int radius, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
+                         ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
+    ManagerWindow(2 * radius, 2 * radius, coord_x, coord_y, color, parent, press_up_f, pointed_f, press_down_f), radius(radius), border_color(border_color),  thickness(thickness) {
+    need_redraw = true;
+    this->draw(render);
+    need_redraw = false;
+};
+
+void RoundWindow::draw(Renderer* render) const {
+    render->setWindow(const_cast<RoundWindow*>(this));
+
+    if (need_redraw) {
+        render->drawCircle(radius, radius, radius, color, border_color, thickness);
+        this->drawChilds(render);
+    }
+
+    this->showOnTexture(this->getParent());
+};
+
+bool RoundWindow::hitTest(int x, int y) const {
+    return ((radius - x) * (radius - x) + (radius - y) * (radius - y)) < (radius * radius);
 };
