@@ -204,7 +204,7 @@ bool ManagerWindow::checkLeftClick(WindowMouse* mouse) {
     return this->checkPointed(mouse) && (mouse->getState() & LEFT_CLICK != 0);
 };
 
-bool ManagerWindow::hitTest(int x, int y) const {
+bool ManagerWindow::hitTest(double x, double y) const {
     return (x > 0 && x < this->getSizeX()) && (y > 0 && y < this->getSizeY());
 };
 
@@ -609,7 +609,7 @@ void GraphWindow::draw(Renderer* render) const {
 
 RoundWindow::RoundWindow(int radius, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
                          ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
-    ManagerWindow(2 * radius, 2 * radius, coord_x, coord_y, color, parent, press_up_f, pointed_f, press_down_f), radius(radius), border_color(border_color),  thickness(thickness) {
+    ManagerWindow(2 * radius, 2 * radius, coord_x, coord_y, color, parent, press_up_f, pointed_f, press_down_f), radius(radius), border_color(border_color), thickness(thickness) {
     need_redraw = true;
     this->draw(render);
     need_redraw = false;
@@ -626,6 +626,31 @@ void RoundWindow::draw(Renderer* render) const {
     this->showOnTexture(this->getParent());
 };
 
-bool RoundWindow::hitTest(int x, int y) const {
+bool RoundWindow::hitTest(double x, double y) const {
     return ((radius - x) * (radius - x) + (radius - y) * (radius - y)) < (radius * radius);
 };
+
+DedWindow::DedWindow(int radius, int size_x, int size_y, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
+                     ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
+    ManagerWindow(size_x, size_y, coord_x, coord_y, color, parent, press_up_f, pointed_f, press_down_f), radius(radius), border_color(border_color),  thickness(thickness) {
+    need_redraw = true;
+    this->draw(render);
+    need_redraw = false;
+}
+
+void DedWindow::draw(Renderer* render) const {
+    render->setWindow(const_cast<DedWindow*>(this));
+
+    if (need_redraw) {
+        render->drawFilledRectangle(0, 0, size.x, size.y, color, border_color, thickness);
+        this->drawChilds(render);
+    }
+
+    this->showOnTexture(this->getParent());
+};
+
+bool DedWindow::hitTest(double x, double y) const {
+    bool out_of_circle = ((size.x / 2 - x) * (size.x / 2 - x) + (size.y / 2 - y) * (size.y / 2 - y)) > (radius * radius);
+    bool in_round_rect = pow((y - double(size.y) / 2) / (double(size.y) / 2), 8) + pow((x - double(size.x) / 2) / (double(size.x) / 2), 12) < 1;
+    return out_of_circle && in_round_rect;
+}

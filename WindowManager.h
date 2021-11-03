@@ -459,7 +459,7 @@ class ManagerWindow : public Texture {
     bool isPointed() const { return is_pointed; };
     bool isClicked() const { return is_clicked; };
 
-    virtual bool hitTest(int x, int y) const;
+    virtual bool hitTest(double x, double y) const;
     bool checkPointed(WindowMouse* mouse); 
     bool checkLeftClick(WindowMouse* mouse);   //nullptr if it doesn't have click on it, coords of mouse on window if has click on it.
     
@@ -641,7 +641,7 @@ class RoundWindow : public ManagerWindow {
                 ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
 
     void draw(Renderer* render) const override;
-    bool hitTest(int x, int y) const override;
+    bool hitTest(double x, double y) const override;
 
   private:
     int radius;
@@ -649,6 +649,20 @@ class RoundWindow : public ManagerWindow {
     COLORREF border_color;
 };
 
+class DedWindow : public ManagerWindow {
+  public:
+    DedWindow();
+    DedWindow(int radius, int size_x, int size_y, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
+              ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+
+    void draw(Renderer* render) const override;
+    bool hitTest(double x, double y) const override;
+
+  private:
+    int radius;
+    int thickness;
+    COLORREF border_color;
+};
 
 class DisplayManager {
   public:
