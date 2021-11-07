@@ -120,7 +120,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     return palette;
 };
 
-PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x) {
+PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, Feather* feather, WindowMouse* mouse) {
     int but_x = x_size / comp_x;
     int but_y = y_size;  
 
@@ -161,7 +161,7 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     PicWindow* view = new PicWindow(view_x, view_y, file_x + help_x, 0, img_view, menu);
     ClockWindow* clock = new ClockWindow(clock_x, clock_y, x_size - menu->getChild(0)->getSizeX() * menu->getCount() - clock_x, 0, mgrey_c, menu);
     
-    FileFunctor* file_f  = new FileFunctor(file); 
+    FileFunctor* file_f  = new FileFunctor(parent, render, feather, mouse); 
     HelpFunctor* help_f  = new HelpFunctor(help); 
     ViewFunctor* view_f  = new ViewFunctor(view); 
 
@@ -247,6 +247,8 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     int layer_size_x = arrow_size_x;
     int layer_size_y = graph_size_y + 2 * arrow_size_y;
     int d_x = 6;
+    int bar_size_x = arrow_size_x - 2;
+    int bar_size_y = 3 * arrow_size_y;
     //left_scorllbar
     InvisibleWindow* layer_left   = new InvisibleWindow(layer_size_x, layer_size_y, graph_coord_x - arrow_size_x - d_x, graph_coord_y - arrow_size_y, graph_layer);
     
@@ -254,11 +256,11 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     PicWindow* down_arrow_button_l    = new PicWindow(arrow_size_x, arrow_size_y, 0, layer_size_y - arrow_size_y, img_arrow_down, layer_left);
 
     BorderWindow* left_thickness_bar     = new BorderWindow(arrow_size_x, layer_size_y - 2 * arrow_size_y, 0, arrow_size_y, dgrey_c, lgrey_c, 1, render, layer_left);
-    BorderWindow* left_moving_bar        = new BorderWindow(arrow_size_x - 2, arrow_size_y / 2, 1, layer_size_y - 5 * arrow_size_y / 2 + 1, lgrey_c, lgrey_c, 1, render, left_thickness_bar);
+    BorderWindow* left_moving_bar        = new BorderWindow(bar_size_x, bar_size_y, 1, layer_size_y - 2 * arrow_size_y - bar_size_y + 1, lgrey_c, lgrey_c, 1, render, left_thickness_bar);
     left_thickness_bar->setRedraw(true);
 
-    CalcGraphDotLeft* calc_left_f = new CalcGraphDotLeft(0, layer_size_y - 5 * arrow_size_y / 2, left_moving_bar, graph);
-    PlaceBar*         left_placer = new PlaceBar        (0, layer_size_y - 5 * arrow_size_y / 2, 'Y', left_moving_bar, calc_left_f);
+    CalcGraphDotLeft* calc_left_f = new CalcGraphDotLeft(0, layer_size_y - 2 * arrow_size_y - bar_size_y, left_moving_bar, graph);
+    PlaceBar*         left_placer = new PlaceBar        (0, layer_size_y - 2 * arrow_size_y - bar_size_y, 'Y', left_moving_bar, calc_left_f);
     
     MoveBarUp*   left_move_up    = new MoveBarUp   (left_placer);
     MoveBarDown* left_move_down  = new MoveBarDown (left_placer);
@@ -289,11 +291,11 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     PicWindow* down_arrow_button_r    = new PicWindow(arrow_size_x, arrow_size_y, 0, layer_size_y - arrow_size_y, img_arrow_down, layer_right);
 
     BorderWindow* right_thickness_bar     = new BorderWindow(arrow_size_x, layer_size_y - 2 * arrow_size_y, 0, arrow_size_y, dgrey_c, lgrey_c, 1, render, layer_right);
-    BorderWindow* right_moving_bar        = new BorderWindow(arrow_size_x - 2, arrow_size_y / 2, 1, 1, lgrey_c, lgrey_c, 1, render, right_thickness_bar);
+    BorderWindow* right_moving_bar        = new BorderWindow(bar_size_x, bar_size_y, 1, 1, lgrey_c, lgrey_c, 1, render, right_thickness_bar);
     right_thickness_bar->setRedraw(true);
 
-    CalcGraphDotRight* calc_right_f = new CalcGraphDotRight(0, layer_size_y - 5 * arrow_size_y / 2, right_moving_bar, graph);
-    PlaceBar*         right_placer = new PlaceBar          (0, layer_size_y - 5 * arrow_size_y / 2, 'Y', right_moving_bar, calc_right_f);
+    CalcGraphDotRight* calc_right_f = new CalcGraphDotRight(0, layer_size_y - 2 * arrow_size_y - bar_size_y, right_moving_bar, graph);
+    PlaceBar*         right_placer = new PlaceBar          (0, layer_size_y - 2 * arrow_size_y - bar_size_y, 'Y', right_moving_bar, calc_right_f);
     
     MoveBarUp*   right_move_up    = new MoveBarUp   (right_placer);
     MoveBarDown* right_move_down  = new MoveBarDown (right_placer);

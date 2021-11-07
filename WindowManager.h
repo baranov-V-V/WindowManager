@@ -269,7 +269,7 @@ CanvasWindow* MakeCanvas(int x_size, int y_size, int coord_x, int coord_y, Manag
 */
 PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int but_x = 30);
 PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse);
-PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x);
+PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, Feather* feather, WindowMouse* mouse);
 void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse);
 
 InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse);
@@ -903,13 +903,20 @@ class HideCanvasFunctor : public VFunctor {
 class FileFunctor : public VFunctor {
   public:
     FileFunctor();
-    FileFunctor(ManagerWindow* window) : window(window) {};
+    FileFunctor(ManagerWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) : window(window), render(render), mouse(mouse), feather(feather) {};
     virtual ~FileFunctor() {};
 
-    bool action() override { /*cout << "Click true on " << window << "\n";*/ return true; };
+    bool action() override {
+        InvisibleWindow* canvas_layer = MakeResizeCanvas(window->getSizeX() / 2, window->getSizeY() / 2, window->getSizeX() / 4, window->getSizeY() / 4, "Canvas", window, render, feather, mouse);
+        window->addChild(canvas_layer);
+        return true;
+    };
 
   private:
     ManagerWindow* window;
+    Renderer* render;
+    Feather* feather;
+    WindowMouse* mouse;
 };
 
 class HelpFunctor : public VFunctor {

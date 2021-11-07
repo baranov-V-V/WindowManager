@@ -22,11 +22,11 @@ void App::initWindows() {
 
     //CanvasWindow* canvas   = new CanvasWindow(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
     //CanvasWindow* canvas_2 = new CanvasWindow(400, 200, 850, 200, "Canvas2", &(this->app_window), &render, &feather, &mouse);
-    //InvisibleWindow* canvas_layer = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
-    //BorderWindow* graph    = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), &(this->mouse));
+    InvisibleWindow* canvas_layer = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
+    BorderWindow* graph           = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), &(this->mouse));
     InvFunctorTrue* debug_f = new InvFunctorTrue();
-    DedWindow* round_wnd = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
-    PicWindow* menu        = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26); //menu->children[0] == close_button;
+    DedWindow* round_wnd   = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
+    PicWindow* menu        = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, &feather, &mouse); //menu->children[0] == close_button;
     PicWindow* palette     = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->feather), &(this->mouse));
     
     /*
@@ -46,8 +46,8 @@ void App::initWindows() {
     this->app_window.addChild(palette);
     this->app_window.addChild(menu);
     this->app_window.addChild(round_wnd);
-    //this->app_window.addChild(graph);
-    //this->app_window.addChild(canvas_layer);
+    this->app_window.addChild(graph);
+    this->app_window.addChild(canvas_layer);
     //this->app_window.addChild(canvas_2);
 };
 

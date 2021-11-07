@@ -190,7 +190,7 @@ void ManagerWindow::showOnTexture(const Texture* target) const {
             if (this->hitTest(ix, iy)) {
                 pixel = source_buf[ix + (-iy + this->getSizeY()) * this->getSizeX()];
                 int target_pos = ix + coord.x + (-iy - coord.y + target->getSizeY()) * target->getSizeX();
-                if ((target_pos < target->getSizeX() * target->getSizeY()) && target_pos >= 0) {
+                if ((target_pos <= target->getSizeX() * target->getSizeY()) && target_pos >= 0) {
                     //cout << "old_x: " << ix << " old_y: " << iy << "\n";
                     //cout << "new_x: " << ix + << "new_y: " << iy << "\n";
                     target_buf[target_pos] = pixel;
