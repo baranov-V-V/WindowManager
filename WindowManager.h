@@ -69,12 +69,12 @@ enum RESIZE_DIRECTIONS {
     DIRECTION_DOWN = 8,
 };
 
-#define CLEAR_DIR(direction)     (direction & DIRECTION_NONE)
+#define CLEAR_DIR(direction)     (direction = direction & DIRECTION_NONE)
 
-#define SET_DIR_LEFT(direction)  (direction | DIRECTION_LEFT)
-#define SET_DIR_RIGHT(direction) (direction | DIRECTION_RIGHT)
-#define SET_DIR_UP(direction)    (direction | DIRECTION_UP)
-#define SET_DIR_DOWN(direction)  (direction | DIRECTION_DOWN)
+#define SET_DIR_LEFT(direction)  (direction = direction | DIRECTION_LEFT)
+#define SET_DIR_RIGHT(direction) (direction = direction | DIRECTION_RIGHT)
+#define SET_DIR_UP(direction)    (direction = direction | DIRECTION_UP)
+#define SET_DIR_DOWN(direction)  (direction = direction | DIRECTION_DOWN)
 
 #define IS_DIR_LEFT(direction)  (direction & DIRECTION_LEFT)
 #define IS_DIR_RIGHT(direction) (direction & DIRECTION_RIGHT)
@@ -401,6 +401,10 @@ class BasicWindow {
     int getSizeY() const { return size.y; };
     Pair<int> getSize() const { return size; };
 
+    void setSizeX(int size_x) { size.x = size_x; };
+    void setSizeY(int size_y) { size.y = size_y; };
+    void setSize(Pair<int> new_size) { size = new_size; };
+
     HDC getHdc() const;
     int getType() const { return type; };
     COLORREF getColor() const;
@@ -590,6 +594,8 @@ class CanvasWindow : public BorderWindow {
         base_img.showOn(this);
     }
     const Texture& getBaseImg() { return base_img; };
+
+    char* getName() const { return name; };
 
   private:
     char* name;
@@ -871,7 +877,7 @@ class DrawFunctor : public VFunctor {
 class CloseCanvasFunctor : public VFunctor {
   public:
     CloseCanvasFunctor();
-    CloseCanvasFunctor(CanvasWindow* window) : window_to_close(window) {};
+    CloseCanvasFunctor(InvisibleWindow* window) : window_to_close(window) {};
     virtual ~CloseCanvasFunctor() {};
 
     bool action() override {
@@ -882,7 +888,7 @@ class CloseCanvasFunctor : public VFunctor {
     };
 
   private:
-    CanvasWindow* window_to_close;
+    InvisibleWindow* window_to_close;
 };
 
 class HideCanvasFunctor : public VFunctor {
@@ -1272,7 +1278,7 @@ class MakeFirst : public VFunctor {
 class ResizeCanvas : public MoveFunctor {
   public:
     ResizeCanvas();
-    ResizeCanvas(ManagerWindow* window, WindowMouse* mouse) : MoveFunctor(window, mouse) {};
+    ResizeCanvas(ManagerWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) : MoveFunctor(window, mouse), render(render), feather(feather), direction(DIRECTION_NONE) {};
     virtual ~ResizeCanvas() {};
 
     void startMove() override {
@@ -1292,6 +1298,7 @@ class ResizeCanvas : public MoveFunctor {
         if (coord.y >= (move_window->getSizeY() - grab_len)) {
             SET_DIR_DOWN(direction);
         }
+        std::cout << "current direction: " << direction;
     };
 
     void endMove() override {
@@ -1300,7 +1307,7 @@ class ResizeCanvas : public MoveFunctor {
     };
 
     bool action() override {
-        if (on_move) {
+        if (on_move && mouse->isLeftClick()) {
             Pair<int> new_size = move_window->getSize();
             Pair<int> new_coord = move_window->getCoord();
             Pair<int> d_mouse_move = mouse->getAbsCoord() - old_coord;
@@ -1308,32 +1315,40 @@ class ResizeCanvas : public MoveFunctor {
                 new_size.x = move_window->getSizeX() + d_mouse_move.x;
             }
             if (IS_DIR_LEFT(direction)) {
-                new_size.x = move_window->getSizeX() + d_mouse_move.x;
+                new_size.x = move_window->getSizeX() - d_mouse_move.x;
                 new_coord.x = move_window->getCoordX() + d_mouse_move.x;
             }
             if (IS_DIR_UP(direction)) {
-                new_size.y = move_window->getSizeY() + d_mouse_move.y;
+                new_size.y = move_window->getSizeY() - d_mouse_move.y;
                 new_coord.y = move_window->getCoordY() + d_mouse_move.y;
             }
             if (IS_DIR_DOWN(direction)) {
                 new_size.y = move_window->getSizeY() + d_mouse_move.y;
             }
-            
-            InvisibleWindow* new_canvas_layer = GetResizedCanvas(dynamic_cast<InvisibleWindow*>(move_window), render, feather, mouse, new_size, new_coord);
-            //move_window->setCoord(move_window->getCoord() + (mouse->getAbsCoord() - old_coord));
-            ManagerWindow* parent = move_window->getParent();
-            parent->delChild(move_window);
-            parent->addChild(new_canvas_layer);
-            delete move_window;
-            move_window = new_canvas_layer;
+            if (old_coord != mouse->getAbsCoord()) {
+                //cout << "start\n";
+                InvisibleWindow* new_canvas_layer = GetResizedCanvas(dynamic_cast<InvisibleWindow*>(move_window), render, feather, mouse, new_size, new_coord);
+                //move_window->setCoord(move_window->getCoord() + (mouse->getAbsCoord() - old_coord));
+                
+                cout << "new size_x: " << move_window->getSizeX() << " new size_y: " << move_window->getSizeY() << "\n";
+                cout << "new coord_x: " << move_window->getCoordX() << " new coord_y: " << move_window->getCoordY() << "\n";
+
+                //cout << "finish\n";
+                //ManagerWindow* parent = move_window->getParent();
+                //parent->delChild(move_window);
+                //parent->addChild(new_canvas_layer);
+                //delete move_window;
+                //move_window = new_canvas_layer;
+            }
             old_coord = mouse->getAbsCoord();
+        } else {
+          this->endMove();
         }
         return true;
     };
   
   private:
     Renderer* render;
-    WindowMouse* mouse;
     Feather* feather;
     int direction;
 };

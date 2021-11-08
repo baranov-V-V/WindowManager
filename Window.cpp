@@ -435,7 +435,11 @@ void InvisibleWindow::draw(Renderer* render) const {
     for (int i = 0; i < this->getCount(); ++i) {
         this->getChild(i)->draw(render);
         render->setWindow(this->getParent());
-        this->getChild(i)->showOn(this->getParent(), this->getChild(i)->getCoordX() + coord.x, this->getChild(i)->getCoordY() + coord.y);
+        if (this->getParent()) {
+            this->getChild(i)->showOn(this->getParent(), this->getChild(i)->getCoordX() + coord.x, this->getChild(i)->getCoordY() + coord.y);
+        } else {
+            cout << "cannot draw invsible window";
+        }
     }
     
 };
@@ -514,7 +518,6 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
         menu->addChild(button_reset);
     }
 
-
     MakeMovable(menu, parent, mouse);
 
     if (pic_name != nullptr) {
@@ -527,8 +530,7 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, CanvasWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) :
-    BorderWindow(x_size, y_size, coord_x, coord_y,
-    white_c, mgrey_c, 1, render, window->getParent()), name(name), on_display(true),
+    BorderWindow(x_size, y_size, coord_x, coord_y, white_c, mgrey_c, 1, render, window->getParent()), name(window->getName()), on_display(true),
     base_img(window->getBaseImg().getSizeX(), window->getBaseImg().getSizeY(), white_c, 0, 0) {
     
     need_redraw = false;
@@ -551,13 +553,19 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, Can
         int text_x = text_y / 3;
         int ident_y = (menu_y - text_y) / 2;
         render->drawText(menu_x / 2 - 30 * 2 - text_size / 2, ident_y, name, "Helvetica", text_y, text_x, silver_c);
+        TextButtonWindow* button_reset  = new TextButtonWindow(7 * (text_x + 1), menu_y, 0, 0, mgrey_c, mgrey_c, 1, silver_c, "Clear", "Helvetica", text_x + 1, text_y - 2, ALIGN_LEFT, render, menu);
+        GlowBorderFunctor* glow_button_reset = new GlowBorderFunctor(button_reset, lgrey_c, lgrey_c);
+        ClearCanvas* clear_f = new ClearCanvas(this, render);
+        button_reset->setPointed(glow_button_reset);
+        button_reset->setPressUp(clear_f);
+        menu->addChild(button_reset);
     }
 
-    MakeMovable(menu, window->getParent(), mouse);
-
-    window->showOn(this);
+    //window->showOn(this);
+   //render->setWindow(this);
+    //render->drawRectangle()
     window->getBaseImg().showOn(&base_img);
-
+    cout << "done!";
     this->addChild(menu);
 };
 
