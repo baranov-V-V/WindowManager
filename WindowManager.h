@@ -1302,32 +1302,42 @@ class ResizeCanvas : public MoveFunctor {
     };
 
     void endMove() override {
+        if (is_moved) {
+            GetResizedCanvas(dynamic_cast<InvisibleWindow*>(move_window), render, feather, mouse, new_size, new_coord);
+        }
         on_move = false;
+        is_moved = false;
         CLEAR_DIR(direction);
     };
 
     bool action() override {
         if (on_move && mouse->isLeftClick()) {
-            Pair<int> new_size = move_window->getSize();
-            Pair<int> new_coord = move_window->getCoord();
+            new_size = move_window->getSize();
+            new_coord = move_window->getCoord();
             Pair<int> d_mouse_move = mouse->getAbsCoord() - old_coord;
             if (IS_DIR_RIGHT(direction)) {
                 new_size.x = move_window->getSizeX() + d_mouse_move.x;
+                resize_dx += d_mouse_move.x;
             }
             if (IS_DIR_LEFT(direction)) {
                 new_size.x = move_window->getSizeX() - d_mouse_move.x;
                 new_coord.x = move_window->getCoordX() + d_mouse_move.x;
+                resize_dx += d_mouse_move.x;
             }
             if (IS_DIR_UP(direction)) {
+                resize_dy += d_mouse_move.y;
                 new_size.y = move_window->getSizeY() - d_mouse_move.y;
                 new_coord.y = move_window->getCoordY() + d_mouse_move.y;
             }
             if (IS_DIR_DOWN(direction)) {
+                resize_dy += d_mouse_move.y;
                 new_size.y = move_window->getSizeY() + d_mouse_move.y;
             }
             if (old_coord != mouse->getAbsCoord()) {
+                is_moved = true;
                 //cout << "start\n";
-                InvisibleWindow* new_canvas_layer = GetResizedCanvas(dynamic_cast<InvisibleWindow*>(move_window), render, feather, mouse, new_size, new_coord);
+                move_window->setCoord(new_coord);
+                move_window->setSize(new_size);
                 //move_window->setCoord(move_window->getCoord() + (mouse->getAbsCoord() - old_coord));
                 
                 cout << "new size_x: " << move_window->getSizeX() << " new size_y: " << move_window->getSizeY() << "\n";
@@ -1340,6 +1350,12 @@ class ResizeCanvas : public MoveFunctor {
                 //delete move_window;
                 //move_window = new_canvas_layer;
             }
+            if (abs(resize_dx) > 5 || abs(resize_dy) > 5) {
+                GetResizedCanvas(dynamic_cast<InvisibleWindow*>(move_window), render, feather, mouse, new_size, new_coord);
+                resize_dx = 0;
+                resize_dy = 0;
+                is_moved = false;
+            }
             old_coord = mouse->getAbsCoord();
         } else {
           this->endMove();
@@ -1348,8 +1364,15 @@ class ResizeCanvas : public MoveFunctor {
     };
   
   private:
+    bool is_moved = false;
+
+    Pair<int> new_size;
+    Pair<int> new_coord;
+    int resize_dx = 0;
+    int resize_dy = 0;
     Renderer* render;
     Feather* feather;
+
     int direction;
 };
 

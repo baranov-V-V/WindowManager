@@ -232,6 +232,8 @@ InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* rende
     //InvisibleWindow* new_canvas_layer = new InvisibleWindow(new_size.x, new_size.y, new_coord.x, new_coord.y, canvas_layer->getParent());
     //CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas, render, feather, mouse);
     CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas->getName(), canvas_layer, render, feather, mouse);
+    canvas->setCoord({0, 0});
+    canvas->showOn(new_canvas);
     //MakeMovable(new_canvas->getChild(0), new_canvas_layer, mouse);
     canvas_layer->addChild(new_canvas);
 
