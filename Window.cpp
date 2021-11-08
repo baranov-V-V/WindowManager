@@ -486,8 +486,8 @@ void TextButtonWindow::draw(Renderer* render) const {
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
-                           Renderer* render, Feather* feather, WindowMouse* mouse, const char* pic_name) :
-    BorderWindow(x_size, y_size, coord_x, coord_y, white_c, mgrey_c, 1, render, parent), name(name), on_display(true),
+                           Renderer* render, Feather* feather, WindowMouse* mouse, App* app, const char* pic_name) :
+    BorderWindow(x_size, y_size, coord_x, coord_y, white_c, white_c, 1, render, parent), name(name), on_display(true),
     base_img(x_size, y_size, white_c, 0, 0) {
     
     need_redraw = false;
@@ -518,7 +518,7 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
         menu->addChild(button_reset);
     }
 
-    MakeMovable(menu, parent, mouse);
+    MakeMovable(menu, parent, mouse, app);
 
     if (pic_name != nullptr) {
         Texture pic(x_size, y_size, pic_name, 0, 0);
@@ -530,7 +530,7 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, CanvasWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) :
-    BorderWindow(x_size, y_size, coord_x, coord_y, white_c, mgrey_c, 1, render, window->getParent()), name(window->getName()), on_display(true),
+    BorderWindow(x_size, y_size, coord_x, coord_y, white_c, white_c, 1, render, window->getParent()), name(window->getName()), on_display(true),
     base_img(window->getBaseImg().getSizeX(), window->getBaseImg().getSizeY(), white_c, 0, 0) {
     
     need_redraw = false;

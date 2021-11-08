@@ -8857,3 +8857,294 @@ Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main
 Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
 
 --------------------------------------------------
+
+--------------------------------------------------
+TXLib сообщает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: TXLib.h, строка: 10617, функция: HDC__* {anonymous}::TX::_txBuffer_Create(HWND, const POINT*, HBITMAP, RGBQUAD**),
+
+Сообщение: Cannot create buffer: CreateCompatibleBitmap() failed
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000044D900 (64-bit), Flags: CMdRe0, Thread: 0x22F4 (Main), GetLastError(): 87 (Параметр задан неверно). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040EF89 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+# 1 0x000000000040E958 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txBuffer_Create() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10617)
+# 2 0x000000000040B198 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txCreateTXIcon() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (9696)
+# 3 0x00000000004164A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txNotifyIcon() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (12479)
+# 4 0x000000000041B13F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txCreateCompatibleDC() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (13288)
+# 5 0x000000000041B3B1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txLoadImage() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (13323)
+
+# 6 0x00000000004216DB in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (40):
+
+     38:     type = TYPE_TEXTURE;
+     39:     screen_buf = nullptr;
+=>   40:     screen = txLoadImage(file_name, x_size, y_size);
+     41:     assert(screen);
+     42: };
+
+# 7 0x000000000040361B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (386):
+
+    384: PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, const char* pic_name, ManagerWindow* parent,
+    385:                      VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
+=>  386:     ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f), base_img(x_size, y_size, pic_name, 0, 0) {
+    387:     PicWindow::need_redraw = need_redraw;
+    388:     Texture pic(x_size, y_size, pic_name, 0, 0);
+
+# 8 0x0000000000423714 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: MakeBasicMenu() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Utility.cpp (8):
+
+      6:     PicWindow* menu  = new PicWindow(x_size, y_size, coord_x, coord_y, img_menu_bar, parent);
+      7:     PicWindow* hide  = new PicWindow(but_x, but_y, x_size - but_x * 2, 0, img_hide, menu);
+=>    8:     PicWindow* close = new PicWindow(but_x, but_y, x_size - but_x * 1, 0, img_close, menu);
+      9: 
+     10:     CloseCanvasFunctor* close_f  = new CloseCanvasFunctor(reinterpret_cast<InvisibleWindow*>(parent->getParent())); 
+
+# 9 0x0000000000404263 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (504):
+
+    502: 
+    503:     int but_x = 30;
+=>  504:     PicWindow* menu = MakeBasicMenu(menu_x, menu_y, 0, 0, this, but_x);
+    505: 
+    506:     render->setWindow(menu);
+
+#10 0x00000000004253B8 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: GetResizedCanvas() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Utility.cpp (234):
+
+    232:     //InvisibleWindow* new_canvas_layer = new InvisibleWindow(new_size.x, new_size.y, new_coord.x, new_coord.y, canvas_layer->getParent());
+    233:     //CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas, render, feather, mouse);
+=>  234:     CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas->getName(), canvas_layer, render, feather, mouse, app);
+    235:     canvas->setCoord({0, 0});
+    236:     canvas->showOn(new_canvas);
+
+#11 0x00000000004301AA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (406):
+
+    404:     void setSizeX(int size_x) { size.x = size_x; };
+    405:     void setSizeY(int size_y) { size.y = size_y; };
+=>  406:     void setSize(Pair<int> new_size) { size = new_size; };
+    407: 
+    408:     HDC getHdc() const;
+
+#12 0x0000000000401D89 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (85):
+
+     83:         
+     84:         if (active_window != nullptr) {
+=>   85:             active_window->getPointed()->action();
+     86:         } else {
+     87:             app_window.proceedPointed(&mouse);
+
+#13 0x000000000040172B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (14):
+
+     12:         app_window.draw(&render);
+     13:         app_window.showOn(&users_window);
+=>   14:         this->proceedMouseEvent();
+     15:         //this->sleep(5);
+     16:     }
+
+#14 0x00000000004234FF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Nov  8 2021 14:07:34, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Nov 08 2021 14:08:17
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: TXLib.h, строка: 10619, функция: HDC__* {anonymous}::TX::_txBuffer_Create(HWND, const POINT*, HBITMAP, RGBQUAD**),
+
+Сообщение: Обнаружен нулевой или ложный результат.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000044D900 (64-bit), Flags: CMdRe0, Thread: 0x22F4 (Main), GetLastError(): 87 (Параметр задан неверно). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040EF89 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+# 1 0x000000000040E998 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txBuffer_Create() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10619)
+# 2 0x000000000040B198 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txCreateTXIcon() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (9696)
+# 3 0x00000000004164A1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txNotifyIcon() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (12479)
+# 4 0x000000000041B13F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txCreateCompatibleDC() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (13288)
+# 5 0x000000000041B3B1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: txLoadImage() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (13323)
+
+# 6 0x00000000004216DB in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (40):
+
+     38:     type = TYPE_TEXTURE;
+     39:     screen_buf = nullptr;
+=>   40:     screen = txLoadImage(file_name, x_size, y_size);
+     41:     assert(screen);
+     42: };
+
+# 7 0x000000000040361B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (386):
+
+    384: PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, const char* pic_name, ManagerWindow* parent,
+    385:                      VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) :
+=>  386:     ManagerWindow(x_size, y_size, coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f), base_img(x_size, y_size, pic_name, 0, 0) {
+    387:     PicWindow::need_redraw = need_redraw;
+    388:     Texture pic(x_size, y_size, pic_name, 0, 0);
+
+# 8 0x0000000000423714 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: MakeBasicMenu() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Utility.cpp (8):
+
+      6:     PicWindow* menu  = new PicWindow(x_size, y_size, coord_x, coord_y, img_menu_bar, parent);
+      7:     PicWindow* hide  = new PicWindow(but_x, but_y, x_size - but_x * 2, 0, img_hide, menu);
+=>    8:     PicWindow* close = new PicWindow(but_x, but_y, x_size - but_x * 1, 0, img_close, menu);
+      9: 
+     10:     CloseCanvasFunctor* close_f  = new CloseCanvasFunctor(reinterpret_cast<InvisibleWindow*>(parent->getParent())); 
+
+# 9 0x0000000000404263 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (504):
+
+    502: 
+    503:     int but_x = 30;
+=>  504:     PicWindow* menu = MakeBasicMenu(menu_x, menu_y, 0, 0, this, but_x);
+    505: 
+    506:     render->setWindow(menu);
+
+#10 0x00000000004253B8 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: GetResizedCanvas() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Utility.cpp (234):
+
+    232:     //InvisibleWindow* new_canvas_layer = new InvisibleWindow(new_size.x, new_size.y, new_coord.x, new_coord.y, canvas_layer->getParent());
+    233:     //CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas, render, feather, mouse);
+=>  234:     CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas->getName(), canvas_layer, render, feather, mouse, app);
+    235:     canvas->setCoord({0, 0});
+    236:     canvas->showOn(new_canvas);
+
+#11 0x00000000004301AA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/WindowManager.h (406):
+
+    404:     void setSizeX(int size_x) { size.x = size_x; };
+    405:     void setSizeY(int size_y) { size.y = size_y; };
+=>  406:     void setSize(Pair<int> new_size) { size = new_size; };
+    407: 
+    408:     HDC getHdc() const;
+
+#12 0x0000000000401D89 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: proceedMouseEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (85):
+
+     83:         
+     84:         if (active_window != nullptr) {
+=>   85:             active_window->getPointed()->action();
+     86:         } else {
+     87:             app_window.proceedPointed(&mouse);
+
+#13 0x000000000040172B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (14):
+
+     12:         app_window.draw(&render);
+     13:         app_window.showOn(&users_window);
+=>   14:         this->proceedMouseEvent();
+     15:         //this->sleep(5);
+     16:     }
+
+#14 0x00000000004234FF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (13):
+
+     11: 
+     12:     App app(x, y);
+=>   13:     app.run();
+     14: 
+     15:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Nov  8 2021 14:07:34, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Nov 08 2021 14:08:17
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib сообщает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe, файл: TXLib.h, строка: 9856, функция: bool {anonymous}::TX::_txCanvas_OnDESTROY(HWND),
+
+Сообщение: Cannot lock GDI to free resources
+
+#3: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x000000000044D900 (64-bit), Flags: CMdrE0, Thread: 0x5EC4 (Canvas), errno: 34 (Result too large). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040EF89 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10689)
+# 1 0x000000000040BD58 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txCanvas_OnDESTROY() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (9856)
+# 2 0x000000000040B75B in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txCanvas_WndProc() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (9775)
+# 3 0x00007FFEAEE6E7E8 in C:\Windows\System32\USER32.dll: CallWindowProcW()
+# 4 0x00007FFEAEE6E36C in C:\Windows\System32\USER32.dll: DispatchMessageW()
+# 5 0x00007FFEAEE80F93 in C:\Windows\System32\USER32.dll: SendMessageTimeoutW()
+# 6 0x00007FFEB02D0BA4 in C:\Windows\SYSTEM32\ntdll.dll: KiUserCallbackDispatcher()
+# 7 0x00007FFEADE81124 in C:\Windows\System32\win32u.dll: NtUserMessageCall()
+# 8 0x00007FFEAEE6CA85 in C:\Windows\System32\USER32.dll: GetWindowTextW()
+# 9 0x00007FFEAEE69BED in C:\Windows\System32\USER32.dll: PeekMessageA()
+#10 0x00007FFEAEE69837 in C:\Windows\System32\USER32.dll: SendMessageA()
+#11 0x000000000040B8C7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txCanvas_WndProc() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (9812)
+#12 0x00007FFEAEE6E7E8 in C:\Windows\System32\USER32.dll: CallWindowProcW()
+#13 0x00007FFEAEE6E36C in C:\Windows\System32\USER32.dll: DispatchMessageW()
+#14 0x00007FFEAEE80F93 in C:\Windows\System32\USER32.dll: SendMessageTimeoutW()
+#15 0x00007FFEB02D0BA4 in C:\Windows\SYSTEM32\ntdll.dll: KiUserCallbackDispatcher()
+#16 0x00007FFEADE81124 in C:\Windows\System32\win32u.dll: NtUserMessageCall()
+#17 0x00007FFEAEE6CA85 in C:\Windows\System32\USER32.dll: GetWindowTextW()
+#18 0x00007FFEAEE69BED in C:\Windows\System32\USER32.dll: PeekMessageA()
+#19 0x00007FFEAB339722 in C:\Windows\system32\uxtheme.dll: GetUserColorPreference()
+#20 0x00007FFEAB353482 in C:\Windows\system32\uxtheme.dll: Ordinal96()
+#21 0x00007FFEAB33B809 in C:\Windows\system32\uxtheme.dll: IsCompositionActive()
+#22 0x00007FFEAB352F8E in C:\Windows\system32\uxtheme.dll: GetThemePosition()
+#23 0x00007FFEAEE69846 in C:\Windows\System32\USER32.dll: SendMessageA()
+#24 0x000000000040B8C7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txCanvas_WndProc() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (9812)
+#25 0x00007FFEAEE6E7E8 in C:\Windows\System32\USER32.dll: CallWindowProcW()
+#26 0x00007FFEAEE6E36C in C:\Windows\System32\USER32.dll: DispatchMessageW()
+#27 0x00007FFEAEE80F93 in C:\Windows\System32\USER32.dll: SendMessageTimeoutW()
+#28 0x00007FFEB02D0BA4 in C:\Windows\SYSTEM32\ntdll.dll: KiUserCallbackDispatcher()
+#29 0x00007FFEADE81124 in C:\Windows\System32\win32u.dll: NtUserMessageCall()
+#30 0x00007FFEAEE6CA85 in C:\Windows\System32\USER32.dll: GetWindowTextW()
+#31 0x00007FFEAEE69BED in C:\Windows\System32\USER32.dll: PeekMessageA()
+#32 0x00007FFEAB339722 in C:\Windows\system32\uxtheme.dll: GetUserColorPreference()
+#33 0x00007FFEAB3533D7 in C:\Windows\system32\uxtheme.dll: Ordinal96()
+#34 0x00007FFEAB33B809 in C:\Windows\system32\uxtheme.dll: IsCompositionActive()
+#35 0x00007FFEAB352F8E in C:\Windows\system32\uxtheme.dll: GetThemePosition()
+#36 0x00007FFEAEE69846 in C:\Windows\System32\USER32.dll: SendMessageA()
+#37 0x000000000040B8C7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txCanvas_WndProc() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (9812)
+#38 0x00007FFEAEE6E7E8 in C:\Windows\System32\USER32.dll: CallWindowProcW()
+#39 0x00007FFEAEE6E229 in C:\Windows\System32\USER32.dll: DispatchMessageW()
+#40 0x000000000040A736 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe: _txCanvas_ThreadProc() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (9558)
+#41 0x00007FFEAF6FAF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#42 0x00007FFEAF6FB02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#43 0x00007FFEAEAD7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#44 0x00007FFEB0282651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Nov  8 2021 14:07:34, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Nov 08 2021 14:08:17
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------

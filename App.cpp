@@ -22,18 +22,18 @@ void App::initWindows() {
 
     //CanvasWindow* canvas   = new CanvasWindow(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
     //CanvasWindow* canvas_2 = new CanvasWindow(400, 200, 850, 200, "Canvas2", &(this->app_window), &render, &feather, &mouse);
-    InvisibleWindow* canvas_layer = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
+    InvisibleWindow* canvas_layer = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse, this);
     
     //InvisibleWindow* new_canvas_layer = GetResizedCanvas(canvas_layer, &render, &feather, &mouse, {app_size.x / 2 + 20, app_size.y / 2 + 20}, {app_size.x / 4 + 20, app_size.y / 4 + 20});
     //this->app_window.addChild(new_canvas_layer);
     
-    BorderWindow* graph = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), &(this->mouse));
+    BorderWindow* graph = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), &(this->mouse), this);
     
     
     InvFunctorTrue* debug_f = new InvFunctorTrue();
     DedWindow* round_wnd   = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
-    PicWindow* menu        = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, &feather, &mouse); //menu->children[0] == close_button;
-    PicWindow* palette     = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->feather), &(this->mouse));
+    PicWindow* menu        = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, &feather, &mouse, this); //menu->children[0] == close_button;
+    PicWindow* palette     = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->feather), &(this->mouse), this);
     
     /*
     InvFunctorTrue* invs_f = new InvFunctorTrue();    
@@ -47,7 +47,7 @@ void App::initWindows() {
     */
     StopAppFunctor* stop_app = new StopAppFunctor(this);
     menu->getChild(0)->setPressUp(stop_app);
-    MakeMovable(round_wnd, round_wnd, &(this->mouse));
+    MakeMovable(round_wnd, round_wnd, &(this->mouse), this);
 
     this->app_window.addChild(palette);
     this->app_window.addChild(menu);
@@ -64,11 +64,29 @@ void App::proceedMouseEvent() {
     mouse.update();
     
     if ((mouse.getState() & LEFT_CLICK) && !(state & LEFT_CLICK)) {
-        app_window.proceedPressDown(&mouse);
+        
+        if (active_window != nullptr) {
+            active_window->getPressDown()->action();
+        } else {
+            app_window.proceedPressDown(&mouse);
+        }
+        
     } else if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {
-        app_window.proceedPressUp(&mouse);
+        
+        if (active_window != nullptr) {
+            active_window->getPressUp()->action();
+        } else {
+            app_window.proceedPressUp(&mouse);
+        }
+        
     } else if (mouse.getAbsCoord() != abs_coord) {
-        app_window.proceedPointed(&mouse);
+        
+        if (active_window != nullptr) {
+            active_window->getPointed()->action();
+        } else {
+            app_window.proceedPointed(&mouse);
+        }
+        
     }
 
     state = mouse.getState();

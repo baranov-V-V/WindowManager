@@ -25,8 +25,8 @@ PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, Manag
     return menu;
 }
 
-void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse) {
-    MoveFunctor* move_f = new MoveFunctor(move_wnd, mouse);
+void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse, App* app) {
+    MoveFunctor* move_f     = new MoveFunctor(move_wnd, mouse, app);
     StartMove* start_move_f = new StartMove(move_f);
     EndMove*   end_move_f   = new EndMove(move_f);
 
@@ -35,10 +35,10 @@ void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMou
     activate_wnd->setPressUp(end_move_f);
 }
 
-PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse) {
+PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) {
 
     PicWindow* palette = new PicWindow(x_size, y_size, coord_x, coord_y, img_palette, parent);
-    MakeMovable(palette, palette, mouse);
+    MakeMovable(palette, palette, mouse, app);
 
     int c_box_x = 5 * x_size / (6 * x_count_c + 1);
     int c_box_y = c_box_x;
@@ -94,7 +94,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     PlaceBar* placer = new PlaceBar(0, bar_size_x - arrow_size_x + 1, 'X', moving_bar, recalc_functor);
     MoveBarRight* move_right = new MoveBarRight(placer);
     MoveBarLeft*  move_left  = new MoveBarLeft (placer);
-    MoveBarRandomX* move_x_axis = new MoveBarRandomX(placer, moving_bar, mouse);
+    MoveBarRandomX* move_x_axis = new MoveBarRandomX(placer, moving_bar, mouse, app);
     PlaceBarOnClickX* start_move = new PlaceBarOnClickX(placer, moving_bar, mouse, move_x_axis);
     StartMove* start_move_bar = new StartMove(move_x_axis);
     EndMove* end_move = new EndMove(move_x_axis);
@@ -120,7 +120,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     return palette;
 };
 
-PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, Feather* feather, WindowMouse* mouse) {
+PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) {
     int but_x = x_size / comp_x;
     int but_y = y_size;  
 
@@ -161,7 +161,7 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     PicWindow* view = new PicWindow(view_x, view_y, file_x + help_x, 0, img_view, menu);
     ClockWindow* clock = new ClockWindow(clock_x, clock_y, x_size - menu->getChild(0)->getSizeX() * menu->getCount() - clock_x, 0, mgrey_c, menu);
     
-    FileFunctor* file_f  = new FileFunctor(parent, render, feather, mouse); 
+    FileFunctor* file_f  = new FileFunctor(parent, render, feather, mouse, app); 
     HelpFunctor* help_f  = new HelpFunctor(help); 
     ViewFunctor* view_f  = new ViewFunctor(view); 
 
@@ -194,14 +194,14 @@ void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs) {
     lhs->setPressUp(rhs->getPressUp());
 }
 
-InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse) {
+InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) {
     InvisibleWindow* canvas_layer = new InvisibleWindow(size_x + 2 * grab_len, size_y + 2 * grab_len, coord_x - grab_len, coord_y - grab_len, parent);
-    CanvasWindow* canvas = new CanvasWindow(size_x, size_y, grab_len, grab_len, name, canvas_layer, render, feather, mouse, img_canvas);
+    CanvasWindow* canvas = new CanvasWindow(size_x, size_y, grab_len, grab_len, name, canvas_layer, render, feather, mouse, app, img_canvas);
     
     //InvFunctorTrue* invs_f = new InvFunctorTrue(reinterpret_cast<ManagerWindow*>(canvas_layer), render, mouse);
     //canvas_layer->setPressUp(invs_f);
     
-    ResizeCanvas* resize_f    = new ResizeCanvas(reinterpret_cast<ManagerWindow*>(canvas_layer), render, feather, mouse);
+    ResizeCanvas* resize_f    = new ResizeCanvas(reinterpret_cast<ManagerWindow*>(canvas_layer), render, feather, mouse, app);
     StartMove* start_resize_f = new StartMove(resize_f);
     EndMove*   end_resize_f   = new EndMove(resize_f);
 
@@ -214,16 +214,16 @@ InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord
     return canvas_layer;
 }
 
-InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse) {
+InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) {
     InvisibleWindow* canvas_layer = new InvisibleWindow(size_x, size_y, coord_x, coord_y, parent);
-    CanvasWindow* canvas = new CanvasWindow(size_x, size_y, 0, 0, name, canvas_layer, render, feather, mouse);
+    CanvasWindow* canvas = new CanvasWindow(size_x, size_y, 0, 0, name, canvas_layer, render, feather, mouse, app);
 
     canvas_layer->addChild(canvas);
 
     return canvas_layer;
 }
 
-InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* render, Feather* feather, WindowMouse* mouse, const Pair<int>& new_size, const Pair<int>& new_coord) {
+InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* render, Feather* feather, WindowMouse* mouse, App* app, const Pair<int>& new_size, const Pair<int>& new_coord) {
     CanvasWindow* canvas = dynamic_cast<CanvasWindow*>(canvas_layer->getChild(0));
     canvas_layer->delLast();
 
@@ -231,7 +231,7 @@ InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* rende
     canvas_layer->setSize(new_size);
     //InvisibleWindow* new_canvas_layer = new InvisibleWindow(new_size.x, new_size.y, new_coord.x, new_coord.y, canvas_layer->getParent());
     //CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas, render, feather, mouse);
-    CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas->getName(), canvas_layer, render, feather, mouse);
+    CanvasWindow* new_canvas = new CanvasWindow(new_size.x - 2 * grab_len, new_size.y - 2 * grab_len, grab_len, grab_len, canvas->getName(), canvas_layer, render, feather, mouse, app);
     canvas->setCoord({0, 0});
     canvas->showOn(new_canvas);
     //MakeMovable(new_canvas->getChild(0), new_canvas_layer, mouse);
@@ -252,9 +252,9 @@ InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* rende
     return canvas_layer;
 }
 
-BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse) {
+BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app) {
     BorderWindow* graph_layer = new BorderWindow(size_x, size_y, coord_x, coord_y, palette_c, dgrey_c, 1, render, parent);
-    MakeMovable(graph_layer, graph_layer, mouse);
+    MakeMovable(graph_layer, graph_layer, mouse, app);
 
     int graph_size_x = 3 * size_y / 4;
     int graph_size_y = 3 * size_y / 4;
@@ -287,7 +287,7 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     MoveBarUp*   left_move_up    = new MoveBarUp   (left_placer);
     MoveBarDown* left_move_down  = new MoveBarDown (left_placer);
     
-    MoveBarRandomY*   left_move_y     = new MoveBarRandomY  (left_placer, left_moving_bar, mouse);
+    MoveBarRandomY*   left_move_y     = new MoveBarRandomY  (left_placer, left_moving_bar, mouse, app);
     PlaceBarOnClickY* left_start_move = new PlaceBarOnClickY(left_placer, left_moving_bar, mouse, left_move_y);
     
     StartMove* left_start_move_bar = new StartMove(left_move_y);
@@ -322,7 +322,7 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     MoveBarUp*   right_move_up    = new MoveBarUp   (right_placer);
     MoveBarDown* right_move_down  = new MoveBarDown (right_placer);
     
-    MoveBarRandomY*   right_move_y     = new MoveBarRandomY  (right_placer, right_moving_bar, mouse);
+    MoveBarRandomY*   right_move_y     = new MoveBarRandomY  (right_placer, right_moving_bar, mouse, app);
     PlaceBarOnClickY* right_start_move = new PlaceBarOnClickY(right_placer, right_moving_bar, mouse, right_move_y);
     
     StartMove* right_start_move_bar = new StartMove(right_move_y);
