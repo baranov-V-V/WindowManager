@@ -312,7 +312,7 @@ bool ManagerWindow::proceedPointedWindows(WindowMouse* mouse) {
 };
 
 BorderWindow::BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
-                 ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) : 
+                           ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) : 
     ManagerWindow(x_size, y_size, coord_x, coord_y, color, parent, press_up_f, pointed_f, press_down_f), border_color(border_color), thickness(thickness) {
     render->setWindow(this);
     render->drawRectangle(0, 0, x_size, y_size, border_color, thickness);
@@ -432,10 +432,14 @@ InvisibleWindow::InvisibleWindow(int x_size, int y_size, int coord_x, int coord_
     
 void InvisibleWindow::draw(Renderer* render) const {
     
+    //render->setWindow(this->getParent());
+    //render->drawFilledRectangle(coord.x, coord.y, coord.x + size.x, coord.y + size.y, black_c, black_c, 1);
+
     for (int i = 0; i < this->getCount(); ++i) {
         this->getChild(i)->draw(render);
         render->setWindow(this->getParent());
         if (this->getParent()) {
+            //cout << "size_x: " << this->getChild(i)->getSizeX() << " size_y: " << this->getChild(i)->getSizeY() << "\n";
             this->getChild(i)->showOn(this->getParent(), this->getChild(i)->getCoordX() + coord.x, this->getChild(i)->getCoordY() + coord.y);
         } else {
             cout << "cannot draw invsible window";
@@ -487,38 +491,51 @@ void TextButtonWindow::draw(Renderer* render) const {
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
                            Renderer* render, Feather* feather, WindowMouse* mouse, App* app, const char* pic_name) :
-    BorderWindow(x_size, y_size, coord_x, coord_y, white_c, white_c, 1, render, parent), name(name), on_display(true),
+    InvisibleWindow(x_size + 2 * grab_len, y_size + 2 * grab_len, coord_x - grab_len, coord_y - grab_len, parent), name(name), on_display(true),
     base_img(x_size, y_size, white_c, 0, 0) {
-    
     need_redraw = false;
-
-    DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
-    MakeFirst* make_first = new MakeFirst(parent);
-    this->setPressDown(make_first);
-    this->setPointed(canvas_functor);
 
     int menu_x = x_size;
     int menu_y = 25;
 
-    int but_x = 30;
-    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, 0, 0, this, but_x);
+    int but_x = close_button_x;
+    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, grab_len, grab_len, this, but_x);
 
+    BorderWindow* canvas = new BorderWindow(max_canvas_x, max_canvas_y, grab_len, menu_y + grab_len, white_c, white_c, 1, render, this);
+    canvas->setSize({x_size, y_size - menu_y});
+    canvas->setRedraw(false);
+    
+    DrawFunctor* canvas_functor = new DrawFunctor(canvas, render, feather, mouse);
+    MakeFirst* make_first = new MakeFirst(this);
+    canvas->setPressDown(make_first);
+    canvas->setPointed(canvas_functor);
+
+    
     render->setWindow(menu);
-    int text_size = strlen(name) * menu_y / 4;
+    int text_size = strlen(name);
+    int text_y = 4 * menu_y / 5;
+    int text_x = text_y / 3;
+    /*
     if (text_size < menu_x - 2 * but_x) {
-        int text_y = 4 * menu_y / 5;
-        int text_x = text_y / 3;
         int ident_y = (menu_y - text_y) / 2;
         render->drawText(menu_x / 2 - 30 * 2 - text_size / 2, ident_y, name, "Helvetica", text_y, text_x, silver_c);
-        TextButtonWindow* button_reset  = new TextButtonWindow(7 * (text_x + 1), menu_y, 0, 0, mgrey_c, mgrey_c, 1, silver_c, "Clear", "Helvetica", text_x + 1, text_y - 2, ALIGN_LEFT, render, menu);
-        GlowBorderFunctor* glow_button_reset = new GlowBorderFunctor(button_reset, lgrey_c, lgrey_c);
-        ClearCanvas* clear_f = new ClearCanvas(this, render);
-        button_reset->setPointed(glow_button_reset);
-        button_reset->setPressUp(clear_f);
-        menu->addChild(button_reset);
+    }
+    */
+
+    TextButtonWindow* button_reset  = new TextButtonWindow(7 * (text_x + 1), menu_y, 0, 0, mgrey_c, mgrey_c, 1, silver_c, "Clear", "Helvetica", text_x + 1, text_y - 2, ALIGN_LEFT, render, menu);
+    GlowBorderFunctor* glow_button_reset = new GlowBorderFunctor(button_reset, lgrey_c, lgrey_c);
+    ClearCanvas* clear_f = new ClearCanvas(canvas, render);
+    button_reset->setPointed(glow_button_reset);
+    button_reset->setPressUp(clear_f);
+    menu->addChild(button_reset);
+
+    render->setWindow(menu);
+    if (menu->getSizeX() / 2 - text_x * text_size > button_reset->getSizeX()) {
+        int ident_y = (menu->getSizeY() - text_y) / 2;
+        render->drawText(menu->getSizeX() / 2 - text_x * text_size, ident_y, name, "Helvetica", text_y, text_x, silver_c);
     }
 
-    MakeMovable(menu, parent, mouse, app);
+    MakeMovable(menu, this, mouse, app);
 
     if (pic_name != nullptr) {
         Texture pic(x_size, y_size, pic_name, 0, 0);
@@ -526,59 +543,8 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
         pic.showOn(this);
     }
 
+    this->addChild(canvas);
     this->addChild(menu);
-};
-
-CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, CanvasWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) :
-    BorderWindow(x_size, y_size, coord_x, coord_y, white_c, white_c, 1, render, window->getParent()), name(window->getName()), on_display(true),
-    base_img(window->getBaseImg().getSizeX(), window->getBaseImg().getSizeY(), white_c, 0, 0) {
-    
-    need_redraw = false;
-
-    DrawFunctor* canvas_functor = new DrawFunctor(this, render, feather, mouse);
-    MakeFirst* make_first = new MakeFirst(this->getParent());
-    this->setPressDown(make_first);
-    this->setPointed(canvas_functor);
-
-    int menu_x = this->getSizeX();
-    int menu_y = 25;
-
-    int but_x = 30;
-    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, 0, 0, this, but_x);
-
-    render->setWindow(menu);
-    int text_size = strlen(name) * menu_y / 4;
-    if (text_size < menu_x - 2 * but_x) {
-        int text_y = 4 * menu_y / 5;
-        int text_x = text_y / 3;
-        int ident_y = (menu_y - text_y) / 2;
-        render->drawText(menu_x / 2 - 30 * 2 - text_size / 2, ident_y, name, "Helvetica", text_y, text_x, silver_c);
-        TextButtonWindow* button_reset  = new TextButtonWindow(7 * (text_x + 1), menu_y, 0, 0, mgrey_c, mgrey_c, 1, silver_c, "Clear", "Helvetica", text_x + 1, text_y - 2, ALIGN_LEFT, render, menu);
-        GlowBorderFunctor* glow_button_reset = new GlowBorderFunctor(button_reset, lgrey_c, lgrey_c);
-        ClearCanvas* clear_f = new ClearCanvas(this, render);
-        button_reset->setPointed(glow_button_reset);
-        button_reset->setPressUp(clear_f);
-        menu->addChild(button_reset);
-    }
-
-    //window->showOn(this);
-   //render->setWindow(this);
-    //render->drawRectangle()
-    window->getBaseImg().showOn(&base_img);
-    cout << "done!";
-    this->addChild(menu);
-};
-
-void CanvasWindow::draw(Renderer* render) const {
-    render->setWindow(const_cast<CanvasWindow*>(this));
-    
-    this->drawChilds(render);
-
-    if (this->getParent()) {
-        this->showOn(this->getParent());
-    } else {
-        cout << "no parent\n";
-    }
 };
 
 GraphWindow::GraphWindow(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render,

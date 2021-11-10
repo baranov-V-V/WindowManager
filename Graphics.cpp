@@ -15,12 +15,33 @@ COLORREF BasicWindow::getColor() const {
 }
 
 Window::Window(int x_size, int y_size, COLORREF color) : BasicWindow(x_size, y_size, color) {    
-    txCreateWindow(x_size, y_size);
+    hWnd = txCreateWindow(x_size, y_size);
     screen = txDC();
     type = TYPE_WINDOW;
     
     txSetFillColor(color, screen);
     txRectangle(0, 0, x_size, y_size, screen);
+    //cout << hWnd << "\n";
+
+    HINSTANCE hInst;
+    hInst = GetModuleHandle(NULL); //(HINSTANCE)GetWindowLong(app.users_window.getHwnd(), -6);
+        if ((hInst))
+        {
+            //printf("Successful");
+        }
+    
+    //HINSTANCE hInst = (HINSTANCE) GetWindowLongA(hWnd, GWLP_HINSTANCE); //
+    //assert(hInst != 0);
+
+    //HCURSOR cursor = LoadCursor(NULL, IDC_ARROW);
+    //assert(cursor != NULL);
+
+    //CopyCursor(cursor);
+
+    //SetSystemCursor(cursor , 32515);
+
+    //SetClassLong(hWnd, GCL_HCURSOR, (LONG) cursor);
+    //SetCursor(cursor);
 };
 
 Texture::Texture(int x_size, int y_size, COLORREF color, int coord_x, int coord_y) :
@@ -46,11 +67,11 @@ Texture::~Texture() {
 }
 
 void Texture::showOn(const BasicWindow* target) const {
-    txBitBlt(target->getHdc(), coord.x, coord.y, 0, 0, this->getHdc());
+    txBitBlt(target->getHdc(), coord.x, coord.y, size.x, size.y, this->getHdc());
 }
 
 void Texture::showOn(const BasicWindow* target, int coord_x, int coord_y) {
-    txBitBlt(target->getHdc(), coord_x, coord_y, 0, 0, this->getHdc());
+    txBitBlt(target->getHdc(), coord_x, coord_y, size.x, size.y, this->getHdc());
 };
 
 void Renderer::drawLine(double x_begin, double y_begin, double x_end, double y_end, COLORREF color, int thickness) const {
@@ -103,6 +124,8 @@ void Renderer::clear() const {
 }
 
 void WindowMouse::update() {
+    this->printPos();
+
     int dx = abs_coord.x - rel_coord.x;
     int dy = abs_coord.y - rel_coord.y;
 

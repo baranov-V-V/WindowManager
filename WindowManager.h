@@ -9,6 +9,7 @@
 #include <iomanip>
 #include <ctime>
 #include <sstream>
+#include <queue>
 #include "Functors.h"
 
 //in each window there is texture.
@@ -19,6 +20,7 @@ using std::rand;
 using std::max;
 using std::cerr;
 using std::cout;
+using std::queue;
 
 //string main_font = "montserrat";
 
@@ -154,6 +156,11 @@ enum TEXT_BUTTON_ALIGN {
 const int MAX_THICKNESS = 20;
 const int MIN_THICKNESS = 2;
 
+const int max_canvas_x = 1980;
+const int max_canvas_y = 1080;
+
+const int close_button_x = 30;
+const int menu_size_y = 25;
 
 #define IS_CLICKABLE(type) (type & TYPE_CLICKABLE)
 #define IS_GLOWABLE(type)  (type & TYPE_GLOWABLE)
@@ -271,11 +278,12 @@ PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, Manag
 PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app);
 PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, Feather* feather, WindowMouse* mouse, App* app);
 void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse, App* app);
+void WriteCanvasName(CanvasWindow* canvas_layer, Renderer* render);
 
 InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app);
 InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app);
 void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs);
-InvisibleWindow* GetResizedCanvas(InvisibleWindow* canvas_layer, Renderer* render, Feather* feather, WindowMouse* mouse, App* app, const Pair<int>& new_size, const Pair<int>& new_coord);
+void ResizeCanvasWindow(CanvasWindow* canvas_layer, Renderer* render, Pair<int> new_size, Pair<int> new_coord);
 BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
 
 class VFunctor {
@@ -298,6 +306,8 @@ class WindowMouse {
     void setRelCoord(Pair<int> coord) { rel_coord = coord; };
     bool isLeftClick() const { return state & LEFT_CLICK; };
     
+    void printPos() { /*POINT pt; GetCursorPos(&pt); std::cout << "x: " << pt.x << " y : " << pt.y << "\n";*/ };
+
     void setWindow(ManagerWindow* new_window);          // only if new window is child of current window
     void setToParent();
 
@@ -420,6 +430,11 @@ class BasicWindow {
 class Window : public BasicWindow {
   public:
     Window(int x_size, int y_size, COLORREF color = black_c);
+  
+    HWND getHwnd() { return hWnd; };
+
+  private:
+    HWND hWnd;
 };
 
 class Texture : public BasicWindow {
@@ -528,6 +543,7 @@ class PicWindow : public ManagerWindow {
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     
     void draw(Renderer* render) const override;
+    Texture* getBaseImg() { return &base_img; };
 
   private:
     Texture base_img;
@@ -578,21 +594,20 @@ class TextButtonWindow : public BorderWindow {
     int align;
 };
 
-class CanvasWindow : public BorderWindow {
+class CanvasWindow : public InvisibleWindow {
   public:
     CanvasWindow();
     CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
                  Renderer* render, Feather* feather, WindowMouse* mouse, App* app, const char* pic_name = nullptr);
-    CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, CanvasWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse);
+    //CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, CanvasWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse);
 
-    void draw(Renderer* render) const override;
     void hide() { on_display = false; };
     void show() { on_display = true;  };
-    void clear(Renderer* render) {
+    /*void clear(Renderer* render) {
         render->setWindow(this);
         render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
         base_img.showOn(this);
-    }
+    }*/
     const Texture& getBaseImg() { return base_img; };
 
     char* getName() const { return name; };
@@ -699,7 +714,7 @@ class App {
     void setActiveWindow(ManagerWindow* window) { active_window = window; };
     ManagerWindow* getActiveWindow(ManagerWindow* window) const { return active_window; };
 
-  private:
+  public:
     void initWindows();
     void proceedMouseEvent();
     void sleep(int millisec) const;
@@ -711,6 +726,8 @@ class App {
     WindowMouse mouse;
     Renderer render;
     bool on_run;
+
+    std::queue<VFunctor*> events_queue;
 
     ManagerWindow* active_window = nullptr;
 };
@@ -914,7 +931,7 @@ class HideCanvasFunctor : public VFunctor {
 class FileFunctor : public VFunctor {
   public:
     FileFunctor();
-    FileFunctor(ManagerWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) : window(window), render(render), mouse(mouse), feather(feather) {};
+    FileFunctor(ManagerWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) : window(window), render(render), mouse(mouse), feather(feather), app(app) {};
     virtual ~FileFunctor() {};
 
     bool action() override {
@@ -958,30 +975,40 @@ class ViewFunctor : public VFunctor {
 class MoveFunctor : public VFunctor {
   public:
     MoveFunctor();
-    MoveFunctor(ManagerWindow* window, WindowMouse* mouse, App* app) : move_window(window), mouse(mouse), on_move(false), old_coord(0, 0), app(app) {};
+    MoveFunctor(ManagerWindow* window, WindowMouse* mouse, App* app, ManagerWindow* activate_window = nullptr) : 
+        activate_window(activate_window), move_window(window), mouse(mouse), on_move(false), old_coord(0, 0), app(app) {};
     virtual ~MoveFunctor() {};
 
     virtual void startMove() { 
         move_window->getParent()->makeFirst(move_window); 
-        on_move = true; old_coord = mouse->getAbsCoord(); 
-        app->setActiveWindow(move_window);
+        on_move = true;
+        old_coord = mouse->getAbsCoord();
+        if (activate_window) {
+            app->setActiveWindow(activate_window);  
+        } else {
+            app->setActiveWindow(move_window);
+        }
+        //cout << "started move!";
     };
 
     virtual void endMove() {
         on_move = false;
         app->setActiveWindow(nullptr);
+        //cout << "ended move!";
     };
 
     bool action() override {
+        //cout << "try movimg!";
         if (on_move) {
+            //cout << "in move!";
             move_window->setCoord(move_window->getCoord() + (mouse->getAbsCoord() - old_coord));
             old_coord = mouse->getAbsCoord();
         }
-
         return true;
     };
 
   protected:
+    ManagerWindow* activate_window;
     ManagerWindow* move_window;
     WindowMouse* mouse;
     Pair<int> old_coord;
@@ -1313,16 +1340,12 @@ class ResizeCanvas : public MoveFunctor {
         if (coord.y >= (move_window->getSizeY() - grab_len)) {
             SET_DIR_DOWN(direction);
         }
-        std::cout << "current direction: " << direction;
+        //std::cout << "current direction: " << direction;
         app->setActiveWindow(move_window);
     };
 
     void endMove() override {
-        if (is_moved) {
-            GetResizedCanvas(dynamic_cast<InvisibleWindow*>(move_window), render, feather, mouse, app, new_size, new_coord);
-        }
         on_move = false;
-        is_moved = false;
         CLEAR_DIR(direction);
         app->setActiveWindow(nullptr);
     };
@@ -1334,44 +1357,20 @@ class ResizeCanvas : public MoveFunctor {
             Pair<int> d_mouse_move = mouse->getAbsCoord() - old_coord;
             if (IS_DIR_RIGHT(direction)) {
                 new_size.x = move_window->getSizeX() + d_mouse_move.x;
-                resize_dx += d_mouse_move.x;
             }
             if (IS_DIR_LEFT(direction)) {
                 new_size.x = move_window->getSizeX() - d_mouse_move.x;
                 new_coord.x = move_window->getCoordX() + d_mouse_move.x;
-                resize_dx += d_mouse_move.x;
             }
             if (IS_DIR_UP(direction)) {
-                resize_dy += d_mouse_move.y;
                 new_size.y = move_window->getSizeY() - d_mouse_move.y;
                 new_coord.y = move_window->getCoordY() + d_mouse_move.y;
             }
             if (IS_DIR_DOWN(direction)) {
-                resize_dy += d_mouse_move.y;
                 new_size.y = move_window->getSizeY() + d_mouse_move.y;
             }
             if (old_coord != mouse->getAbsCoord()) {
-                is_moved = true;
-                //cout << "start\n";
-                move_window->setCoord(new_coord);
-                move_window->setSize(new_size);
-                //move_window->setCoord(move_window->getCoord() + (mouse->getAbsCoord() - old_coord));
-                
-                cout << "new size_x: " << move_window->getSizeX() << " new size_y: " << move_window->getSizeY() << "\n";
-                cout << "new coord_x: " << move_window->getCoordX() << " new coord_y: " << move_window->getCoordY() << "\n";
-
-                //cout << "finish\n";
-                //ManagerWindow* parent = move_window->getParent();
-                //parent->delChild(move_window);
-                //parent->addChild(new_canvas_layer);
-                //delete move_window;
-                //move_window = new_canvas_layer;
-            }
-            if (abs(resize_dx) > 5 || abs(resize_dy) > 5) {
-                GetResizedCanvas(dynamic_cast<InvisibleWindow*>(move_window), render, feather, mouse, app, new_size, new_coord);
-                resize_dx = 0;
-                resize_dy = 0;
-                is_moved = false;
+                ResizeCanvasWindow(dynamic_cast<CanvasWindow*>(move_window), render, new_size, new_coord);
             }
             old_coord = mouse->getAbsCoord();
         } else {
@@ -1381,8 +1380,6 @@ class ResizeCanvas : public MoveFunctor {
     };
   
   private:
-    bool is_moved = false;
-
     Pair<int> new_size;
     Pair<int> new_coord;
     int resize_dx = 0;
@@ -1478,12 +1475,12 @@ class MakeUnFixedBars : public VFunctor {
 class ClearCanvas : public VFunctor {
   public:
     ClearCanvas();
-    ClearCanvas(CanvasWindow* canvas, Renderer* render) : canvas(canvas), render(render) {};
+    ClearCanvas(BorderWindow* canvas, Renderer* render) : canvas(canvas), render(render) {};
     virtual ~ClearCanvas() {};
 
-    bool action() override { canvas->clear(render); return true; };
+    bool action() override { render->setWindow(canvas); render->drawRectangle(0, 0, max_canvas_x, max_canvas_y, white_c, 1); return true; };
 
   private:
-    CanvasWindow* canvas;
+    BorderWindow* canvas;
     Renderer* render;
 };
