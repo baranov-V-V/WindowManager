@@ -48,6 +48,7 @@
         "typeinfo": "cpp",
         "queue": "cpp",
         "cassert": "cpp",
-        "*.rh": "cpp"
+        "*.rh": "cpp",
+        "cstring": "cpp"
     }
 }

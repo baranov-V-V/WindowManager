@@ -265,6 +265,7 @@ void ResizeCanvasWindow(CanvasWindow* canvas_layer, Renderer* render, Pair<int> 
 }
 
 BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app) {
+
     BorderWindow* graph_layer = new BorderWindow(size_x, size_y, coord_x, coord_y, palette_c, dgrey_c, 1, render, parent);
     MakeMovable(graph_layer, graph_layer, mouse, app);
 
@@ -371,3 +372,26 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
 
     return graph_layer;
 }
+
+ToolManager::ToolManager() {
+    count = 0;
+};
+
+ToolManager::~ToolManager() {};
+
+void ToolManager::addTool(VTool* tool) {
+    tools.push_back(tool);
+};
+
+void ToolManager::delTool(VTool* tool) {
+
+    auto it = std::find(tools.begin(), tools.end(), tool);
+    if (it != tools.end()) {
+        tools.erase(it);
+    }
+
+};
+
+void ToolManager::delLast() {
+    tools.pop_back();
+};

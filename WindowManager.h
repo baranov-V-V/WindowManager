@@ -1,6 +1,7 @@
 #include <cmath>
 #include <ctime>
 #include <iostream>
+#include <algorithm>
 #include <windows.h>
 #include <windef.h>
 #include <cassert>
@@ -286,73 +287,6 @@ void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs);
 void ResizeCanvasWindow(CanvasWindow* canvas_layer, Renderer* render, Pair<int> new_size, Pair<int> new_coord);
 BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
 
-class VFunctor {
-  public:
-    virtual ~VFunctor() {};
-    virtual bool action() = 0;
-};
-
-class WindowMouse {
-  public:
-    WindowMouse(ManagerWindow* window) : window(window), abs_coord(0, 0), rel_coord(0, 0), state(NONE_CLICK) {};
-
-    void update(); //call only if window is app_window!!
-    
-    int getState() const;
-    void printState() const;
-    
-    Pair<int> getRelCoord() const { return rel_coord; }; 
-    Pair<int> getAbsCoord() const { return abs_coord; };
-    void setRelCoord(Pair<int> coord) { rel_coord = coord; };
-    bool isLeftClick() const { return state & LEFT_CLICK; };
-    
-    void printPos() { /*POINT pt; GetCursorPos(&pt); std::cout << "x: " << pt.x << " y : " << pt.y << "\n";*/ };
-
-    void setWindow(ManagerWindow* new_window);          // only if new window is child of current window
-    void setToParent();
-
-  private:
-    int state;
-    Pair<int> abs_coord;
-    ManagerWindow* window;
-    Pair<int> rel_coord;
-};
-
-class Feather {
-  public:
-    Feather(COLORREF color = black_c, int thickness = 2) : color(color), thickness(thickness), mode(MODE_DRAW) {};
-
-    void setColor(COLORREF color) { Feather::color = color; };
-    void setThickness(int thickness) { Feather::thickness = thickness; };
-    void setMode(int mode) { Feather::mode = mode; };
-
-    COLORREF getColor() const { return color; };
-    int getThickness() const { return thickness; };
-    int getMode() const { return mode; };
-
-    //void setTheme();
-
-  private:
-    COLORREF color;
-    int thickness;
-    int mode;
-};
-
-/*
-class Eraser {
-  public:
-    Eraser() : color(white_c), thickness(5) {};
-
-    COLORREF getColor() const { return color; };
-    int getThickness()  const { return thickness; };
-    //void setTheme();
-
-  private:
-    COLORREF color;
-    int thickness;
-};
-*/
-
 class Renderer {
   public:
     Renderer(BasicWindow* window, double min_x, double min_y, double max_x, double max_y);
@@ -398,6 +332,142 @@ class Renderer {
     Pair<double> scale;
     Pair<double> max;
     Pair<double> min;
+};
+
+class VFunctor {
+  public:
+    virtual ~VFunctor() {};
+    virtual bool action() = 0;
+};
+
+class WindowMouse {
+  public:
+    WindowMouse(ManagerWindow* window) : window(window), abs_coord(0, 0), rel_coord(0, 0), state(NONE_CLICK) {};
+
+    void update(); //call only if window is app_window!!
+    
+    int getState() const;
+    void printState() const;
+    
+    Pair<int> getRelCoord() const { return rel_coord; }; 
+    Pair<int> getAbsCoord() const { return abs_coord; };
+    void setRelCoord(Pair<int> coord) { rel_coord = coord; };
+    bool isLeftClick() const { return state & LEFT_CLICK; };
+    
+    void printPos() { /*POINT pt; GetCursorPos(&pt); std::cout << "x: " << pt.x << " y : " << pt.y << "\n";*/ };
+
+    void setWindow(ManagerWindow* new_window);          // only if new window is child of current window
+    void setToParent();
+
+  private:
+    int state;
+    Pair<int> abs_coord;
+    ManagerWindow* window;
+    Pair<int> rel_coord;
+};
+
+class VTool {
+  public:
+    virtual ~VTool() {};
+    virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) {};
+    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) = 0;
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y) {};
+  private:
+};
+
+class Feather : public VTool {
+  public:
+    Feather(COLORREF color = black_c, int thickness = 2) : color(color), thickness(thickness), mode(MODE_DRAW) {};
+    virtual ~Feather() {};
+
+    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override {
+        old_coord.x = x;
+        old_coord.y = y;
+    };
+    /*
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y) {
+        render->setWindow(target);
+        render->drawLine(x, y, old_coord.x, old_coord.y, color, thickness);
+    };
+    */
+   
+    void setColor(COLORREF color) { Feather::color = color; };
+    void setThickness(int thickness) { Feather::thickness = thickness; };
+    void setMode(int mode) { Feather::mode = mode; };
+
+    COLORREF getColor() const { return color; };
+    int getThickness() const { return thickness; };
+    int getMode() const { return mode; };
+
+    //void setTheme();
+  private:
+    Pair<int> old_coord;
+    COLORREF color;
+    int thickness;
+    int mode;
+};
+
+class Eraser : public VTool {
+  public:
+    Eraser() : color(white_c), thickness(5) {};
+    virtual ~Eraser() {};
+
+    
+    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override {
+        old_coord.x = x;
+        old_coord.y = y;
+    };
+    /*
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y) {
+        render->setWindow(target);
+        render->drawLine(x, y, old_coord.x, old_coord.y, color, thickness);
+    };
+    */
+
+    COLORREF getColor() const { return color; };
+    int getThickness()  const { return thickness; };
+
+  private:
+    Pair<int> old_coord;
+    COLORREF color;
+    int thickness;
+};
+
+class ToolManager {
+  public:
+    ToolManager();
+    ~ToolManager();
+
+    size_t getCount() const { return count; };
+    VTool* getCurrTool() const { return tools[curr_tool]; };
+
+    void addTool(VTool* tool);
+    void delTool(VTool* tool);
+    void delLast();
+
+    VTool* operator[] (int index) { return tools[index]; };
+    const VTool* operator[] (int index) const { return tools[index]; };
+  
+    void setNext() {
+        if (curr_tool != tools.size() - 1) {
+            curr_tool++;
+        } else {
+            curr_tool = 0;
+        }
+    };
+    void setPrev() {
+        if (curr_tool != 0) {
+            curr_tool--;
+        } else {
+            curr_tool = tools.size() - 1;
+        }
+    };
+
+  private:
+    std::vector<VTool*> tools;
+    size_t count;
+
+    size_t curr_tool;
 };
 
 
