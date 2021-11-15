@@ -154,11 +154,13 @@ enum TEXT_BUTTON_ALIGN {
     ALIGN_RIGHT = 2,
 };
 
+enum BASIC_TOOLS {
+    TOOL_FEATHER = 0,
+    TOOL_ERASER = 1
+};
+
 const int MAX_THICKNESS = 20;
 const int MIN_THICKNESS = 2;
-
-const int max_canvas_x = 1980;
-const int max_canvas_y = 1080;
 
 const int close_button_x = 30;
 const int menu_size_y = 25;
@@ -227,8 +229,6 @@ class ThicknessWindow;
 class TextButtonWindow;
 class CanvasWindow;
 class ClockWindow;
-
-
 
 class DummyFunctor;
 class FeatherFunctor;
@@ -368,69 +368,21 @@ class WindowMouse {
 
 class VTool {
   public:
+    VTool() : color(black_c) {};
+    VTool(COLORREF color) : color(color) {};
     virtual ~VTool() {};
+    
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) {};
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) = 0;
-    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y) {};
+    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) {};
+
+    void setColor(COLORREF color) { VTool::color = color; };
+    COLORREF getColor() const { return color;}
+
   private:
-};
-
-class Feather : public VTool {
-  public:
-    Feather(COLORREF color = black_c, int thickness = 2) : color(color), thickness(thickness), mode(MODE_DRAW) {};
-    virtual ~Feather() {};
-
-    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override {
-        old_coord.x = x;
-        old_coord.y = y;
-    };
-    /*
-    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y) {
-        render->setWindow(target);
-        render->drawLine(x, y, old_coord.x, old_coord.y, color, thickness);
-    };
-    */
-   
-    void setColor(COLORREF color) { Feather::color = color; };
-    void setThickness(int thickness) { Feather::thickness = thickness; };
-    void setMode(int mode) { Feather::mode = mode; };
-
-    COLORREF getColor() const { return color; };
-    int getThickness() const { return thickness; };
-    int getMode() const { return mode; };
-
-    //void setTheme();
-  private:
-    Pair<int> old_coord;
+  
+  protected:
     COLORREF color;
-    int thickness;
-    int mode;
-};
-
-class Eraser : public VTool {
-  public:
-    Eraser() : color(white_c), thickness(5) {};
-    virtual ~Eraser() {};
-
-    
-    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override {
-        old_coord.x = x;
-        old_coord.y = y;
-    };
-    /*
-    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y) {
-        render->setWindow(target);
-        render->drawLine(x, y, old_coord.x, old_coord.y, color, thickness);
-    };
-    */
-
-    COLORREF getColor() const { return color; };
-    int getThickness()  const { return thickness; };
-
-  private:
-    Pair<int> old_coord;
-    COLORREF color;
-    int thickness;
 };
 
 class ToolManager {
@@ -438,8 +390,9 @@ class ToolManager {
     ToolManager();
     ~ToolManager();
 
-    size_t getCount() const { return count; };
+    size_t getCount() const { return tools.size(); };
     VTool* getCurrTool() const { return tools[curr_tool]; };
+    void setCurrTool(int tool_index) { curr_tool = tool_index; };
 
     void addTool(VTool* tool);
     void delTool(VTool* tool);
@@ -465,11 +418,9 @@ class ToolManager {
 
   private:
     std::vector<VTool*> tools;
-    size_t count;
 
     size_t curr_tool;
 };
-
 
 class BasicWindow {
   public:
@@ -529,6 +480,98 @@ class Texture : public BasicWindow {
   protected:
     Pair<int> coord;
     RGBQUAD* screen_buf;
+};
+
+class Feather : public VTool {
+  public:
+    Feather(COLORREF color = black_c, int thickness = 2) : VTool(color), thickness(thickness) {};
+    virtual ~Feather() {};
+
+    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override {
+        old_coord.x = x;
+        old_coord.y = y;
+    };
+    
+    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
+        render->setWindow(reinterpret_cast<BasicWindow*>(target));
+        if (old_coord.x + dx > target->getSizeX() || old_coord.y + dy > target->getSizeY()) {
+            old_coord.x += dx;
+            old_coord.y += dy;
+            return;
+        }
+
+        render->drawLine(old_coord.x, old_coord.y, old_coord.x + dx, old_coord.y + dy, color, thickness);
+        
+        old_coord.x += dx;
+        old_coord.y += dy;
+    };
+    
+    void setThickness(int thickness) { Feather::thickness = thickness; };
+    int getThickness() const { return thickness; };
+
+    //void setTheme();
+  private:
+    Pair<int> old_coord;
+    int thickness;
+};
+
+class Eraser : public VTool {
+  public:
+    Eraser() : VTool(white_c), thickness(5) {};
+    virtual ~Eraser() {};
+
+    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override {
+        old_coord.x = x;
+        old_coord.y = y;
+    };
+    
+    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
+        render->setWindow(reinterpret_cast<BasicWindow*>(target));
+        if (old_coord.x + dx > target->getSizeX() || old_coord.y + dy > target->getSizeY()) {
+            old_coord.x += dx;
+            old_coord.y += dy;
+            return;
+        }
+
+        render->drawLine(old_coord.x, old_coord.y, old_coord.x + dx, old_coord.y + dy, white_c, thickness);
+        
+        old_coord.x += dx;
+        old_coord.y += dy;
+    };
+    
+    int getThickness()  const { return thickness; };
+
+  private:
+    Pair<int> old_coord;
+    int thickness;
+};
+
+class RectTool : public VTool {
+  public:
+    RectTool() : VTool(black_c) {};
+    virtual ~RectTool() {};
+
+    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override {
+        old_coord.x = x;
+        old_coord.y = y;
+        new_coord = old_coord;
+    };
+    
+    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) { 
+        new_coord.x += dx;
+        new_coord.y += dy;
+    };
+
+    virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
+        if (new_coord.x > 0 && new_coord.x < target->getSizeX() && new_coord.y > 0 && new_coord.y < target->getSizeY()) {
+            render->setWindow(reinterpret_cast<BasicWindow*>(target));
+            render->drawFilledRectangle(old_coord.x, old_coord.y, new_coord.x, new_coord.y, color, color, 1);
+        }
+    };
+
+  private:
+    Pair<int> old_coord;
+    Pair<int> new_coord;
 };
 
 class ManagerWindow : public Texture {
@@ -637,13 +680,13 @@ class BorderWindow : public ManagerWindow {
 class ThicknessWindow : public BorderWindow {
   public:
     ThicknessWindow();
-    ThicknessWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Feather* feather, Renderer* render,
+    ThicknessWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, ToolManager* tools, Renderer* render,
                     ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
 
     void draw(Renderer* render) const override;
   
   private:
-    Feather* feather;
+    ToolManager* tools;
 };
 
 class TextButtonWindow : public BorderWindow {
@@ -784,8 +827,11 @@ class App {
     void setActiveWindow(ManagerWindow* window) { active_window = window; };
     ManagerWindow* getActiveWindow(ManagerWindow* window) const { return active_window; };
 
+    ToolManager* getToolManager() { return &tool_manager; };
+
   public:
     void initWindows();
+    void initBasicTools();
     void proceedMouseEvent();
     void sleep(int millisec) const;
 
@@ -798,7 +844,8 @@ class App {
     bool on_run;
 
     std::queue<VFunctor*> events_queue;
-
+    
+    ToolManager tool_manager;
     ManagerWindow* active_window = nullptr;
 };
 
@@ -870,38 +917,55 @@ class DebugFunctorFalse : public VFunctor {
 
 class ChangeColor : public VFunctor {
   public:
-    ChangeColor() : feather(nullptr), color(black_c) {};
-    ChangeColor(Feather* feather, COLORREF color) : feather(feather), color(color) {};
+    ChangeColor() : tools(nullptr), color(black_c) {};
+    ChangeColor(ToolManager* tools, COLORREF color) : tools(tools), color(color) {};
     virtual ~ChangeColor() {};
 
-    bool action() override { feather->setColor(color); return true; };
+    bool action() override { 
+        for (int i = 0; i < tools->getCount(); ++i) {
+            tools->operator[](i)->setColor(color);
+        }
+      return true;
+    };
 
   private:
-    Feather* feather;
+    ToolManager* tools;
     COLORREF color;  
 };
 
-class ChangeMode : public VFunctor {
+class ChangeBasicTool : public VFunctor {
   public:
-    ChangeMode() : feather(nullptr) { mode = MODE_DRAW; };
+    ChangeBasicTool() : tools(nullptr) { tool_index = 0; };
+    ChangeBasicTool(ToolManager* tools, int tool_index) : tools(tools), tool_index(tool_index) {};
+    virtual ~ChangeBasicTool() {};
 
-    ChangeMode(Feather* feather, int mode) : feather(feather), mode(mode) {};
-    virtual ~ChangeMode() {};
-
-    bool action() override { feather->setMode(mode); return true; };
+    bool action() override { tools->setCurrTool(tool_index); return true; };
 
   private:
-    Feather* feather;
-    int mode;
+    ToolManager* tools;
+    int tool_index;
+};
+
+class NextBasicTool : public VFunctor {
+  public:
+    NextBasicTool() : tools(nullptr) {};
+    NextBasicTool(ToolManager* tools) : tools(tools) {};
+    virtual ~NextBasicTool() {};
+
+    bool action() override { tools->setNext(); return true; };
+
+  private:
+    ToolManager* tools;
 };
 
 class IncThickness : public VFunctor {
   public:
-    IncThickness() : feather(nullptr) {};
-    IncThickness(Feather* feather) : feather(feather) {};
+    IncThickness() : tools(nullptr) {};
+    IncThickness(ToolManager* tools) : tools(tools) {};
     virtual ~IncThickness() {};
 
     bool action() override { 
+        Feather* feather = reinterpret_cast<Feather*>(tools->operator[](TOOL_FEATHER));
         if (feather->getThickness() < MAX_THICKNESS) {
             feather->setThickness(feather->getThickness() + 1);  
         }
@@ -909,16 +973,17 @@ class IncThickness : public VFunctor {
     };
 
   private:
-    Feather* feather;  
+    ToolManager* tools;  
 };
 
 class DecThickness : public VFunctor {
   public:
-    DecThickness() : feather(nullptr) {};
-    DecThickness(Feather* feather) : feather(feather) {};
+    DecThickness() : tools(nullptr) {};
+    DecThickness(ToolManager* tools) : tools(tools) {};
     virtual ~DecThickness() {};
 
-    bool action() override { 
+    bool action() override {
+        Feather* feather = reinterpret_cast<Feather*>(tools->operator[](TOOL_FEATHER));
         if (feather->getThickness() > MIN_THICKNESS) {
             feather->setThickness(feather->getThickness() - 1);  
         }
@@ -926,44 +991,77 @@ class DecThickness : public VFunctor {
     };
 
   private:
-    Feather* feather;  
+    ToolManager* tools;  
 };
 
 class DrawFunctor : public VFunctor {
   public:
-    DrawFunctor() : feather(nullptr), render(nullptr), window(nullptr), mouse(nullptr), old_coord(0, 0) {};
-    DrawFunctor(ManagerWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse) : feather(feather), render(render), window(window), mouse(mouse) {};
+    DrawFunctor() : render(nullptr), canvas(nullptr), mouse(nullptr), abs_old_coord(0, 0) {};
+    DrawFunctor(ManagerWindow* window, Renderer* render, WindowMouse* mouse, App* app, ToolManager* tool_manager) :
+                render(render), canvas(window), mouse(mouse), app(app), tool_manager(tool_manager) {};
     virtual ~DrawFunctor() {};
+
+    void startDraw() {
+        is_drawing = true;
+        curr_tool = tool_manager->getCurrTool();
+        canvas->getParent()->getParent()->makeFirst(canvas->getParent());
+        curr_tool->ProceedPressDown(canvas, render, mouse->getRelCoord().x, mouse->getRelCoord().y);
+        abs_old_coord = mouse->getAbsCoord();
+        app->setActiveWindow(canvas);
+    }
+    void endDraw() {
+        is_drawing = false;
+        curr_tool->ProceedPressUp(canvas, render, mouse->getAbsCoord().x, mouse->getAbsCoord().y);
+        app->setActiveWindow(nullptr);
+    }
 
     bool action() override {
         //cout << "in draw!" << "\n";
-        render->setWindow(window);
-        if (mouse->getState() & LEFT_CLICK) {
-            //cout << "in draw2!" << "\n";
-            switch (feather->getMode()) {
-                case MODE_ERASE:
-                    render->drawLine(old_coord.x, old_coord.y, mouse->getRelCoord().x, mouse->getRelCoord().y, white_c, feather->getThickness());
-                    break;
-                case MODE_DRAW:
-                    //cout << "drawing line!" << "\n";
-                    //cout << "from (" << old_coord.x << "," << old_coord.y << ") to (" << mouse->getRelCoord().x << "," << mouse->getRelCoord().y << ")\n";
-                    render->drawLine(old_coord.x, old_coord.y, mouse->getRelCoord().x, mouse->getRelCoord().y, feather->getColor(), feather->getThickness());
-                    break;
-                default:
-                    cerr << "unsupported mod: " << feather->getMode() << " in draw" << "\n";
-                    break;
-            }
+        if (is_drawing) {
+            curr_tool->ProceedMove(canvas, render, mouse->getAbsCoord().x - abs_old_coord.x, mouse->getAbsCoord().y - abs_old_coord.y); //dx, dy coordinates
+            abs_old_coord = mouse->getAbsCoord();
         }
-        old_coord = mouse->getRelCoord();
         return true;
     };
 
   private:
-    Feather* feather;
+    bool is_drawing;
     Renderer* render;
-    ManagerWindow* window;
+    
+    ManagerWindow* canvas;
+    
     WindowMouse* mouse;
-    Pair<int> old_coord;
+    
+    ToolManager* tool_manager;
+    VTool* curr_tool;
+    
+    Pair<int> abs_old_coord;
+    
+    App* app;
+};
+
+class StartDraw : public VFunctor {
+  public:
+    StartDraw();
+    StartDraw(DrawFunctor* draw_f) : draw_f(draw_f) {};
+    virtual ~StartDraw() {};
+
+    bool action() override { draw_f->startDraw(); return true; };
+
+  protected:
+    DrawFunctor* draw_f;
+};
+
+class EndDraw : public VFunctor {
+  public:
+    EndDraw();
+    EndDraw(DrawFunctor* draw_f) : draw_f(draw_f) {};
+    virtual ~EndDraw() {};
+
+    bool action() override { draw_f->endDraw(); return true; };
+
+  private:
+    DrawFunctor* draw_f;
 };
 
 class CloseCanvasFunctor : public VFunctor {
@@ -1112,17 +1210,18 @@ class EndMove : public VFunctor {
 
 class RecalcThickness : public VFunctor {
   public:
-    RecalcThickness(int min_coord, int max_coord, ManagerWindow* bar, Feather* feather) : bar(bar), feather(feather), min_coord(min_coord), max_coord(max_coord) {};
+    RecalcThickness(int min_coord, int max_coord, ManagerWindow* bar, ToolManager* tools) : bar(bar), tools(tools), min_coord(min_coord), max_coord(max_coord) {};
     virtual ~RecalcThickness() {};
 
     bool action () override {
+        Feather* feather = reinterpret_cast<Feather*>(tools->operator[](TOOL_FEATHER));
         feather->setThickness(MIN_THICKNESS + (bar->getCoordX() - min_coord) * (MAX_THICKNESS - MIN_THICKNESS) / (max_coord - min_coord));    
         return true;
     }; 
 
   private:
     ManagerWindow* bar;
-    Feather* feather;
+    ToolManager* tools;
     int min_coord;
     int max_coord;
 };
@@ -1548,7 +1647,7 @@ class ClearCanvas : public VFunctor {
     ClearCanvas(BorderWindow* canvas, Renderer* render) : canvas(canvas), render(render) {};
     virtual ~ClearCanvas() {};
 
-    bool action() override { render->setWindow(canvas); render->drawRectangle(0, 0, max_canvas_x, max_canvas_y, white_c, 1); return true; };
+    bool action() override { render->setWindow(canvas); render->drawFilledRectangle(0, 0, max_canvas_x, max_canvas_y, white_c, white_c, 1); return true; };
 
   private:
     BorderWindow* canvas;

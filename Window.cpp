@@ -1,4 +1,10 @@
-#include "WindowManager.h"
+#include "Window.h"
+#include "Functors.h"
+#include "Tools.h"
+#include "App.h"
+#include <iostream>
+#include <cassert>
+#include <cmath>
 
 Renderer::Renderer(BasicWindow* window, double min_x, double min_y, double max_x, double max_y) :
     window(window), max(max_x, max_y), min(min_x, min_y) {
@@ -7,7 +13,7 @@ Renderer::Renderer(BasicWindow* window, double min_x, double min_y, double max_x
 
 void Renderer::calcScale() {
     scale.x = double(window->getSizeX()) / double(max.x - min.x);
-    scale.y = double(window->getSizeY()) / double(max.y - min.y); 
+    scale.y = double(window->getSizeY()) / double(max.y - min.y);
 };
 
 void Renderer::setWindow(BasicWindow* new_window) {
@@ -358,9 +364,9 @@ int WindowMouse::getState() const {
 };
 
 void WindowMouse::printState() const{
-    cout << "    Mouse\n" << "abs_coord_x: " << abs_coord.x << " abs_coord_y: " << abs_coord.y << "\n";
-    cout << "rel_coord_x: " << rel_coord.x << " rel_coord_y: " << rel_coord.y << "\n";
-    cout << "state: " << state << "\n";
+    std::cout << "    Mouse\n" << "abs_coord_x: " << abs_coord.x << " abs_coord_y: " << abs_coord.y << "\n";
+    std::cout << "rel_coord_x: " << rel_coord.x << " rel_coord_y: " << rel_coord.y << "\n";
+    std::cout << "state: " << state << "\n";
     //cout << "window: " << window << "\n";
 };
 
@@ -411,15 +417,16 @@ void PicWindow::draw(Renderer* render) const {
     }
 };
 
-ThicknessWindow::ThicknessWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Feather* feather, Renderer* render,
+ThicknessWindow::ThicknessWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, ToolManager* tools, Renderer* render,
                                  ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) : 
-    BorderWindow(x_size, y_size, coord_x, coord_y, color, border_color, thickness, render, parent, press_up_f, pointed_f, press_down_f), feather(feather) {
+    BorderWindow(x_size, y_size, coord_x, coord_y, color, border_color, thickness, render, parent, press_up_f, pointed_f, press_down_f), tools(tools) {
     //cerr << "constructed: [" << this << "]\n";
 };
 
 void ThicknessWindow::draw(Renderer* render) const {
     render->setWindow(const_cast<ThicknessWindow*>(this));
     render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
+    ToolFeather* feather = reinterpret_cast<ToolFeather*>(tools->operator[](TOOL_FEATHER));
     render->drawLine(6, size.y / 2, size.x - 6, size.y / 2, feather->getColor(), feather->getThickness());
     this->drawChilds(render);
     this->showOn(this->getParent());
@@ -442,7 +449,7 @@ void InvisibleWindow::draw(Renderer* render) const {
             //cout << "size_x: " << this->getChild(i)->getSizeX() << " size_y: " << this->getChild(i)->getSizeY() << "\n";
             this->getChild(i)->showOn(this->getParent(), this->getChild(i)->getCoordX() + coord.x, this->getChild(i)->getCoordY() + coord.y);
         } else {
-            cout << "cannot draw invsible window";
+            std::cout << "cannot draw invsible window";
         }
     }
     
@@ -490,7 +497,7 @@ void TextButtonWindow::draw(Renderer* render) const {
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
-                           Renderer* render, Feather* feather, WindowMouse* mouse, App* app, const char* pic_name) :
+                           Renderer* render, WindowMouse* mouse, App* app, const char* pic_name) :
     InvisibleWindow(x_size + 2 * grab_len, y_size + 2 * grab_len, coord_x - grab_len, coord_y - grab_len, parent), name(name), on_display(true),
     base_img(x_size, y_size, white_c, 0, 0) {
     need_redraw = false;
@@ -505,12 +512,14 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
     canvas->setSize({x_size, y_size - menu_y});
     canvas->setRedraw(false);
     
-    DrawFunctor* canvas_functor = new DrawFunctor(canvas, render, feather, mouse);
-    MakeFirst* make_first = new MakeFirst(this);
-    canvas->setPressDown(make_first);
-    canvas->setPointed(canvas_functor);
-
+    DrawFunctor* draw_f = new DrawFunctor(canvas, render, mouse, app, app->getToolManager());
+    StartDraw* start_draw = new StartDraw(draw_f);
+    EndDraw* end_draw = new EndDraw(draw_f);
     
+    canvas->setPressDown(start_draw);
+    canvas->setPressUp(end_draw);
+    canvas->setPointed(draw_f);
+
     render->setWindow(menu);
     int text_size = strlen(name);
     int text_y = 4 * menu_y / 5;

@@ -1,4 +1,10 @@
-#include "WindowManager.h"
+#include "BasicInfo.h"
+#include "Functors.h"
+#include "Window.h"
+#include "App.h"
+#include "SkinsConfig.h"
+
+#include <algorithm>
 
 PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int but_x) {
     int but_y = y_size;  
@@ -37,7 +43,7 @@ void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMou
     activate_wnd->setPressUp(end_move_f);
 }
 
-PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) {
+PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app) {
 
     PicWindow* palette = new PicWindow(x_size, y_size, coord_x, coord_y, img_palette, parent);
     MakeMovable(palette, palette, mouse, app);
@@ -52,7 +58,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
 
     for (int i = 0; i < y_count_c; ++i) {
         for (int j = 0; j < x_count_c; ++j) {
-            ChangeColor* change_f   = new ChangeColor(feather, palette_colors[i][j]);
+            ChangeColor* change_f   = new ChangeColor(app->getToolManager(), palette_colors[i][j]);
             BorderWindow* color_button = new BorderWindow(c_box_x, c_box_y, c_box_dx + (c_box_dx + c_box_x) * j, start_boxes_y + (c_box_y + c_box_dy) * i, palette_colors[i][j], black_c, 1, render, palette, change_f);
             palette->addChild(color_button);
         }
@@ -66,12 +72,12 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     int inst_dx = c_box_dx;
     int inst_dy = c_box_dy;
 
-    ChangeMode* change_to_feather = new ChangeMode(feather, MODE_DRAW);
-    ChangeMode* change_to_eraser  = new ChangeMode(feather, MODE_ERASE);
+    ChangeBasicTool* change_to_feather = new ChangeBasicTool(app->getToolManager(), TOOL_FEATHER);
+    ChangeBasicTool* change_to_eraser  = new ChangeBasicTool(app->getToolManager(), TOOL_ERASER);
     PicWindow* feather_button = new PicWindow(inst_x, inst_y, inst_dx, feather_y                         , img_feather, palette, change_to_feather);
     PicWindow* eraser_button  = new PicWindow(inst_x, inst_y, inst_dx, feather_y + (inst_dy + inst_y) * 1, img_eraser , palette, change_to_eraser ); 
-    ThicknessWindow* thick_ind_w = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y                         , white_c, mgrey_c, 1, feather, render, palette);
-    ThicknessWindow* thick_ind_b = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y + (inst_dy + inst_y) * 1, black_c, mgrey_c, 1, feather, render, palette);
+    ThicknessWindow* thick_ind_w = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y                         , white_c, mgrey_c, 1, app->getToolManager(), render, palette);
+    ThicknessWindow* thick_ind_b = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y + (inst_dy + inst_y) * 1, black_c, mgrey_c, 1, app->getToolManager(), render, palette);
 
     GlowPicFunctor* feather_glow = new GlowPicFunctor(feather_button, img_feather, img_feather2);
     GlowPicFunctor* eraser_glow  = new GlowPicFunctor(eraser_button , img_eraser , img_eraser2 );
@@ -92,7 +98,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     BorderWindow* moving_bar        = new BorderWindow(arrow_size_x - 2, arrow_size_y - 2, 1, 1, lgrey_c, lgrey_c, 1, render, thickness_bar);
     thickness_bar->setRedraw(true);
 
-    RecalcThickness* recalc_functor = new RecalcThickness(0, bar_size_x - arrow_size_x + 1, moving_bar, feather);
+    RecalcThickness* recalc_functor = new RecalcThickness(0, bar_size_x - arrow_size_x + 1, moving_bar, app->getToolManager());
     PlaceBar* placer = new PlaceBar(0, bar_size_x - arrow_size_x + 1, 'X', moving_bar, recalc_functor);
     MoveBarRight* move_right = new MoveBarRight(placer);
     MoveBarLeft*  move_left  = new MoveBarLeft (placer);
@@ -100,6 +106,9 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     PlaceBarOnClickX* start_move = new PlaceBarOnClickX(placer, moving_bar, mouse, move_x_axis);
     StartMove* start_move_bar = new StartMove(move_x_axis);
     EndMove* end_move = new EndMove(move_x_axis);
+
+    NextBasicTool* change_next = new NextBasicTool(app->getToolManager());
+    TextButtonWindow* next_instrument = new TextButtonWindow(80, 25, inst_dx, feather_y + (inst_dy + inst_y) * 2 + layer_size_y + inst_dy, dgrey_c, lgrey_c, 1, silver_c, "next tool", "Helvetica", 7, 20, ALIGN_LEFT, render, palette, change_next);
 
     dec_thickness_button->setPressUp(move_left);
     inc_thickness_button->setPressUp(move_right);
@@ -118,11 +127,12 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     palette->addChild(thick_ind_b);
     palette->addChild(feather_button);
     palette->addChild(eraser_button);
+    palette->addChild(next_instrument);
 
     return palette;
 };
 
-PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) {
+PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, WindowMouse* mouse, App* app) {
     int but_x = x_size / comp_x;
     int but_y = y_size;  
 
@@ -163,7 +173,7 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     PicWindow* view = new PicWindow(view_x, view_y, file_x + help_x, 0, img_view, menu);
     ClockWindow* clock = new ClockWindow(clock_x, clock_y, x_size - menu->getChild(0)->getSizeX() * menu->getCount() - clock_x, 0, mgrey_c, menu);
     
-    FileFunctor* file_f  = new FileFunctor(parent, render, feather, mouse, app); 
+    FileFunctor* file_f  = new FileFunctor(parent, render, mouse, app); 
     HelpFunctor* help_f  = new HelpFunctor(help); 
     ViewFunctor* view_f  = new ViewFunctor(view); 
 
@@ -196,10 +206,10 @@ void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs) {
     lhs->setPressUp(rhs->getPressUp());
 }
 
-InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) {
-    CanvasWindow* canvas_layer = new CanvasWindow(size_x, size_y, coord_x, coord_y, name, parent, render, feather, mouse, app, nullptr);
+InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app) {
+    CanvasWindow* canvas_layer = new CanvasWindow(size_x, size_y, coord_x, coord_y, name, parent, render, mouse, app, nullptr);
     
-    ResizeCanvas* resize_f    = new ResizeCanvas(reinterpret_cast<ManagerWindow*>(canvas_layer), render, feather, mouse, app);
+    ResizeCanvas* resize_f    = new ResizeCanvas(reinterpret_cast<ManagerWindow*>(canvas_layer), render, mouse, app);
     StartMove* start_resize_f = new StartMove(resize_f);
     EndMove*   end_resize_f   = new EndMove(resize_f);
 
@@ -210,9 +220,9 @@ InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord
     return canvas_layer;
 }
 
-InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, Feather* feather, WindowMouse* mouse, App* app) {
+InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app) {
     InvisibleWindow* canvas_layer = new InvisibleWindow(size_x, size_y, coord_x, coord_y, parent);
-    CanvasWindow* canvas = new CanvasWindow(size_x, size_y, 0, 0, name, canvas_layer, render, feather, mouse, app);
+    CanvasWindow* canvas = new CanvasWindow(size_x, size_y, 0, 0, name, canvas_layer, render, mouse, app);
 
     canvas_layer->addChild(canvas);
 
@@ -372,26 +382,3 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
 
     return graph_layer;
 }
-
-ToolManager::ToolManager() {
-    count = 0;
-};
-
-ToolManager::~ToolManager() {};
-
-void ToolManager::addTool(VTool* tool) {
-    tools.push_back(tool);
-};
-
-void ToolManager::delTool(VTool* tool) {
-
-    auto it = std::find(tools.begin(), tools.end(), tool);
-    if (it != tools.end()) {
-        tools.erase(it);
-    }
-
-};
-
-void ToolManager::delLast() {
-    tools.pop_back();
-};

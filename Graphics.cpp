@@ -1,7 +1,8 @@
 //graphics engine
 
-#include "WindowManager.h"
+#include "Window.h"
 #include "TXLib.h"
+#include "App.h"
 
 BasicWindow::BasicWindow(int x_size, int y_size, COLORREF color) :
     size(x_size, y_size), color(color) {};

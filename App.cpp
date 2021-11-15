@@ -1,8 +1,13 @@
-#include "WindowManager.h"
+#include "App.h"
+#include "Tools.h"
+#include "SkinsConfig.h"
+#include "Functors.h"
+#include "Window.h"
 
-App::App(int app_x, int app_y) : users_window(app_x, app_y), feather(black_c, 2), app_size(app_x, app_y),
+App::App(int app_x, int app_y) : users_window(app_x, app_y), app_size(app_x, app_y),
     app_window(app_x, app_y, 0, 0, img_back_font, nullptr, nullptr, nullptr, nullptr, true),
     mouse(static_cast<ManagerWindow*>(&app_window)), render(&app_window, 0, 0, app_x, app_y), on_run(false) {
+    this->initBasicTools();
     this->initWindows();
 };
     
@@ -17,14 +22,23 @@ void App::run() {
     }
 };
 
+void App::initBasicTools() {
+    ToolFeather* tool_feather = new ToolFeather();
+    ToolEraser* tool_eraser = new ToolEraser();
+    ToolRect* tool_rect = new ToolRect();
+    tool_manager.addTool(tool_feather);
+    tool_manager.addTool(tool_eraser);
+    tool_manager.addTool(tool_rect);
+}
+
 void App::initWindows() {
     const int palette_x = app_size.x / 2;
     const int palette_y = 2 * app_size.y / 3;
 
     //CanvasWindow* canvas   = new CanvasWindow(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse);
     //CanvasWindow* canvas_2 = new CanvasWindow(400, 200, 850, 200, "Canvas2", &(this->app_window), &render, &feather, &mouse);
-    InvisibleWindow* canvas_layer = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse, this);
-    InvisibleWindow* canvas_layer2 = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse, this);
+    //InvisibleWindow* canvas_layer = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse, this);
+    //InvisibleWindow* canvas_layer2 = MakeResizeCanvas(app_size.x / 2, app_size.y / 2, app_size.x / 4, app_size.y / 4, "Canvas1", &(this->app_window), &render, &feather, &mouse, this);
     
     //InvisibleWindow* new_canvas_layer = GetResizedCanvas(canvas_layer, &render, &feather, &mouse, {app_size.x / 2 + 20, app_size.y / 2 + 20}, {app_size.x / 4 + 20, app_size.y / 4 + 20});
     //this->app_window.addChild(new_canvas_layer);
@@ -34,8 +48,8 @@ void App::initWindows() {
     
     InvFunctorTrue* debug_f = new InvFunctorTrue();
     DedWindow* round_wnd    = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
-    PicWindow* menu         = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, &feather, &mouse, this); //menu->children[0] == close_button;
-    PicWindow* palette      = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->feather), &(this->mouse), this);
+    PicWindow* menu         = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, &mouse, this); //menu->children[0] == close_button;
+    PicWindow* palette      = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->mouse), this);
     
     /*
     InvFunctorTrue* invs_f = new InvFunctorTrue();    
@@ -55,8 +69,8 @@ void App::initWindows() {
     this->app_window.addChild(menu);
     this->app_window.addChild(round_wnd);
     this->app_window.addChild(graph);
-    this->app_window.addChild(canvas_layer);
-    this->app_window.addChild(canvas_layer2);
+    //this->app_window.addChild(canvas_layer);
+    //this->app_window.addChild(canvas_layer2);
     //this->app_window.addChild(canvas_2);
 };
 

@@ -1,4 +1,4 @@
-#include "WindowManager.h"
+#include "App.h"
 
 int main(int argc, const char* argv[]) {
     int x = 1196;

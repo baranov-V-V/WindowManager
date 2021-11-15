@@ -1,0 +1,586 @@
+#pragma once
+
+#include "BasicInfo.h"
+#include "Window.h"
+
+enum RESIZE_DIRECTIONS {
+    DIRECTION_NONE = 0,
+    DIRECTION_LEFT = 1,
+    DIRECTION_RIGHT = 2,
+    DIRECTION_UP = 4,
+    DIRECTION_DOWN = 8,
+};
+
+#define CLEAR_DIR(direction)     (direction = direction & DIRECTION_NONE)
+
+#define SET_DIR_LEFT(direction)  (direction = direction | DIRECTION_LEFT)
+#define SET_DIR_RIGHT(direction) (direction = direction | DIRECTION_RIGHT)
+#define SET_DIR_UP(direction)    (direction = direction | DIRECTION_UP)
+#define SET_DIR_DOWN(direction)  (direction = direction | DIRECTION_DOWN)
+
+#define IS_DIR_LEFT(direction)  (direction & DIRECTION_LEFT)
+#define IS_DIR_RIGHT(direction) (direction & DIRECTION_RIGHT)
+#define IS_DIR_UP(direction)    (direction & DIRECTION_UP)
+#define IS_DIR_DOWN(direction)  (direction & DIRECTION_DOWN)
+
+class VFunctor {
+  public:
+    virtual ~VFunctor() {};
+    virtual bool action() = 0;
+};
+
+class DummyFunctor : public VFunctor {
+  public:
+    DummyFunctor();
+    virtual ~DummyFunctor() {};
+    bool action() override;
+};
+
+class FeatherFunctor : public VFunctor {
+    FeatherFunctor(ToolFeather* feather);
+    virtual ~FeatherFunctor() {};
+
+    bool action() override;
+    void setColor(COLORREF color);
+    void setThickness(int thinckness);
+
+  private:
+    ToolFeather* feather;
+    COLORREF new_color;
+    int new_thickness;  
+};
+
+class DebugFunctorTrue : public VFunctor {
+  public:
+    DebugFunctorTrue();
+    DebugFunctorTrue(ManagerWindow* window);
+    virtual ~DebugFunctorTrue() {};
+
+    bool action() override;
+
+  private:
+    ManagerWindow* window;
+};
+
+class InvFunctorTrue : public VFunctor {
+  public:
+    InvFunctorTrue();
+    virtual ~InvFunctorTrue() {};
+
+    bool action() override;
+
+  private:
+};
+
+class StopAppFunctor : public VFunctor {
+  public:
+    StopAppFunctor();
+    StopAppFunctor(App* app);
+    virtual ~StopAppFunctor() {};
+
+    bool action() override;
+
+  private:
+    App* app;
+};
+
+class DebugFunctorFalse : public VFunctor {
+  public:
+    DebugFunctorFalse();
+    DebugFunctorFalse(ManagerWindow* window);
+    virtual ~DebugFunctorFalse() {};
+    bool action() override;
+
+  private:
+    ManagerWindow* window;
+};
+
+class ChangeColor : public VFunctor {
+  public:
+    ChangeColor();
+    ChangeColor(ToolManager* tools, COLORREF color);
+    virtual ~ChangeColor() {};
+
+    bool action() override;
+
+  private:
+    ToolManager* tools;
+    COLORREF color;  
+};
+
+class ChangeBasicTool : public VFunctor {
+  public:
+    ChangeBasicTool();
+    ChangeBasicTool(ToolManager* tools, int tool_index);
+    virtual ~ChangeBasicTool() {};
+
+    bool action() override;
+
+  private:
+    ToolManager* tools;
+    int tool_index;
+};
+
+class NextBasicTool : public VFunctor {
+  public:
+    NextBasicTool();
+    NextBasicTool(ToolManager* tools);
+    virtual ~NextBasicTool() {};
+
+    bool action() override;
+
+  private:
+    ToolManager* tools;
+};
+
+class IncThickness : public VFunctor {
+  public:
+    IncThickness();
+    IncThickness(ToolManager* tools);
+    virtual ~IncThickness() {};
+
+    bool action() override;
+
+  private:
+    ToolManager* tools;  
+};
+
+class DecThickness : public VFunctor {
+  public:
+    DecThickness();
+    DecThickness(ToolManager* tools);
+    virtual ~DecThickness() {};
+
+    bool action() override;
+
+  private:
+    ToolManager* tools;  
+};
+
+class DrawFunctor : public VFunctor {
+  public:
+    DrawFunctor();
+    DrawFunctor(ManagerWindow* window, Renderer* render, WindowMouse* mouse, App* app, ToolManager* tool_manager);
+    virtual ~DrawFunctor() {};
+
+    void startDraw();
+    void endDraw();
+
+    bool action() override;
+
+  private:
+    bool is_drawing;
+    Renderer* render;
+    ManagerWindow* canvas;
+    WindowMouse* mouse;
+    
+    ToolManager* tool_manager;
+    VTool* curr_tool;
+    Pair<int> abs_old_coord;
+    
+    App* app;
+};
+
+class StartDraw : public VFunctor {
+  public:
+    StartDraw();
+    StartDraw(DrawFunctor* draw_f);
+    virtual ~StartDraw() {};
+
+    bool action() override;
+
+  protected:
+    DrawFunctor* draw_f;
+};
+
+class EndDraw : public VFunctor {
+  public:
+    EndDraw();
+    EndDraw(DrawFunctor* draw_f);
+    virtual ~EndDraw() {};
+
+    bool action() override;
+
+  private:
+    DrawFunctor* draw_f;
+};
+
+class CloseCanvasFunctor : public VFunctor {
+  public:
+    CloseCanvasFunctor();
+    CloseCanvasFunctor(InvisibleWindow* window);
+    virtual ~CloseCanvasFunctor() {};
+
+    bool action() override;
+
+  private:
+    InvisibleWindow* window_to_close;
+};
+
+class HideCanvasFunctor : public VFunctor {
+  public:
+    HideCanvasFunctor();
+    HideCanvasFunctor(CanvasWindow* window);
+    virtual ~HideCanvasFunctor() {};
+
+    bool action() override;
+
+  private:
+    CanvasWindow* window_to_hide;
+};
+
+class FileFunctor : public VFunctor {
+  public:
+    FileFunctor();
+    FileFunctor(ManagerWindow* window, Renderer* render, WindowMouse* mouse, App* app);
+    virtual ~FileFunctor() {};
+
+    bool action() override;
+
+  private:
+    ManagerWindow* window;
+    Renderer* render;
+    WindowMouse* mouse;
+    App* app;
+};
+
+class HelpFunctor : public VFunctor {
+  public:
+    HelpFunctor();
+    HelpFunctor(ManagerWindow* window);
+    virtual ~HelpFunctor() {};
+
+    bool action() override;;
+
+  private:
+    ManagerWindow* window;
+};
+
+class ViewFunctor : public VFunctor {
+  public:
+    ViewFunctor();
+    ViewFunctor(ManagerWindow* window);
+    virtual ~ViewFunctor() {};
+
+    bool action() override;;
+
+  private:
+    ManagerWindow* window;
+};
+
+class MoveFunctor : public VFunctor {
+  public:
+    MoveFunctor();
+    MoveFunctor(ManagerWindow* window, WindowMouse* mouse, App* app, ManagerWindow* activate_window = nullptr);
+    virtual ~MoveFunctor() {};
+
+    virtual void startMove();
+    virtual void endMove();
+    bool action() override;
+
+  protected:
+    ManagerWindow* activate_window;
+    ManagerWindow* move_window;
+    WindowMouse* mouse;
+    Pair<int> old_coord;
+    bool on_move;
+    App* app;
+};
+
+class StartMove : public VFunctor {
+  public:
+    StartMove();
+    StartMove(MoveFunctor* move_f);
+    virtual ~StartMove() {};
+
+    bool action() override;;
+
+  protected:
+    MoveFunctor* move_f;
+};
+
+class EndMove : public VFunctor {
+  public:
+    EndMove();
+    EndMove(MoveFunctor* move_f);
+    virtual ~EndMove() {};
+
+    bool action() override;
+
+  private:
+    MoveFunctor* move_f;
+};
+
+class RecalcThickness : public VFunctor {
+  public:
+    RecalcThickness(int min_coord, int max_coord, ManagerWindow* bar, ToolManager* tools);
+    virtual ~RecalcThickness() {};
+
+    bool action () override;
+
+  private:
+    ManagerWindow* bar;
+    ToolManager* tools;
+    int min_coord;
+    int max_coord;
+};
+
+class PlaceBar {
+  public:
+    PlaceBar();
+    PlaceBar(int min_coord, int max_coord, char type, ManagerWindow* bar, VFunctor* action);
+    ~PlaceBar() {};
+
+    void fixPos();
+    void unfixPos();
+    void place(int new_coord);
+    ManagerWindow* getBar() const;
+
+  private: 
+    VFunctor* action;
+    bool is_fixed_pos;
+    char type;
+    int min_coord;
+    int max_coord;
+    ManagerWindow* bar;
+};
+
+class MoveBarLeft : public VFunctor {
+  public:
+    MoveBarLeft(PlaceBar* placer);
+    virtual ~MoveBarLeft() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer;  
+};
+
+class MoveBarRight : public VFunctor {
+  public:
+    MoveBarRight(PlaceBar* placer);
+    virtual ~MoveBarRight() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer;  
+};
+
+class MoveBarUp : public VFunctor {
+  public:
+    MoveBarUp(PlaceBar* placer);
+    virtual ~MoveBarUp() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer;  
+};
+
+class MoveBarDown : public VFunctor {
+  public:
+    MoveBarDown(PlaceBar* placer);
+    virtual ~MoveBarDown() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer;  
+};
+
+class PlaceBarOnClickX : public StartMove {
+  public:
+    PlaceBarOnClickX();
+    PlaceBarOnClickX(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, MoveFunctor* functor);
+    virtual ~PlaceBarOnClickX() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer;
+    WindowMouse* mouse;
+};
+
+class PlaceBarOnClickY : public StartMove {
+  public:
+    PlaceBarOnClickY();
+    PlaceBarOnClickY(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, MoveFunctor* functor);
+    virtual ~PlaceBarOnClickY() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer;
+    WindowMouse* mouse;
+};
+
+class MoveBarRandomX : public MoveFunctor {
+  public:
+    MoveBarRandomX();
+    MoveBarRandomX(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, App* app);
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer;
+};
+
+class MoveBarRandomY : public MoveFunctor {
+  public:
+    MoveBarRandomY();
+    MoveBarRandomY(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, App* app);
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer;
+};
+
+class GlowPicFunctor : public VFunctor {
+  public:
+    GlowPicFunctor(PicWindow* window, const char* default_name, const char* glowing_name);
+    virtual ~GlowPicFunctor() {};
+
+    bool action() override;
+
+  private:
+    PicWindow* glow_window;
+    Texture default_wnd;
+    Texture glowing_wnd;
+    int curr_state;
+};
+
+class GlowBorderFunctor : public VFunctor {
+  public:
+    GlowBorderFunctor();
+    GlowBorderFunctor(BorderWindow* window, COLORREF glowing_main_c, COLORREF glowing_bord_c);
+
+    virtual ~GlowBorderFunctor() {};
+
+    bool action() override;
+
+  private:
+    BorderWindow* glow_window;
+    COLORREF default_main_c;
+    COLORREF default_bord_c;
+    COLORREF glowing_main_c;
+    COLORREF glowing_bord_c;
+    int curr_state;
+};
+
+class MakeFirst : public VFunctor {
+  public:
+    MakeFirst();
+    MakeFirst(ManagerWindow* window);
+    virtual ~MakeFirst() {};
+
+    bool action() override;
+
+  private:
+    ManagerWindow* window;
+};
+
+class ResizeCanvas : public MoveFunctor {
+  public:
+    ResizeCanvas();
+    ResizeCanvas(ManagerWindow* window, Renderer* render, WindowMouse* mouse, App* app);
+    virtual ~ResizeCanvas() {};
+
+    void startMove() override;
+    void endMove() override;
+
+    bool action() override;
+  
+  private:
+    Pair<int> new_size;
+    Pair<int> new_coord;
+    int resize_dx = 0;
+    int resize_dy = 0;
+    Renderer* render;
+
+    int direction;
+};
+
+class CalcGraphDotLeft : public VFunctor {
+  public:
+    CalcGraphDotLeft(int min_coord, int max_coord, ManagerWindow* bar, GraphWindow* window);
+    virtual ~CalcGraphDotLeft() {};
+
+    bool action () override; 
+
+  private:
+    GraphWindow* window;
+    ManagerWindow* bar;
+    int min_coord;
+    int max_coord;
+};
+
+class CalcGraphDotRight : public VFunctor {
+  public:
+    CalcGraphDotRight(int min_coord, int max_coord, ManagerWindow* bar, GraphWindow* window);
+    virtual ~CalcGraphDotRight() {};
+
+    bool action () override; 
+
+  private:
+    GraphWindow* window;
+    ManagerWindow* bar;
+    int min_coord;
+    int max_coord;
+};
+
+class ResetBars : public VFunctor {
+  public:
+    ResetBars();
+    ResetBars(PlaceBar* placer_left, PlaceBar* placer_right, int reset_coord_left, int reset_coord_right);
+    virtual ~ResetBars() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer_left;
+    PlaceBar* placer_right;
+    int reset_coord_left;
+    int reset_coord_right;
+};
+
+class MakeFixedBars : public VFunctor {
+  public:
+    MakeFixedBars();
+    MakeFixedBars(PlaceBar* placer_left, PlaceBar* placer_right);
+    virtual ~MakeFixedBars() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer_left;
+    PlaceBar* placer_right;
+};
+
+class MakeUnFixedBars : public VFunctor {
+  public:
+    MakeUnFixedBars();
+    MakeUnFixedBars(PlaceBar* placer_left, PlaceBar* placer_right);
+    virtual ~MakeUnFixedBars() {};
+
+    bool action() override;
+
+  private:
+    PlaceBar* placer_left;
+    PlaceBar* placer_right;
+};
+
+class ClearCanvas : public VFunctor {
+  public:
+    ClearCanvas();
+    ClearCanvas(BorderWindow* canvas, Renderer* render);
+    virtual ~ClearCanvas() {};
+
+    bool action() override;
+
+  private:
+    BorderWindow* canvas;
+    Renderer* render;
+};
+

@@ -1,59 +1,6 @@
 #pragma once
 
-#include <cmath>
-#include <ctime>
-#include <iostream>
-#include <windows.h>
-#include <windef.h>
-#include <cassert>
-#include <initializer_list>
-#include <string>
-#include <iomanip>
-#include <ctime>
-#include <sstream>
-
-using std::string;
-
-using std::rand;
-using std::max;
-using std::cerr;
-using std::cout;
-
-//string main_font = "montserrat";
-
-static const char* img_close  = "img\\close.bmp";
-static const char* img_close2 = "img\\close2.bmp";
-static const char* img_hide   = "img\\hide.bmp";
-static const char* img_hide2  = "img\\hide2.bmp";
-static const char* img_scale  = "img\\scale.bmp";
-static const char* img_scale2 = "img\\scale2.bmp";
-
-static const char* img_file  = "img\\file.bmp";
-static const char* img_file2 = "img\\file2.bmp";
-static const char* img_help  = "img\\help.bmp";
-static const char* img_help2 = "img\\help2.bmp";
-static const char* img_view  = "img\\view.bmp";
-static const char* img_view2 = "img\\view2.bmp";
-
-static const char* img_palette   = "img\\palette.bmp";
-static const char* img_menu_bar  = "img\\menu_bar.bmp";
-static const char* img_canvas    = "img\\canvas2.bmp";
-static const char* img_back_font = "img\\back_font.bmp";
-
-static const char* img_feather  = "img\\feather.bmp";
-static const char* img_eraser   = "img\\eraser.bmp";
-static const char* img_feather2 = "img\\feather2.bmp";
-static const char* img_eraser2  = "img\\eraser2.bmp";
-
-static const char* img_arrow_up    = "img\\arrow_up.bmp";
-static const char* img_arrow_down  = "img\\arrow_down.bmp";
-static const char* img_arrow_left  = "img\\arrow_left.bmp";
-static const char* img_arrow_right = "img\\arrow_right.bmp";
-
-static const char* img_arrow_up2    = "img\\arrow_up2.bmp";
-static const char* img_arrow_down2  = "img\\arrow_down2.bmp";
-static const char* img_arrow_left2  = "img\\arrow_left2.bmp";
-static const char* img_arrow_right2 = "img\\arrow_right2.bmp";
+#include<windows.h>
 
 enum WINDOW_TYPES {
     TYPE_WINDOW = 1,
@@ -94,9 +41,9 @@ enum MOUSE_STATES {
     RIGHT_CLICK = 2
 };
 
-enum FEATHER_MODE {
-    MODE_ERASE = 1,
-    MODE_DRAW   = 2
+enum BASIC_TOOLS {
+    TOOL_FEATHER = 0,
+    TOOL_ERASER = 1
 };
 
 enum GLOW_STATE {
@@ -122,9 +69,13 @@ enum TEXT_BUTTON_ALIGN {
 const int MAX_THICKNESS = 20;
 const int MIN_THICKNESS = 2;
 
-#define IS_CLICKABLE(type) (type & TYPE_CLICKABLE)
-#define IS_GLOWABLE(type) (type & TYPE_GLOWABLE)
+const int close_button_x = 30;
+const int menu_size_y = 25;
 
+#define IS_CLICKABLE(type) (type & TYPE_CLICKABLE)
+#define IS_GLOWABLE(type)  (type & TYPE_GLOWABLE)
+
+const COLORREF palette_c   = RGB( 37,  37,  38);
 const COLORREF black_c     = RGB(  0,   0,   0);
 const COLORREF white_c     = RGB(255, 255, 255); 
 const COLORREF canvas_c    = RGB( 85,  86, 179);
@@ -133,7 +84,7 @@ const COLORREF red_c       = RGB(  4,   2, 255);
 const COLORREF grey_c      = RGB(153,  76,   0);
 const COLORREF green_c     = RGB(  0, 128,   0);
 const COLORREF dgrey_c     = RGB( 38,  38,  38);
-const COLORREF lgrey_c     = RGB( 77,  77,  77);
+const COLORREF lgrey_c     = RGB( 83,  83,  83);
 const COLORREF llgrey_c    = RGB(137, 137, 137);
 const COLORREF silver_c    = RGB(192, 192, 192);
 const COLORREF mgrey_c     = RGB( 60,  60,  60);
@@ -150,6 +101,10 @@ const COLORREF honeydew_c  = RGB(240, 255, 240);
 const COLORREF sand_br_c   = RGB(244, 164,  96);
 const COLORREF coral_c     = RGB(255, 127,  80);
 
+const int grab_len = 5; //in pixels
+
+const int max_canvas_x = 1980;
+const int max_canvas_y = 1080;
 
 const int x_count_c = 5;
 const int y_count_c = 4;
@@ -165,6 +120,11 @@ class WindowMouse;
 class Feather;
 class Renderer;
 class DisplayManager;
+class VTool;
+class ToolManager;
+class ToolFeather;
+class ToolEraser;
+class ToolRect;
 class App;
 
 class BasicWindow;
@@ -181,7 +141,7 @@ class CanvasWindow;
 class ClockWindow;
 
 
-
+class VFunctor;
 class DummyFunctor;
 class FeatherFunctor;
 class DebugFunctorTrue;
@@ -214,3 +174,24 @@ class MoveBarRandomY;
 class GlowPicFunctor;
 class GlowBorderFunctor;
 class MakeFirst;
+
+RGBQUAD ToRGBQUAD(COLORREF color);
+
+void PrintMousePos();
+int NumOfDigits(int num);
+void GetMouse(double& x, double& y, const Renderer& render);
+
+RGBQUAD ToRGBQUAD(COLORREF color);
+RGBQUAD ToRGBQUAD(BYTE red, BYTE green, BYTE blue);
+
+PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int but_x = 30);
+PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
+PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, WindowMouse* mouse, App* app);
+void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse, App* app);
+void WriteCanvasName(CanvasWindow* canvas_layer, Renderer* render);
+
+InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
+InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
+void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs);
+void ResizeCanvasWindow(CanvasWindow* canvas_layer, Renderer* render, Pair<int> new_size, Pair<int> new_coord);
+BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
