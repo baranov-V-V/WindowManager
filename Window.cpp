@@ -214,12 +214,32 @@ bool ManagerWindow::hitTest(double x, double y) const {
     return (x > 0 && x < this->getSizeX()) && (y > 0 && y < this->getSizeY());
 };
 
+Pair<int> ManagerWindow::toRelCoord(const Pair<int>& abs_coord) {
+    Pair<int> rel_coord = abs_coord;
+    ManagerWindow* parent = this;
+
+    while(parent != nullptr) {
+        rel_coord = rel_coord - parent->getCoord();
+        parent = parent->getParent();
+    }
+
+    //std::cout << "rel_coord_x: " << rel_coord.x << " rel_coord_y: " << rel_coord.y << "\n";
+
+    return rel_coord;
+};
+
+bool ManagerWindow::checkPointed(const Pair<int>& abs_coord) {
+    Pair<int> rel_coord = this->toRelCoord(abs_coord);
+    return hitTest(rel_coord.x, rel_coord.y);
+}
+
 bool ManagerWindow::checkPointed(WindowMouse* mouse) {
     int x = mouse->getRelCoord().x;
     int y = mouse->getRelCoord().y;
     return hitTest(x, y);
 }
 
+/*
 bool ManagerWindow::proceedPressDown(WindowMouse* mouse) {
     mouse->setWindow(this);
 
@@ -251,7 +271,6 @@ bool ManagerWindow::proceedPressUp(WindowMouse* mouse) {
         }
         bool result = false;
         if (is_clicked) {
-            //cout << "action up!" << "\n";
             result = press_up_f->action();
             is_clicked = false;
         }
@@ -274,7 +293,7 @@ bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
 
 void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
     mouse->setWindow(this);
-    
+
     for (int i = count - 1; i >= 0; --i) {
         children[i]->markPointedWindows(mouse);
     }
@@ -315,6 +334,65 @@ bool ManagerWindow::proceedPointedWindows(WindowMouse* mouse) {
 
     mouse->setToParent();
     return false;
+};
+*/
+
+bool ManagerWindow::ProceedEvent(const Event& event) {
+
+    bool result = false;
+
+    for (int i = count - 1; i >= 0; --i) {
+        if (children[i]->ProceedEvent(event)) {
+            return true;
+        }
+    }
+
+    switch(event.getType()) {
+        case EVENT_MOUSE_MOVE:
+            
+            if (this->checkPointed(event.getData().mouse_data.start)) {
+                is_pointed = true;
+                if (pointed_f != nullptr) {
+                    if (pointed_f->action(event.getData())) {
+                        result = true;
+                    }
+                }
+            } else if (is_pointed) {
+                is_pointed = false;
+                if (pointed_f != nullptr) {
+                    result = pointed_f->action(event.getData());
+                }
+                is_pointed = false;
+            }
+
+            break;
+
+        case EVENT_MOUSE_PRESSED:
+
+            if (this->checkPointed(event.getData().abs_coord)) {
+                is_clicked = true;
+                result = press_down_f->action(event.getData());
+            }
+
+            break;
+
+        case EVENT_MOUSE_RELEASED:
+
+            if (this->checkPointed(event.getData().abs_coord)) {
+                if (is_clicked) {
+                    result = press_up_f->action(event.getData());
+                }
+            }
+            is_clicked = false;
+
+            break;
+
+        default:
+
+            std::cout << "no such event in ProceedEvent: " << event.getType() << "\n";
+    }    
+
+    return result;
 };
 
 BorderWindow::BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
@@ -497,7 +575,7 @@ void TextButtonWindow::draw(Renderer* render) const {
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
-                           Renderer* render, WindowMouse* mouse, App* app, const char* pic_name) :
+                           Renderer* render, App* app, const char* pic_name) :
     InvisibleWindow(x_size + 2 * grab_len, y_size + 2 * grab_len, coord_x - grab_len, coord_y - grab_len, parent), name(name), on_display(true),
     base_img(x_size, y_size, white_c, 0, 0) {
     need_redraw = false;
@@ -512,7 +590,7 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
     canvas->setSize({x_size, y_size - menu_y});
     canvas->setRedraw(false);
     
-    DrawFunctor* draw_f = new DrawFunctor(canvas, render, mouse, app, app->getToolManager());
+    DrawFunctor* draw_f = new DrawFunctor(canvas, render, app, app->getToolManager());
     StartDraw* start_draw = new StartDraw(draw_f);
     EndDraw* end_draw = new EndDraw(draw_f);
     
@@ -544,7 +622,7 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
         render->drawText(menu->getSizeX() / 2 - text_x * text_size, ident_y, name, "Helvetica", text_y, text_x, silver_c);
     }
 
-    MakeMovable(menu, this, mouse, app);
+    MakeMovable(menu, this, app);
 
     if (pic_name != nullptr) {
         Texture pic(x_size, y_size, pic_name, 0, 0);

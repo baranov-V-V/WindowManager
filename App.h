@@ -22,7 +22,7 @@ class App {
   public:
     void initWindows();
     void initBasicTools();
-    void proceedMouseEvent();
+    void makeEvents();
     void sleep(int millisec) const;
 
     Pair<int> app_size;

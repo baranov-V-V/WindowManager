@@ -185,13 +185,13 @@ RGBQUAD ToRGBQUAD(COLORREF color);
 RGBQUAD ToRGBQUAD(BYTE red, BYTE green, BYTE blue);
 
 PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int but_x = 30);
-PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
-PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, WindowMouse* mouse, App* app);
-void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, WindowMouse* mouse, App* app);
+PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, App* app);
+PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, App* app);
+void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, App* app);
 void WriteCanvasName(CanvasWindow* canvas_layer, Renderer* render);
 
-InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
-InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
+InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, App* app);
+InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, App* app);
 void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs);
 void ResizeCanvasWindow(CanvasWindow* canvas_layer, Renderer* render, Pair<int> new_size, Pair<int> new_coord);
-BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, WindowMouse* mouse, App* app);
+BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, App* app);

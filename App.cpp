@@ -3,6 +3,7 @@
 #include "SkinsConfig.h"
 #include "Functors.h"
 #include "Window.h"
+#include "Events.h"
 
 App::App(int app_x, int app_y) : users_window(app_x, app_y), app_size(app_x, app_y),
     app_window(app_x, app_y, 0, 0, img_back_font, nullptr, nullptr, nullptr, nullptr, true),
@@ -17,8 +18,7 @@ void App::run() {
     while (on_run) {
         app_window.draw(&render);
         app_window.showOn(&users_window);
-        this->proceedMouseEvent();
-        //this->sleep(5);
+        this->makeEvents();
     }
 };
 
@@ -43,13 +43,13 @@ void App::initWindows() {
     //InvisibleWindow* new_canvas_layer = GetResizedCanvas(canvas_layer, &render, &feather, &mouse, {app_size.x / 2 + 20, app_size.y / 2 + 20}, {app_size.x / 4 + 20, app_size.y / 4 + 20});
     //this->app_window.addChild(new_canvas_layer);
     
-    BorderWindow* graph = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), &(this->mouse), this);
+    BorderWindow* graph = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), this);
     
     
     InvFunctorTrue* debug_f = new InvFunctorTrue();
     DedWindow* round_wnd    = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
-    PicWindow* menu         = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, &mouse, this); //menu->children[0] == close_button;
-    PicWindow* palette      = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), &(this->mouse), this);
+    PicWindow* menu         = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, this); //menu->children[0] == close_button;
+    PicWindow* palette      = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), this);
     
     /*
     InvFunctorTrue* invs_f = new InvFunctorTrue();    
@@ -63,7 +63,7 @@ void App::initWindows() {
     */
     StopAppFunctor* stop_app = new StopAppFunctor(this);
     menu->getChild(0)->setPressUp(stop_app);
-    MakeMovable(round_wnd, round_wnd, &(this->mouse), this);
+    MakeMovable(round_wnd, round_wnd, this);
 
     this->app_window.addChild(palette);
     this->app_window.addChild(menu);
@@ -74,34 +74,46 @@ void App::initWindows() {
     //this->app_window.addChild(canvas_2);
 };
 
-void App::proceedMouseEvent() {
+void App::makeEvents() {
     static int state = 0;
     static Pair<int> abs_coord(0, 0); 
 
     mouse.update();
     
-    if ((mouse.getState() & LEFT_CLICK) && !(state & LEFT_CLICK)) {
+    Event new_event;
+
+    if ((mouse.getState() & LEFT_CLICK) && !(state & LEFT_CLICK)) {     //mouse pressed
         
+        new_event.setType(EVENT_MOUSE_PRESSED);
+        new_event.setData(mouse.getAbsCoord());
+
         if (active_window != nullptr) {
-            active_window->getPressDown()->action();
+            active_window->getPressDown()->action(new_event.getData());
         } else {
-            app_window.proceedPressDown(&mouse);
+            app_window.ProceedEvent(new_event);
         }
         
-    } else if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {
+    } else if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {      // mouse released
         
+        new_event.setType(EVENT_MOUSE_RELEASED);
+        new_event.setData(mouse.getAbsCoord());
+
         if (active_window != nullptr) {
-            active_window->getPressUp()->action();
+            active_window->getPressUp()->action(new_event.getData());
         } else {
-            app_window.proceedPressUp(&mouse);
+            app_window.ProceedEvent(new_event);
         }
         
-    } else if (mouse.getAbsCoord() != abs_coord) {
+    } else if (mouse.getAbsCoord() != abs_coord) {  //mouse moved
+        
+        new_event.setType(EVENT_MOUSE_MOVE);
+        new_event.setData(MouseData(abs_coord, mouse.getAbsCoord() - abs_coord, mouse.getState() & LEFT_CLICK));
+        
         if (active_window != nullptr) {
-            active_window->getPointed()->action();
+            active_window->getPointed()->action(new_event.getData());
         } else {
             //cout << "sending mouse move to active\n";
-            app_window.proceedPointed(&mouse);
+            app_window.ProceedEvent(new_event);
         }
         
     }

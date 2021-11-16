@@ -1,6 +1,7 @@
 #pragma once
 #include <ctime>
 #include "BasicInfo.h"
+#include "Events.h"
 
 class Renderer {
   public:
@@ -171,7 +172,12 @@ class ManagerWindow : public Texture {
     bool isClicked() const { return is_clicked; };
 
     virtual bool hitTest(double x, double y) const;
-    bool checkPointed(WindowMouse* mouse); 
+
+    Pair<int> toRelCoord(const Pair<int>& abs_coord); //new!!
+
+    bool checkPointed(WindowMouse* mouse);
+    bool checkPointed(const Pair<int>& abs_coord);
+
     bool checkLeftClick(WindowMouse* mouse);   //nullptr if it doesn't have click on it, coords of mouse on window if has click on it.
     
     bool proceedPointed(WindowMouse* mouse);
@@ -181,6 +187,8 @@ class ManagerWindow : public Texture {
     void setPointed(VFunctor* functor) { delete ManagerWindow::pointed_f; ManagerWindow::pointed_f = functor; };
     void setPressUp(VFunctor* functor) { delete ManagerWindow::press_up_f; ManagerWindow::press_up_f = functor; };
     void setPressDown(VFunctor* functor) { delete ManagerWindow::press_down_f; ManagerWindow::press_down_f = functor; };
+
+    bool ProceedEvent(const Event& event); //new!!
 
     VFunctor* getPointed() const { return pointed_f; };
     VFunctor* getPressUp() const { return press_up_f; };
@@ -220,6 +228,7 @@ class InvisibleWindow : public ManagerWindow {
     InvisibleWindow();
     InvisibleWindow(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent = nullptr,
                     VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
+    virtual ~InvisibleWindow() {};
     
     void draw(Renderer* render) const override;
 
@@ -233,6 +242,7 @@ class PicWindow : public ManagerWindow {
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic_name, ManagerWindow* parent = nullptr,
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
+    virtual ~PicWindow() {};
     
     void draw(Renderer* render) const override;
     Texture* getBaseImg() { return &base_img; };
@@ -246,6 +256,8 @@ class BorderWindow : public ManagerWindow {
     BorderWindow();
     BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
                  ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+    virtual ~BorderWindow() {};
+
     void draw(Renderer* render) const override;
 
     COLORREF getBorderColor() const { return border_color; };
@@ -261,6 +273,7 @@ class ThicknessWindow : public BorderWindow {
     ThicknessWindow();
     ThicknessWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, ToolManager* tools, Renderer* render,
                     ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+    virtual ~ThicknessWindow() {};       
 
     void draw(Renderer* render) const override;
   
@@ -274,6 +287,7 @@ class TextButtonWindow : public BorderWindow {
     TextButtonWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness,
                      COLORREF text_color, const char* text, const char* font_name, int ch_size_x, int ch_size_y, int align, Renderer* render,
                      ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+    virtual ~TextButtonWindow() {};
 
     void draw(Renderer* render) const override;
   
@@ -290,7 +304,8 @@ class CanvasWindow : public InvisibleWindow {
   public:
     CanvasWindow();
     CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
-                 Renderer* render, WindowMouse* mouse, App* app, const char* pic_name = nullptr);
+                 Renderer* render, App* app, const char* pic_name = nullptr);
+    virtual ~CanvasWindow() {};
     //CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, CanvasWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse);
 
     void hide() { on_display = false; };
@@ -311,6 +326,7 @@ class GraphWindow : public BorderWindow {
     GraphWindow();
     GraphWindow(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render,
                 COLORREF backgroud_c = white_c, COLORREF border_c = dgrey_c, COLORREF line_c = black_c, COLORREF net_c = lgrey_c);
+    virtual ~GraphWindow() {};
 
     void draw(Renderer* render) const override;
 
@@ -332,6 +348,7 @@ class ClockWindow : public ManagerWindow {
     ClockWindow();
     ClockWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, ManagerWindow* parent = nullptr,
                 VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+    virtual ~ClockWindow() {};
 
     void draw(Renderer* render) const override;
 
@@ -348,6 +365,7 @@ class RoundWindow : public ManagerWindow {
     RoundWindow();
     RoundWindow(int radius, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
                 ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+    virtual ~RoundWindow() {};
 
     void draw(Renderer* render) const override;
     bool hitTest(double x, double y) const override;
@@ -363,6 +381,7 @@ class DedWindow : public ManagerWindow {
     DedWindow();
     DedWindow(int radius, int size_x, int size_y, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
               ManagerWindow* parent = nullptr, VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+    virtual ~DedWindow() {};
 
     void draw(Renderer* render) const override;
     bool hitTest(double x, double y) const override;

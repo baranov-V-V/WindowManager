@@ -2,6 +2,7 @@
 
 #include "BasicInfo.h"
 #include "Window.h"
+#include "Events.h"
 
 enum RESIZE_DIRECTIONS {
     DIRECTION_NONE = 0,
@@ -26,21 +27,21 @@ enum RESIZE_DIRECTIONS {
 class VFunctor {
   public:
     virtual ~VFunctor() {};
-    virtual bool action() = 0;
+    virtual bool action(const EventData& data) = 0;
 };
 
 class DummyFunctor : public VFunctor {
   public:
     DummyFunctor();
     virtual ~DummyFunctor() {};
-    bool action() override;
+    bool action(const EventData& data) override;
 };
 
 class FeatherFunctor : public VFunctor {
     FeatherFunctor(ToolFeather* feather);
     virtual ~FeatherFunctor() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
     void setColor(COLORREF color);
     void setThickness(int thinckness);
 
@@ -56,7 +57,7 @@ class DebugFunctorTrue : public VFunctor {
     DebugFunctorTrue(ManagerWindow* window);
     virtual ~DebugFunctorTrue() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ManagerWindow* window;
@@ -67,7 +68,7 @@ class InvFunctorTrue : public VFunctor {
     InvFunctorTrue();
     virtual ~InvFunctorTrue() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
 };
@@ -78,7 +79,7 @@ class StopAppFunctor : public VFunctor {
     StopAppFunctor(App* app);
     virtual ~StopAppFunctor() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     App* app;
@@ -89,7 +90,7 @@ class DebugFunctorFalse : public VFunctor {
     DebugFunctorFalse();
     DebugFunctorFalse(ManagerWindow* window);
     virtual ~DebugFunctorFalse() {};
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ManagerWindow* window;
@@ -101,7 +102,7 @@ class ChangeColor : public VFunctor {
     ChangeColor(ToolManager* tools, COLORREF color);
     virtual ~ChangeColor() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ToolManager* tools;
@@ -114,7 +115,7 @@ class ChangeBasicTool : public VFunctor {
     ChangeBasicTool(ToolManager* tools, int tool_index);
     virtual ~ChangeBasicTool() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ToolManager* tools;
@@ -127,7 +128,7 @@ class NextBasicTool : public VFunctor {
     NextBasicTool(ToolManager* tools);
     virtual ~NextBasicTool() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ToolManager* tools;
@@ -139,7 +140,7 @@ class IncThickness : public VFunctor {
     IncThickness(ToolManager* tools);
     virtual ~IncThickness() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ToolManager* tools;  
@@ -151,7 +152,7 @@ class DecThickness : public VFunctor {
     DecThickness(ToolManager* tools);
     virtual ~DecThickness() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ToolManager* tools;  
@@ -160,19 +161,18 @@ class DecThickness : public VFunctor {
 class DrawFunctor : public VFunctor {
   public:
     DrawFunctor();
-    DrawFunctor(ManagerWindow* window, Renderer* render, WindowMouse* mouse, App* app, ToolManager* tool_manager);
+    DrawFunctor(ManagerWindow* window, Renderer* render, App* app, ToolManager* tool_manager);
     virtual ~DrawFunctor() {};
 
-    void startDraw();
-    void endDraw();
+    void startDraw(const EventData& data);
+    void endDraw(const EventData& data);
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     bool is_drawing;
     Renderer* render;
     ManagerWindow* canvas;
-    WindowMouse* mouse;
     
     ToolManager* tool_manager;
     VTool* curr_tool;
@@ -187,7 +187,7 @@ class StartDraw : public VFunctor {
     StartDraw(DrawFunctor* draw_f);
     virtual ~StartDraw() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   protected:
     DrawFunctor* draw_f;
@@ -199,7 +199,7 @@ class EndDraw : public VFunctor {
     EndDraw(DrawFunctor* draw_f);
     virtual ~EndDraw() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     DrawFunctor* draw_f;
@@ -211,7 +211,7 @@ class CloseCanvasFunctor : public VFunctor {
     CloseCanvasFunctor(InvisibleWindow* window);
     virtual ~CloseCanvasFunctor() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     InvisibleWindow* window_to_close;
@@ -223,7 +223,7 @@ class HideCanvasFunctor : public VFunctor {
     HideCanvasFunctor(CanvasWindow* window);
     virtual ~HideCanvasFunctor() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     CanvasWindow* window_to_hide;
@@ -232,15 +232,14 @@ class HideCanvasFunctor : public VFunctor {
 class FileFunctor : public VFunctor {
   public:
     FileFunctor();
-    FileFunctor(ManagerWindow* window, Renderer* render, WindowMouse* mouse, App* app);
+    FileFunctor(ManagerWindow* window, Renderer* render, App* app);
     virtual ~FileFunctor() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ManagerWindow* window;
     Renderer* render;
-    WindowMouse* mouse;
     App* app;
 };
 
@@ -250,7 +249,7 @@ class HelpFunctor : public VFunctor {
     HelpFunctor(ManagerWindow* window);
     virtual ~HelpFunctor() {};
 
-    bool action() override;;
+    bool action(const EventData& data) override;;
 
   private:
     ManagerWindow* window;
@@ -262,7 +261,7 @@ class ViewFunctor : public VFunctor {
     ViewFunctor(ManagerWindow* window);
     virtual ~ViewFunctor() {};
 
-    bool action() override;;
+    bool action(const EventData& data) override;;
 
   private:
     ManagerWindow* window;
@@ -271,17 +270,16 @@ class ViewFunctor : public VFunctor {
 class MoveFunctor : public VFunctor {
   public:
     MoveFunctor();
-    MoveFunctor(ManagerWindow* window, WindowMouse* mouse, App* app, ManagerWindow* activate_window = nullptr);
+    MoveFunctor(ManagerWindow* window, App* app, ManagerWindow* activate_window = nullptr);
     virtual ~MoveFunctor() {};
 
-    virtual void startMove();
-    virtual void endMove();
-    bool action() override;
+    virtual void startMove(const EventData& data);
+    virtual void endMove(const EventData& data);
+    bool action(const EventData& data) override;
 
   protected:
     ManagerWindow* activate_window;
     ManagerWindow* move_window;
-    WindowMouse* mouse;
     Pair<int> old_coord;
     bool on_move;
     App* app;
@@ -293,7 +291,7 @@ class StartMove : public VFunctor {
     StartMove(MoveFunctor* move_f);
     virtual ~StartMove() {};
 
-    bool action() override;;
+    bool action(const EventData& data) override;;
 
   protected:
     MoveFunctor* move_f;
@@ -305,7 +303,7 @@ class EndMove : public VFunctor {
     EndMove(MoveFunctor* move_f);
     virtual ~EndMove() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     MoveFunctor* move_f;
@@ -316,7 +314,7 @@ class RecalcThickness : public VFunctor {
     RecalcThickness(int min_coord, int max_coord, ManagerWindow* bar, ToolManager* tools);
     virtual ~RecalcThickness() {};
 
-    bool action () override;
+    bool action(const EventData& data) override;
 
   private:
     ManagerWindow* bar;
@@ -333,7 +331,7 @@ class PlaceBar {
 
     void fixPos();
     void unfixPos();
-    void place(int new_coord);
+    void place(const EventData& data, int new_coord);
     ManagerWindow* getBar() const;
 
   private: 
@@ -350,7 +348,7 @@ class MoveBarLeft : public VFunctor {
     MoveBarLeft(PlaceBar* placer);
     virtual ~MoveBarLeft() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer;  
@@ -361,7 +359,7 @@ class MoveBarRight : public VFunctor {
     MoveBarRight(PlaceBar* placer);
     virtual ~MoveBarRight() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer;  
@@ -372,7 +370,7 @@ class MoveBarUp : public VFunctor {
     MoveBarUp(PlaceBar* placer);
     virtual ~MoveBarUp() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer;  
@@ -383,7 +381,7 @@ class MoveBarDown : public VFunctor {
     MoveBarDown(PlaceBar* placer);
     virtual ~MoveBarDown() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer;  
@@ -392,35 +390,35 @@ class MoveBarDown : public VFunctor {
 class PlaceBarOnClickX : public StartMove {
   public:
     PlaceBarOnClickX();
-    PlaceBarOnClickX(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, MoveFunctor* functor);
+    PlaceBarOnClickX(PlaceBar* placer, ManagerWindow* window, MoveFunctor* functor);
     virtual ~PlaceBarOnClickX() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer;
-    WindowMouse* mouse;
+    ManagerWindow* window;
 };
 
 class PlaceBarOnClickY : public StartMove {
   public:
     PlaceBarOnClickY();
-    PlaceBarOnClickY(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, MoveFunctor* functor);
+    PlaceBarOnClickY(PlaceBar* placer, ManagerWindow* window, MoveFunctor* functor);
     virtual ~PlaceBarOnClickY() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer;
-    WindowMouse* mouse;
+    ManagerWindow* window;
 };
 
 class MoveBarRandomX : public MoveFunctor {
   public:
     MoveBarRandomX();
-    MoveBarRandomX(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, App* app);
+    MoveBarRandomX(PlaceBar* placer, ManagerWindow* window, App* app);
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer;
@@ -429,9 +427,9 @@ class MoveBarRandomX : public MoveFunctor {
 class MoveBarRandomY : public MoveFunctor {
   public:
     MoveBarRandomY();
-    MoveBarRandomY(PlaceBar* placer, ManagerWindow* window, WindowMouse* mouse, App* app);
+    MoveBarRandomY(PlaceBar* placer, ManagerWindow* window, App* app);
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer;
@@ -442,7 +440,7 @@ class GlowPicFunctor : public VFunctor {
     GlowPicFunctor(PicWindow* window, const char* default_name, const char* glowing_name);
     virtual ~GlowPicFunctor() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PicWindow* glow_window;
@@ -458,7 +456,7 @@ class GlowBorderFunctor : public VFunctor {
 
     virtual ~GlowBorderFunctor() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     BorderWindow* glow_window;
@@ -475,7 +473,7 @@ class MakeFirst : public VFunctor {
     MakeFirst(ManagerWindow* window);
     virtual ~MakeFirst() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     ManagerWindow* window;
@@ -484,13 +482,13 @@ class MakeFirst : public VFunctor {
 class ResizeCanvas : public MoveFunctor {
   public:
     ResizeCanvas();
-    ResizeCanvas(ManagerWindow* window, Renderer* render, WindowMouse* mouse, App* app);
+    ResizeCanvas(ManagerWindow* window, Renderer* render, App* app);
     virtual ~ResizeCanvas() {};
 
-    void startMove() override;
-    void endMove() override;
+    void startMove(const EventData& data) override;
+    void endMove(const EventData& data) override;
 
-    bool action() override;
+    bool action(const EventData& data) override;
   
   private:
     Pair<int> new_size;
@@ -507,7 +505,7 @@ class CalcGraphDotLeft : public VFunctor {
     CalcGraphDotLeft(int min_coord, int max_coord, ManagerWindow* bar, GraphWindow* window);
     virtual ~CalcGraphDotLeft() {};
 
-    bool action () override; 
+    bool action(const EventData& data) override; 
 
   private:
     GraphWindow* window;
@@ -521,7 +519,7 @@ class CalcGraphDotRight : public VFunctor {
     CalcGraphDotRight(int min_coord, int max_coord, ManagerWindow* bar, GraphWindow* window);
     virtual ~CalcGraphDotRight() {};
 
-    bool action () override; 
+    bool action(const EventData& data) override; 
 
   private:
     GraphWindow* window;
@@ -536,7 +534,7 @@ class ResetBars : public VFunctor {
     ResetBars(PlaceBar* placer_left, PlaceBar* placer_right, int reset_coord_left, int reset_coord_right);
     virtual ~ResetBars() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer_left;
@@ -551,7 +549,7 @@ class MakeFixedBars : public VFunctor {
     MakeFixedBars(PlaceBar* placer_left, PlaceBar* placer_right);
     virtual ~MakeFixedBars() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer_left;
@@ -564,7 +562,7 @@ class MakeUnFixedBars : public VFunctor {
     MakeUnFixedBars(PlaceBar* placer_left, PlaceBar* placer_right);
     virtual ~MakeUnFixedBars() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     PlaceBar* placer_left;
@@ -577,7 +575,7 @@ class ClearCanvas : public VFunctor {
     ClearCanvas(BorderWindow* canvas, Renderer* render);
     virtual ~ClearCanvas() {};
 
-    bool action() override;
+    bool action(const EventData& data) override;
 
   private:
     BorderWindow* canvas;
