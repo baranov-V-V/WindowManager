@@ -54,7 +54,9 @@ ChangeColor::ChangeColor() : tools(nullptr), color(black_c) {};
 ChangeColor::ChangeColor(ToolManager* tools, COLORREF color) : tools(tools), color(color) {};
 bool ChangeColor::action(const EventData& data) { 
     for (int i = 0; i < tools->getCount(); ++i) {
-        tools->operator[](i)->setColor(color);
+        if (IS_OPTION_COLOR(tools->operator[](i)->getOption())) {
+            tools->operator[](i)->setColor(color);tools->operator[](i)->setColor(color);
+        }
     }
     return true;
 };

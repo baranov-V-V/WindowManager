@@ -29,6 +29,9 @@ void App::initBasicTools() {
     tool_manager.addTool(tool_feather);
     tool_manager.addTool(tool_eraser);
     tool_manager.addTool(tool_rect);
+
+    ToolModule* circle_drawer = LoadTool("circle.dll");
+    tool_manager.addTool(circle_drawer);
 }
 
 void App::initWindows() {
@@ -46,6 +49,7 @@ void App::initWindows() {
     BorderWindow* graph = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), this);
     
     
+    
     InvFunctorTrue* debug_f = new InvFunctorTrue();
     DedWindow* round_wnd    = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
     PicWindow* menu         = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, this); //menu->children[0] == close_button;
@@ -61,6 +65,7 @@ void App::initWindows() {
     text_button->setPointed(glow_txt_but);
     inv_wnd->addChild(text_button);
     */
+
     StopAppFunctor* stop_app = new StopAppFunctor(this);
     menu->getChild(0)->setPressUp(stop_app);
     MakeMovable(round_wnd, round_wnd, this);
@@ -117,7 +122,8 @@ void App::makeEvents() {
         }
         
     }
-
+ 
+ 
     state = mouse.getState();
     abs_coord = mouse.getAbsCoord();
 };

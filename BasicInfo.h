@@ -41,11 +41,6 @@ enum MOUSE_STATES {
     RIGHT_CLICK = 2
 };
 
-enum BASIC_TOOLS {
-    TOOL_FEATHER = 0,
-    TOOL_ERASER = 1
-};
-
 enum GLOW_STATE {
     STATE_DEFAULT = 1,
     STATE_GLOWING  = 2
@@ -79,8 +74,8 @@ const COLORREF palette_c   = RGB( 37,  37,  38);
 const COLORREF black_c     = RGB(  0,   0,   0);
 const COLORREF white_c     = RGB(255, 255, 255); 
 const COLORREF canvas_c    = RGB( 85,  86, 179);
-const COLORREF blue_c      = RGB( 85,  86, 179);
-const COLORREF red_c       = RGB(  4,   2, 255);
+const COLORREF blue_c      = RGB( 15,   2, 255);
+const COLORREF red_c       = RGB(255,   2,   2);
 const COLORREF grey_c      = RGB(153,  76,   0);
 const COLORREF green_c     = RGB(  0, 128,   0);
 const COLORREF dgrey_c     = RGB( 38,  38,  38);

@@ -1,6 +1,8 @@
 #include "Tools.h"
-#include "Window.h"
+#include "BasicWindow.h"
 #include <algorithm>
+#include <cassert>
+#include <iostream>
     
 void ToolManager::addTool(VTool* tool) {
     tools.push_back(tool);
@@ -80,3 +82,56 @@ void ToolRect::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
         render->drawFilledRectangle(old_coord.x, old_coord.y, new_coord.x, new_coord.y, color, color, 1);
     }
 };
+
+void ToolModule::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
+    if (press != NULL) {
+        press(&funcs, target, render, x, y, info); 
+        std::cout << "pressing!";
+    }
+    std::cout << "kinda press!";
+};
+void ToolModule::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
+    if (move != NULL) {
+        move(&funcs, target, render, dx, dy, info);
+    }
+};
+void ToolModule::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
+    if (release != NULL) {
+        release(&funcs, target, render, x, y, info);
+    }
+};
+ToolModule::ToolModule(int options, char* name, ToolFunc press, ToolFunc move, ToolFunc release, void* info) : 
+    VTool(black_c, name, options), press(press), move(move), release(release), info(info) {
+    printf("\n%p", press); 
+    funcs = {&RenderDrawLine,
+             &RenderSetPixel, 
+             &RenderdrawCircle,
+             &RenderdrawRectangle,
+             &RenderdrawFilledRectangle,
+             &RenderdrawRoundRect};
+};
+
+
+ToolModule* LoadTool(char* file_name) {
+    HMODULE module = LoadLibraryA(file_name);   
+    if (module == NULL) {
+        std::cout << "couldn't open file" << file_name << "\n";
+    }
+
+    ToolFunc tool_funcs[3];
+    NameFunc func_name = (NameFunc) GetProcAddress(module, func_names[0]);
+
+    printf("loaded %s!", func_name());
+
+    for (int i = 1; i < func_count; ++i) {
+        tool_funcs[i - 1] = (ToolFunc) GetProcAddress(module, func_names[i]);
+        if (tool_funcs[i - 1] == NULL) {
+            printf("couldn't find function with name %s\n", func_names[i]);
+        }
+    }
+
+    //tool_funcs[0](nullptr, nullptr, 0, 0, nullptr);
+    ToolModule* tool = new ToolModule(OPTION_COLOR | OPTION_THICKNESS, func_name(), tool_funcs[0], tool_funcs[1], tool_funcs[2], nullptr);
+    
+    return tool;
+}

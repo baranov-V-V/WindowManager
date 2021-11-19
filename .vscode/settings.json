@@ -49,6 +49,7 @@
         "queue": "cpp",
         "cassert": "cpp",
         "*.rh": "cpp",
-        "cstring": "cpp"
+        "cstring": "cpp",
+        "assert.h": "c"
     }
 }
