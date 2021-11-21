@@ -50,6 +50,7 @@
         "cassert": "cpp",
         "*.rh": "cpp",
         "cstring": "cpp",
-        "assert.h": "c"
+        "assert.h": "c",
+        "set": "cpp"
     }
 }

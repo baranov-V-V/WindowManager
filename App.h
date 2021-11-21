@@ -1,9 +1,11 @@
 #pragma once
+#include <queue>
+#include <string>
+
 #include "BasicInfo.h"
 #include "Window.h"
 #include "Tools.h"
-#include <queue>
-#include <string>
+
 
 class App {
   public:
@@ -18,6 +20,7 @@ class App {
     ManagerWindow* getActiveWindow(ManagerWindow* window) const { return active_window; };
 
     ToolManager* getToolManager() { return &tool_manager; };
+    DisplayManager* getCanvasManager() { return &canvas_manager; };
 
   public:
     void initWindows();
@@ -34,6 +37,7 @@ class App {
 
     std::queue<VFunctor*> events_queue;
     
+    DisplayManager canvas_manager;
     ToolManager tool_manager;
     ManagerWindow* active_window = nullptr;
 };

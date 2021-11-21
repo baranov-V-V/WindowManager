@@ -1,10 +1,10 @@
+#include <cassert>
+#include <iostream>
+
 #include "Functors.h"
 #include "Window.h"
 #include "Tools.h"
 #include "App.h"
-
-#include <cassert>
-#include <iostream>
 
 DummyFunctor::DummyFunctor() {};
 bool DummyFunctor::action(const EventData& data) {
@@ -27,12 +27,13 @@ void FeatherFunctor::setThickness(int thinckness) {
 DebugFunctorTrue::DebugFunctorTrue() {};
 DebugFunctorTrue::DebugFunctorTrue(ManagerWindow* window) : window(window) {};
 bool DebugFunctorTrue::action(const EventData& data) {
+    //std::cout << "click in debug_f!\n";
     return true;
 };
 
 InvFunctorTrue::InvFunctorTrue() {};
 bool InvFunctorTrue::action(const EventData& data) { 
-    std::cout << "Click true on invs_wnd\n"; 
+    //std::cout << "Click true on invs_wnd\n"; 
     return true; 
 };
 
@@ -66,6 +67,14 @@ ChangeBasicTool::ChangeBasicTool(ToolManager* tools, int tool_index) : tools(too
 bool ChangeBasicTool::action(const EventData& data) {
     tools->setCurrTool(tool_index);
     return true;
+};
+
+ChangeToolFalse::ChangeToolFalse() : tools(nullptr) { tool_index = 0; };
+ChangeToolFalse::ChangeToolFalse(ToolManager* tools, int tool_index) : tools(tools), tool_index(tool_index) {};
+bool ChangeToolFalse::action(const EventData& data) {
+    std::cout << "clicked!\n";
+    tools->setCurrTool(tool_index);
+    return false;
 };
 
 NextBasicTool::NextBasicTool() : tools(nullptr) {};
@@ -143,26 +152,45 @@ bool EndDraw::action(const EventData& data) {
 };
 
 CloseCanvasFunctor::CloseCanvasFunctor() {};
-CloseCanvasFunctor::CloseCanvasFunctor(InvisibleWindow* window) : window_to_close(window) {};
+CloseCanvasFunctor::CloseCanvasFunctor(CanvasWindow* window, DisplayManager* canvas_manager) : window_to_close(window), canvas_manager(canvas_manager) {};
 bool CloseCanvasFunctor::action(const EventData& data) {
     ManagerWindow* parent = window_to_close->getParent();
     assert(parent);
+    canvas_manager->delWindow(window_to_close);
     parent->delChild(window_to_close);
+    std::cout << "canvas_count: " << canvas_manager->getCount() << "\n";
     return true;
 };
 
 HideCanvasFunctor::HideCanvasFunctor() {};
 HideCanvasFunctor::HideCanvasFunctor(CanvasWindow* window) : window_to_hide(window) {};
 bool HideCanvasFunctor::action(const EventData& data)  {
-    window_to_hide->hide();
+    window_to_hide->setShow(!window_to_hide->getShow());
     return true;
+};
+
+HideAllCanvasFunctor::HideAllCanvasFunctor() {};
+HideAllCanvasFunctor::HideAllCanvasFunctor(DisplayManager* canvas_manager) : canvas_manager(canvas_manager) {};
+bool HideAllCanvasFunctor::action(const EventData& data) {
+    canvas_manager->hideAll();
+    std::cout << "done!\n";
+    return false;
+};
+
+ShowAllCanvasFunctor::ShowAllCanvasFunctor() {};
+ShowAllCanvasFunctor::ShowAllCanvasFunctor(DisplayManager* canvas_manager) : canvas_manager(canvas_manager) {};
+bool ShowAllCanvasFunctor::action(const EventData& data) {
+    canvas_manager->showAll();
+    return false;
 };
 
 FileFunctor::FileFunctor() {};
 FileFunctor::FileFunctor(ManagerWindow* window, Renderer* render, App* app) : window(window), render(render), app(app) {};
 bool FileFunctor::action(const EventData& data) {
-    InvisibleWindow* canvas_layer = MakeResizeCanvas(window->getSizeX() / 2, window->getSizeY() / 2, window->getSizeX() / 4, window->getSizeY() / 4, "Canvas", window, render, app);
+    CanvasWindow* canvas_layer = MakeResizeCanvas(window->getSizeX() / 2, window->getSizeY() / 2, window->getSizeX() / 4, window->getSizeY() / 4, "Canvas", window, render, app);
     window->addChild(canvas_layer);
+    app->getCanvasManager()->addWindow(canvas_layer);
+    //app->getCanvasManager()->updateCanvasMenu(render);
     return true;
 };
 
@@ -486,5 +514,13 @@ ClearCanvas::ClearCanvas(BorderWindow* canvas, Renderer* render) : canvas(canvas
 bool ClearCanvas::action(const EventData& data) {
     render->setWindow(canvas);
     render->drawFilledRectangle(0, 0, max_canvas_x, max_canvas_y, white_c, white_c, 1); 
+    return true; 
+};
+
+SetHideFunctor::SetHideFunctor() {};
+SetHideFunctor::SetHideFunctor(ManagerWindow* window, bool is_shown) : window(window), is_shown(is_shown) {};
+bool SetHideFunctor::action(const EventData& data) {
+    //std::cout << "hiding menu!\n";
+    window->setShow(!window->getShow());
     return true; 
 };

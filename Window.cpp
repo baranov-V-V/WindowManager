@@ -1,10 +1,11 @@
+#include <iostream>
+#include <cassert>
+#include <cmath>
+
 #include "Window.h"
 #include "Functors.h"
 #include "Tools.h"
 #include "App.h"
-#include <iostream>
-#include <cassert>
-#include <cmath>
 
 Renderer::Renderer(BasicWindow* window, double min_x, double min_y, double max_x, double max_y) :
     window(window), max(max_x, max_y), min(min_x, min_y) {
@@ -41,60 +42,49 @@ double Renderer::toCoordY(int y) const {
     return double(y) / scale.y + min.y;
 };
 
-DisplayManager::DisplayManager(int max_count) {
-    
+DisplayManager::DisplayManager() : canvas_menu(nullptr) {};
+DisplayManager::~DisplayManager() {};
+
+void DisplayManager::updateCanvasMenu(Renderer* render) {
+    InvisibleWindow* new_menu = MakeCanvasMenu(canvas_menu->getCoordX(), canvas_menu->getCoordY(), this, render, canvas_menu->getParent());
+    delete canvas_menu;
+    canvas_menu = new_menu;
 };
 
-DisplayManager::~DisplayManager() {
-    for (int i = 0; i < count; ++i) {
-        this->delLast();
-    }
-    delete[] windows;
+void DisplayManager::addWindow(CanvasWindow* window) {
+    windows.insert(window);
 };
 
-void DisplayManager::addWindow(ManagerWindow* window) {
-    if (count < size) {
-        windows[count++] = window;
-    } else {
-        std::cerr << "Overflow!!" << std::endl;
-    }
-};
-
-void DisplayManager::showWindow(ManagerWindow* window) {
-    int pos = 0;
-    for (int i = 0; i < count; ++i) {
-        if (windows[i] == window) {
-            
-        }
+void DisplayManager::showWindow(CanvasWindow* window) {
+    auto it = windows.find(window);
+    if (it != windows.end()) {
+        (*it)->setShow(true);
     }
 };
 
-void DisplayManager::hideWindow(ManagerWindow* window) {
-    int pos = 0;
-    for (int i = 0; i < count; ++i) {
-        if (windows[i] == window) {
-            for (int j = i; j < count - 1; ++j) {
-                windows[j] = windows[j + 1];   
-            }
-        }
+void DisplayManager::hideWindow(CanvasWindow* window) {
+    auto it = windows.find(window);
+    if (it != windows.end()) {
+        (*it)->setShow(false);
     }
 };
 
-void DisplayManager::delWindow(ManagerWindow* window) {
-    int pos = 0;
-    for (int i = 0; i < count; ++i) {
-        if (windows[i] == window) {
-            for (int j = i; j < count - 1; ++j) {
-                windows[j] = windows[j + 1];   
-            }
-            count--;
-            break;
-        }
+void DisplayManager::delWindow(CanvasWindow* window) {
+    if (windows.find(window) != windows.end()) {
+        windows.erase(window);
     }
 };
 
-void DisplayManager::delLast() {
-    windows[--count] = nullptr;
+void DisplayManager::hideAll() {
+    for (auto it = windows.begin(); it != windows.end(); ++it) {
+        (*it)->setShow(false);
+    }
+};
+
+void DisplayManager::showAll() {
+    for (auto it = windows.begin(); it != windows.end(); ++it) {
+        (*it)->setShow(true);
+    }
 };
 
 ManagerWindow::ManagerWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, ManagerWindow* parent,
@@ -102,21 +92,21 @@ ManagerWindow::ManagerWindow(int x_size, int y_size, int coord_x, int coord_y, C
     Texture(x_size, y_size, color, coord_x, coord_y), parent(parent) {
 
     if (press_up_f == nullptr) {
-        ManagerWindow::press_up_f = new DebugFunctorTrue(this);
+        functors[EVENT_MOUSE_RELEASED_LC] = new DebugFunctorTrue(this);
     } else {
-        ManagerWindow::press_up_f = press_up_f;
+        functors[EVENT_MOUSE_RELEASED_LC] = press_up_f;
     }
     
     if (press_down_f == nullptr) {
-        ManagerWindow::press_down_f = new DebugFunctorTrue(this);
+        functors[EVENT_MOUSE_PRESSED_LC] = new DebugFunctorTrue(this);
     } else {
-        ManagerWindow::press_down_f = press_down_f;
+        functors[EVENT_MOUSE_PRESSED_LC] = press_down_f;
     }
 
-    if (press_up_f == nullptr) {
-        ManagerWindow::pointed_f = new DebugFunctorTrue(this);
+    if (pointed_f == nullptr) {
+        functors[EVENT_MOUSE_MOVE] = new DebugFunctorTrue(this);
     } else {
-        ManagerWindow::pointed_f = pointed_f;
+        functors[EVENT_MOUSE_MOVE] = pointed_f;
     }
 
     is_clicked = false;
@@ -131,10 +121,78 @@ ManagerWindow::~ManagerWindow() {
         this->delLast();
     }
     delete[] children;
-    delete pointed_f;
-    delete press_down_f;
-    delete press_up_f;
+    
+    for (auto it : functors) {
+        delete it.second;
+    }
 };
+
+void ManagerWindow::setPointed(VFunctor* functor) {
+    //delete ManagerWindow::pointed_f;
+    auto it = functors.find(EVENT_MOUSE_MOVE);
+    if (it != functors.end()) {
+        delete it->second;
+    }
+    functors[EVENT_MOUSE_MOVE] = functor;
+    //ManagerWindow::pointed_f = functor;
+};
+void ManagerWindow::setPressUp(VFunctor* functor) {
+    //delete ManagerWindow::press_up_f;
+    auto it = functors.find(EVENT_MOUSE_RELEASED_LC);
+    if (it != functors.end()) {
+        delete it->second;
+    }
+    functors[EVENT_MOUSE_RELEASED_LC] = functor;
+    //ManagerWindow::press_up_f = functor;
+};
+void ManagerWindow::setPressDown(VFunctor* functor) {
+    //delete ManagerWindow::press_down_f;
+    auto it = functors.find(EVENT_MOUSE_PRESSED_LC);
+    if (it != functors.end()) {
+        delete it->second;
+    }
+    functors[EVENT_MOUSE_PRESSED_LC] = functor;
+    //ManagerWindow::press_down_f = functor;
+};
+void ManagerWindow::setFunctor(EventType type, VFunctor* functor) {
+   auto it = functors.find(type);
+    if (it != functors.end()) {
+        delete it->second;
+    }
+    functors[type] = functor; 
+}
+
+VFunctor* ManagerWindow::getPointed() const {
+    auto it = functors.find(EVENT_MOUSE_MOVE);
+    if (it != functors.end()) {
+        return it->second;
+    }
+    return nullptr;
+    //return pointed_f;
+};
+VFunctor* ManagerWindow::getPressUp() const { 
+    auto it = functors.find(EVENT_MOUSE_RELEASED_LC);
+    if (it != functors.end()) {
+        return it->second;
+    }
+    return nullptr;
+    //return press_up_f;
+};
+VFunctor* ManagerWindow::getPressDown() const {
+    auto it = functors.find(EVENT_MOUSE_PRESSED_LC);
+    if (it != functors.end()) {
+        return it->second;
+    }
+    return nullptr;
+    //return press_down_f;
+};
+VFunctor* ManagerWindow::getFunctor(EventType type) const {
+    auto it = functors.find(type);
+    if (it != functors.end()) {
+        return it->second;
+    }
+    return nullptr;
+}
 
 void ManagerWindow::drawChilds(Renderer* renderer) const {
     //cerr << "trying draw childs for: [" << this << "]\n";
@@ -239,158 +297,129 @@ bool ManagerWindow::checkPointed(WindowMouse* mouse) {
     return hitTest(x, y);
 }
 
-/*
-bool ManagerWindow::proceedPressDown(WindowMouse* mouse) {
-    mouse->setWindow(this);
+EventState ManagerWindow::processEvent(const Event& event) {
+    if (event.getType() == EVENT_MOUSE_PRESSED_LC && this->checkPointed(event.getData().abs_coord)) {
+        std::cout << "in window [" << this << "]\n";
+        std::cout << "child count: " << count << "\n";
+    }
+    
+    if (!is_shown) {
+        std::cout << "not shown\n";
+        return EVENT_NEW;
+    }
 
-    if (this->checkPointed(mouse)) {
-        for (int i = count - 1; i >= 0; --i) {
-            if (children[i]->proceedPressDown(mouse)) {
-                mouse->setToParent();
-                return true;
-            }
-        }
+    if (event.getType() == EVENT_MOUSE_PRESSED_LC && this->checkPointed(event.getData().abs_coord)) {
         is_clicked = true;
-        bool result = press_down_f->action();
-        mouse->setToParent();
-        return result;
     }
-    mouse->setToParent();
-    return false;
-};
 
-bool ManagerWindow::proceedPressUp(WindowMouse* mouse) {
-    mouse->setWindow(this);
-
-    if (this->checkPointed(mouse)) {
-        for (int i = count - 1; i >= 0; --i) {
-            if (children[i]->proceedPressUp(mouse)) {
-                mouse->setToParent();
-                return true;
+    if (event.getType() == EVENT_MOUSE_MOVE) {
+        if (this->checkPointed(event.getData().mouse_data.start)) {
+            is_pointed = true;
+        } else {
+            if (is_pointed == true) {
+                is_pointed = false;
+                this->getPointed()->action(event.getData());
             }
-        }
-        bool result = false;
-        if (is_clicked) {
-            result = press_up_f->action();
-            is_clicked = false;
-        }
-        mouse->setToParent();
-        return result;
-    }
-    is_clicked = false;
-    mouse->setToParent();
-    return false;
-};
-
-bool ManagerWindow::proceedPointed(WindowMouse* mouse) {
-    Pair<int> rel_coord_old = mouse->getRelCoord();
-    this->markPointedWindows(mouse);
-    mouse->setRelCoord(rel_coord_old);
-    this->proceedPointedWindows(mouse);
-
-    return true;
-};
-
-void ManagerWindow::markPointedWindows(WindowMouse* mouse) {
-    mouse->setWindow(this);
-
-    for (int i = count - 1; i >= 0; --i) {
-        children[i]->markPointedWindows(mouse);
-    }
-
-    if (this->checkPointed(mouse)) {
-        is_pointed = true;
-    } else {
-        if (is_pointed) {
             is_pointed = false;
-            if (pointed_f != nullptr) {
-                pointed_f->action();
+        }
+    }
+
+    EventState result = EVENT_NEW;
+
+    for (int i = count - 1; i >= 0; --i) {
+        if (event.getType() == EVENT_MOUSE_PRESSED_LC && this->checkPointed(event.getData().abs_coord)) {
+            std::cout << "giving from [" << this << "] to child [" << children[i] << "]\n";
+        }
+        result = children[i]->processEvent(event);
+
+        if (result == EVENT_DONE) {
+            if (event.getType() == EVENT_MOUSE_RELEASED_LC) {
+                is_clicked = false;
             }
+            std::cout << "Event done!\n";
+            return EVENT_DONE;
         }
-        is_pointed = false;
-    }
-    
-    mouse->setToParent();
-};
-    
-bool ManagerWindow::proceedPointedWindows(WindowMouse* mouse) {
-    mouse->setWindow(this);
-
-    for (int i = count - 1; i >= 0; --i) {
-        if(children[i]->proceedPointedWindows(mouse)) {
-            mouse->setToParent();
-            return true;
-        };
-    }
-    
-    if (is_pointed) {
-        if (pointed_f != nullptr) {
-            if(pointed_f->action()) {
-                mouse->setToParent();
-                return true;
-            };
-        }
-    }
-
-    mouse->setToParent();
-    return false;
-};
-*/
-
-bool ManagerWindow::ProceedEvent(const Event& event) {
-
-    bool result = false;
-
-    for (int i = count - 1; i >= 0; --i) {
-        if (children[i]->ProceedEvent(event)) {
-            return true;
+        if (result == EVENT_IN_PROCESS) {
+            std::cout << "Event in progress!\n";
+            break;
         }
     }
 
     switch(event.getType()) {
         case EVENT_MOUSE_MOVE:
             
-            if (this->checkPointed(event.getData().mouse_data.start)) {
-                is_pointed = true;
-                if (pointed_f != nullptr) {
-                    if (pointed_f->action(event.getData())) {
-                        result = true;
+            if (is_pointed) {
+                if (this->getPointed() != nullptr) {
+                    if (this->getPointed()->action(event.getData())) {
+                        result = EVENT_DONE;
+                    } else {
+                        result = EVENT_IN_PROCESS; 
                     }
                 }
-            } else if (is_pointed) {
+            } /*else if (is_pointed) {
                 is_pointed = false;
-                if (pointed_f != nullptr) {
-                    result = pointed_f->action(event.getData());
+                if (this->getPointed() != nullptr) {
+                    if (this->getPointed()->action(event.getData())) {
+                        result = EVENT_DONE;
+                    } else {
+                        result = EVENT_IN_PROCESS; 
+                    }
                 }
                 is_pointed = false;
+            } */
+
+            break;
+
+        case EVENT_MOUSE_PRESSED_LC:
+
+            if (this->checkPointed(event.getData().abs_coord)) {
+                if (this->getPressDown() != nullptr) {
+                    if (this->getPressDown()->action(event.getData())) {
+                        result = EVENT_DONE;
+                    } else {
+                        result = EVENT_IN_PROCESS; 
+                    }
+                }
             }
 
             break;
 
-        case EVENT_MOUSE_PRESSED:
+        case EVENT_MOUSE_RELEASED_LC:
 
             if (this->checkPointed(event.getData().abs_coord)) {
-                is_clicked = true;
-                result = press_down_f->action(event.getData());
-            }
-
-            break;
-
-        case EVENT_MOUSE_RELEASED:
-
-            if (this->checkPointed(event.getData().abs_coord)) {
-                if (is_clicked) {
-                    result = press_up_f->action(event.getData());
+                if (is_clicked && this->getPressUp() != nullptr) {
+                    if (this->getPressUp()->action(event.getData())) {
+                        result = EVENT_DONE;
+                    } else {
+                        result = EVENT_IN_PROCESS; 
+                    };
+                    std::cout << "in release if\n";
                 }
+                std::cout << "released result: " << result << "\n";
             }
             is_clicked = false;
 
             break;
+        
+        case EVENT_MOUSE_RELEASED_RC:
+
+            if (this->checkPointed(event.getData().abs_coord)) {
+                if (is_clicked && this->getFunctor(EVENT_MOUSE_RELEASED_RC) != nullptr) {
+                    if (this->getFunctor(EVENT_MOUSE_RELEASED_RC)->action(event.getData())) {
+                        result = EVENT_DONE;
+                    } else {
+                        result = EVENT_IN_PROCESS; 
+                    };
+                    //std::cout << "in release if\n";
+                }
+                //std::cout << "released result: " << result << "\n";
+            }
+
+            break;
 
         default:
-
-            std::cout << "no such event in ProceedEvent: " << event.getType() << "\n";
-    }    
+            std::cout << "no such event in processEvent: " << event.getType() << "\n";
+    };   
 
     return result;
 };
@@ -406,6 +435,10 @@ BorderWindow::BorderWindow(int x_size, int y_size, int coord_x, int coord_y, COL
     
 void BorderWindow::draw(Renderer* render) const {
     //cerr << "started drawing: [" << this << "]\n";
+    if (!is_shown) {
+        return;
+    }
+
     render->setWindow(const_cast<BorderWindow*>(this));
     if (need_redraw) {
         render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
@@ -423,6 +456,10 @@ ClockWindow::ClockWindow(int x_size, int y_size, int coord_x, int coord_y, COLOR
 };
 
 void ClockWindow::draw(Renderer* render) const {
+    if (!is_shown) {
+        return;
+    }
+    
     ClockWindow* nc_this = const_cast<ClockWindow*>(this);
     
     char buf[24];
@@ -482,6 +519,10 @@ PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic
 };
     
 void PicWindow::draw(Renderer* render) const {
+    if (!is_shown) {
+        return;
+    }
+    
     render->setWindow(const_cast<PicWindow*>(this));
     
     if (need_redraw) {
@@ -502,6 +543,10 @@ ThicknessWindow::ThicknessWindow(int x_size, int y_size, int coord_x, int coord_
 };
 
 void ThicknessWindow::draw(Renderer* render) const {
+    if (!is_shown) {
+        return;
+    }
+    
     render->setWindow(const_cast<ThicknessWindow*>(this));
     render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
     ToolFeather* feather = reinterpret_cast<ToolFeather*>(tools->operator[](TOOL_FEATHER));
@@ -516,7 +561,9 @@ InvisibleWindow::InvisibleWindow(int x_size, int y_size, int coord_x, int coord_
 };
     
 void InvisibleWindow::draw(Renderer* render) const {
-    
+    if (!is_shown) {
+        return;
+    }
     //render->setWindow(this->getParent());
     //render->drawFilledRectangle(coord.x, coord.y, coord.x + size.x, coord.y + size.y, black_c, black_c, 1);
 
@@ -538,13 +585,21 @@ TextButtonWindow::TextButtonWindow(int x_size, int y_size, int coord_x, int coor
                                    ManagerWindow* parent, VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) : 
     BorderWindow(x_size, y_size, coord_x, coord_y, color, border_color, thickness, render, parent, press_up_f, pointed_f, press_down_f), 
     text(text), font_name(font_name), ch_size_x(ch_size_x), ch_size_y(ch_size_y), align(align), text_color(text_color) {
+    
+    assert(text);
+    assert(font_name);
+
+    
     need_redraw = true;
     this->draw(render);
     need_redraw = false;
 };
 
 void TextButtonWindow::draw(Renderer* render) const {
-    
+    if (!is_shown) {
+        return;
+    }
+
     render->setWindow(const_cast<TextButtonWindow*>(this));
     if (need_redraw) {
         render->drawFilledRectangle(0, 0, size.x, size.y, color, border_color, thickness);
@@ -576,7 +631,7 @@ void TextButtonWindow::draw(Renderer* render) const {
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
                            Renderer* render, App* app, const char* pic_name) :
-    InvisibleWindow(x_size + 2 * grab_len, y_size + 2 * grab_len, coord_x - grab_len, coord_y - grab_len, parent), name(name), on_display(true),
+    InvisibleWindow(x_size + 2 * grab_len, y_size + 2 * grab_len, coord_x - grab_len, coord_y - grab_len, parent), name(name),
     base_img(x_size, y_size, white_c, 0, 0) {
     need_redraw = false;
 
@@ -584,7 +639,7 @@ CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, cha
     int menu_y = 25;
 
     int but_x = close_button_x;
-    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, grab_len, grab_len, this, but_x);
+    PicWindow* menu = MakeBasicMenu(menu_x, menu_y, grab_len, grab_len, this, app, but_x);
 
     BorderWindow* canvas = new BorderWindow(max_canvas_x, max_canvas_y, grab_len, menu_y + grab_len, white_c, white_c, 1, render, this);
     canvas->setSize({x_size, y_size - menu_y});
@@ -644,6 +699,10 @@ GraphWindow::GraphWindow(int x_size, int y_size, int coord_x, int coord_y, Manag
 
 
 void GraphWindow::draw(Renderer* render) const {
+    if (!is_shown) {
+        return;
+    }
+    
     render->setWindow(const_cast<GraphWindow*>(this));
 
     if (need_redraw) {
@@ -677,6 +736,10 @@ RoundWindow::RoundWindow(int radius, int coord_x, int coord_y, COLORREF color, C
 };
 
 void RoundWindow::draw(Renderer* render) const {
+    if (!is_shown) {
+        return;
+    }
+    
     render->setWindow(const_cast<RoundWindow*>(this));
 
     if (need_redraw) {
@@ -700,6 +763,10 @@ DedWindow::DedWindow(int radius, int size_x, int size_y, int coord_x, int coord_
 }
 
 void DedWindow::draw(Renderer* render) const {
+    if (!is_shown) {
+        return;
+    }
+    
     render->setWindow(const_cast<DedWindow*>(this));
 
     if (need_redraw) {

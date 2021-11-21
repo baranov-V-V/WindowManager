@@ -1,8 +1,14 @@
 #pragma once
 #include <ctime>
+#include <map>
+#include <set>
+
 #include "BasicInfo.h"
 #include "Events.h"
 #include "BasicWindow.h"
+
+using std::map;
+using std::set;
 
 class WindowMouse {
   public:
@@ -32,20 +38,28 @@ class WindowMouse {
 
 class DisplayManager {
   public:
-    DisplayManager(int max_count = 100);
+    DisplayManager();
     ~DisplayManager();
 
-    void addWindow(ManagerWindow* window);
-    void showWindow(ManagerWindow* window);
-    void hideWindow(ManagerWindow* window);
-    int getCount() const { return count; };
-    void delWindow(ManagerWindow* window);
-    void delLast();
+    void setMenu(InvisibleWindow* menu) { canvas_menu = menu; };
+    void updateCanvasMenu(Renderer* render);
+
+    void addWindow(CanvasWindow* window);
+    void showWindow(CanvasWindow* window);
+    void delWindow(CanvasWindow* window);
+    
+    void hideWindow(CanvasWindow* window);
+    
+    void hideAll();
+    void showAll();
+
+    int getCount() const { return windows.size(); };
+
+    const std::set<CanvasWindow*>& getData() { return windows; };
 
   private:
-    ManagerWindow** windows;
-    int count;
-    int size;
+    std::set<CanvasWindow*> windows;
+    InvisibleWindow* canvas_menu;
 };
 
 class ManagerWindow : public Texture {
@@ -60,6 +74,9 @@ class ManagerWindow : public Texture {
     void showOnTexture(const Texture* target) const;
     void setRedraw(bool state) { need_redraw = state; };
     bool isRedraw() const { return need_redraw; };
+
+    void setShow(bool new_show) { is_shown = new_show; };
+    bool getShow() const { return is_shown; };
 
     //!mouse press part
     bool isPointed() const { return is_pointed; };
@@ -77,16 +94,18 @@ class ManagerWindow : public Texture {
     bool proceedPointed(WindowMouse* mouse);
     bool proceedPressDown(WindowMouse* mouse);
     bool proceedPressUp(WindowMouse* mouse);
+
+    EventState processEvent(const Event& event); //new!!
     
-    void setPointed(VFunctor* functor) { delete ManagerWindow::pointed_f; ManagerWindow::pointed_f = functor; };
-    void setPressUp(VFunctor* functor) { delete ManagerWindow::press_up_f; ManagerWindow::press_up_f = functor; };
-    void setPressDown(VFunctor* functor) { delete ManagerWindow::press_down_f; ManagerWindow::press_down_f = functor; };
+    void setPointed(VFunctor* functor);
+    void setPressUp(VFunctor* functor);
+    void setPressDown(VFunctor* functor);
+    void setFunctor(EventType type, VFunctor* functor);
 
-    bool ProceedEvent(const Event& event); //new!!
-
-    VFunctor* getPointed() const { return pointed_f; };
-    VFunctor* getPressUp() const { return press_up_f; };
-    VFunctor* getPressDown() const { return press_down_f; };
+    VFunctor* getPointed() const;
+    VFunctor* getPressUp() const;
+    VFunctor* getPressDown() const;
+    VFunctor* getFunctor(EventType type) const;
 
     //manager part
     ManagerWindow* getParent() const { return parent; };
@@ -106,15 +125,16 @@ class ManagerWindow : public Texture {
     ManagerWindow** children;
     int count;
     int max_size;
-    VFunctor* pointed_f;
-    VFunctor* press_up_f;
-    VFunctor* press_down_f;
+
+    map<EventType, VFunctor*> functors;
 
   protected:
+    
     bool need_redraw = false;
     int window_type;
     bool is_clicked;
     bool is_pointed;
+    bool is_shown = true;
 };
 
 class InvisibleWindow : public ManagerWindow {
@@ -202,16 +222,13 @@ class CanvasWindow : public InvisibleWindow {
     virtual ~CanvasWindow() {};
     //CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, CanvasWindow* window, Renderer* render, Feather* feather, WindowMouse* mouse);
 
-    void hide() { on_display = false; };
-    void show() { on_display = true;  };
-
     const Texture& getBaseImg() { return base_img; };
 
+    Texture* getCanvas() { return this->getChild(0); }
     char* getName() const { return name; };
 
   private:
     char* name;
-    bool on_display;
     Texture base_img;
 };
 

@@ -122,6 +122,19 @@ class ChangeBasicTool : public VFunctor {
     int tool_index;
 };
 
+class ChangeToolFalse : public VFunctor {
+  public:
+    ChangeToolFalse();
+    ChangeToolFalse(ToolManager* tools, int tool_index);
+    virtual ~ChangeToolFalse() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    ToolManager* tools;
+    int tool_index;
+};
+
 class NextBasicTool : public VFunctor {
   public:
     NextBasicTool();
@@ -208,13 +221,14 @@ class EndDraw : public VFunctor {
 class CloseCanvasFunctor : public VFunctor {
   public:
     CloseCanvasFunctor();
-    CloseCanvasFunctor(InvisibleWindow* window);
+    CloseCanvasFunctor(CanvasWindow* window, DisplayManager* canvas_manager);
     virtual ~CloseCanvasFunctor() {};
 
     bool action(const EventData& data) override;
 
   private:
-    InvisibleWindow* window_to_close;
+    CanvasWindow* window_to_close;
+    DisplayManager* canvas_manager;
 };
 
 class HideCanvasFunctor : public VFunctor {
@@ -227,6 +241,30 @@ class HideCanvasFunctor : public VFunctor {
 
   private:
     CanvasWindow* window_to_hide;
+};
+
+class HideAllCanvasFunctor : public VFunctor {
+  public:
+    HideAllCanvasFunctor();
+    HideAllCanvasFunctor(DisplayManager* canvas_manager);
+    virtual ~HideAllCanvasFunctor() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    DisplayManager* canvas_manager;
+};
+
+class ShowAllCanvasFunctor : public VFunctor {
+  public:
+    ShowAllCanvasFunctor();
+    ShowAllCanvasFunctor(DisplayManager* canvas_manager);
+    virtual ~ShowAllCanvasFunctor() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    DisplayManager* canvas_manager;
 };
 
 class FileFunctor : public VFunctor {
@@ -582,3 +620,15 @@ class ClearCanvas : public VFunctor {
     Renderer* render;
 };
 
+class SetHideFunctor : public VFunctor {
+  public:
+    SetHideFunctor();
+    SetHideFunctor(ManagerWindow* window, bool is_shown);
+    virtual ~SetHideFunctor() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    ManagerWindow* window;
+    bool is_shown;
+};

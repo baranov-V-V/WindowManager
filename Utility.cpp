@@ -1,12 +1,12 @@
+#include <algorithm>
+
 #include "BasicInfo.h"
 #include "Functors.h"
 #include "Window.h"
 #include "App.h"
 #include "SkinsConfig.h"
 
-#include <algorithm>
-
-PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int but_x) {
+PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, App* app, int but_x) {
     int but_y = y_size;  
 
     PicWindow* menu  = new PicWindow(max_canvas_x, max_canvas_y, coord_x, coord_y, img_menu_bar, parent);
@@ -15,7 +15,7 @@ PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, Manag
     PicWindow* hide  = new PicWindow(but_x, but_y, x_size - but_x * 2, 0, img_hide, menu);
     PicWindow* close = new PicWindow(but_x, but_y, x_size - but_x * 1, 0, img_close, menu);
 
-    CloseCanvasFunctor* close_f  = new CloseCanvasFunctor(reinterpret_cast<InvisibleWindow*>(parent)); 
+    CloseCanvasFunctor* close_f  = new CloseCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent), app->getCanvasManager()); //add app 
     //HideCanvasFunctor*  hide_f   = new HideCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent->getParent())); 
     
     GlowPicFunctor* close_glow = new GlowPicFunctor(close, img_close, img_close2);
@@ -147,48 +147,50 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     GlowPicFunctor* hide_glow  = new GlowPicFunctor(hide , img_hide , img_hide2);
 
     hide->setPressUp(hide_f);
-    //close->setPressUp(close_f);
 
     hide->setPointed(hide_glow);
     close->setPointed(close_glow);
 
     menu->addChild(close);
     menu->addChild(hide);
-    
-    int file_x = x_size / 34;
-    int file_y = y_size;
 
-    int help_x = x_size / 28;    
-    int help_y = y_size;
+    int text_x = 7;
+    int text_y = 18;
 
-    int view_x = help_x;
-    int view_y = help_y;
-    
+    int file_y = y_size, help_y = y_size, view_y = y_size, tools_y = y_size, clock_y = y_size;
+
+    int file_x = x_size / 34 + 5;
+    int help_x = file_x + 5;    
+    int view_x = file_x + 11;
+    int tools_x = file_x + text_x * 2;
+
     int clock_x = x_size / 15;
-    int clock_y = y_size;
 
     //file->help->(to be continued...)
-    PicWindow* file = new PicWindow(file_x, file_y, 0, 0, img_file, menu);
-    PicWindow* help = new PicWindow(help_x, help_y, file_x, 0, img_help, menu);
-    PicWindow* view = new PicWindow(view_x, view_y, file_x + help_x, 0, img_view, menu);
+    TextButtonWindow* file = new TextButtonWindow(file_x, file_y, 0, 0, mgrey_c, mgrey_c, 1, silver_c, "File", main_font, text_x, text_y, ALIGN_LEFT, render, menu);
+    TextButtonWindow* tools = new TextButtonWindow(tools_x, tools_y, file_x, 0, mgrey_c, mgrey_c, 1, silver_c, "Tools", main_font, text_x, text_y, ALIGN_LEFT, render, menu);
+    TextButtonWindow* view = new TextButtonWindow(view_x, view_y, file_x + tools_x, 0, mgrey_c, mgrey_c, 1, silver_c, "View", main_font, text_x, text_y, ALIGN_LEFT, render, menu);
+    TextButtonWindow* help = new TextButtonWindow(help_x, help_y, file_x + tools_x + view_x, 0, mgrey_c, mgrey_c, 1, silver_c, "Help", main_font, text_x, text_y, ALIGN_LEFT, render, menu);
     ClockWindow* clock = new ClockWindow(clock_x, clock_y, x_size - menu->getChild(0)->getSizeX() * menu->getCount() - clock_x, 0, mgrey_c, menu);
     
-    FileFunctor* file_f  = new FileFunctor(parent, render, app); 
-    HelpFunctor* help_f  = new HelpFunctor(help); 
-    ViewFunctor* view_f  = new ViewFunctor(view); 
+    InvisibleWindow* tools_menu = MakeToolsMenu(file_x, tools_y, app->getToolManager(), render, parent);
+    tools->setPressUp(new SetHideFunctor(tools_menu, true));
+    parent->addChild(tools_menu);
 
-    GlowPicFunctor* file_glow = new GlowPicFunctor(file, img_file, img_file2);
-    GlowPicFunctor* help_glow = new GlowPicFunctor(help, img_help, img_help2);
-    GlowPicFunctor* view_glow = new GlowPicFunctor(view, img_view, img_view2);
+    InvisibleWindow* canvas_menu = MakeCanvasMenu(file_x + tools_x, view_y, app->getCanvasManager(), render, parent);
+    view->setPressUp(new SetHideFunctor(canvas_menu, true));
+    parent->addChild(canvas_menu);
+    app->getCanvasManager()->setMenu(canvas_menu);
     
-    file->setPressUp(file_f);
-    help->setPressUp(help_f);
-    help->setPressUp(view_f);
-    file->setPointed(file_glow);
-    help->setPointed(help_glow);
-    view->setPointed(view_glow);
+    file->setPressUp(new FileFunctor(parent, render, app));
+    
+    file->setPointed(new GlowBorderFunctor(file, lgrey_c, lgrey_c));
+    help->setPointed(new GlowBorderFunctor(help, lgrey_c, lgrey_c));
+    view->setPointed(new GlowBorderFunctor(view, lgrey_c, lgrey_c));
+    tools->setPointed(new GlowBorderFunctor(tools, lgrey_c, lgrey_c));
 
     menu->addChild(clock);
+    menu->addChild(tools);
     menu->addChild(file);
     menu->addChild(help);
     menu->addChild(view);
@@ -206,7 +208,7 @@ void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs) {
     lhs->setPressUp(rhs->getPressUp());
 }
 
-InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, App* app) {
+CanvasWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, App* app) {
     CanvasWindow* canvas_layer = new CanvasWindow(size_x, size_y, coord_x, coord_y, name, parent, render, app, nullptr);
     
     ResizeCanvas* resize_f    = new ResizeCanvas(reinterpret_cast<ManagerWindow*>(canvas_layer), render, app);
@@ -381,4 +383,61 @@ BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, 
     graph_layer->addChild(button_reset);
 
     return graph_layer;
+}
+
+InvisibleWindow* MakeToolsMenu(int coord_x, int coord_y, ToolManager* tools, Renderer* render, ManagerWindow* parent) {
+    int tools_count = tools->getCount();
+    
+    int button_x = 150;
+    int button_y = 30;
+
+    int size_x = button_x;
+    int size_y = tools_count * button_y;
+    
+    InvisibleWindow* layer = new InvisibleWindow(size_x, size_y, coord_x, coord_y, parent);
+    layer->setPressUp(new SetHideFunctor(layer, false));
+    layer->setShow(false);
+
+    for (int i = 0; i < tools_count; ++i) {
+        TextButtonWindow* button = new TextButtonWindow(button_x, button_y, 0, button_y * i, dgrey_c, dgrey_c, 1, silver_c, (*tools)[i]->getName(),
+                                                        main_font, 8, 20, ALIGN_LEFT, render, layer, new ChangeToolFalse(tools, i), nullptr, new ChangeToolFalse(tools, i));
+        //button->setPointed(new GlowBorderFunctor(button, navy_c, navy_c));
+        button->setShow(true);
+        layer->addChild(button);
+    }
+
+    return layer;
+}
+
+InvisibleWindow* MakeCanvasMenu(int coord_x, int coord_y, DisplayManager* canvas_manager, Renderer* render, ManagerWindow* parent) {
+    int canvas_count = canvas_manager->getCount();
+    
+    int button_x = 150;
+    int button_y = 30;
+
+    int size_x = button_x;
+    int size_y = (canvas_count + 2) * button_y;
+    
+    InvisibleWindow* layer = new InvisibleWindow(size_x, size_y, coord_x, coord_y, parent);
+    layer->setPressUp(new SetHideFunctor(layer, false));
+    layer->setShow(false);
+
+    TextButtonWindow* show_all = new TextButtonWindow(button_x, button_y, 0, 0, dgrey_c, dgrey_c, 1, silver_c, "Show All",
+                                                      main_font, 8, 20, ALIGN_LEFT, render, layer, new ShowAllCanvasFunctor(canvas_manager));
+    TextButtonWindow* hide_all = new TextButtonWindow(button_x, button_y, 0, button_y, dgrey_c, dgrey_c, 1, silver_c, "Hide All",
+                                                      main_font, 8, 20, ALIGN_LEFT, render, layer, new HideAllCanvasFunctor(canvas_manager));
+    layer->addChild(show_all);
+    layer->addChild(hide_all);
+
+    int i = 2;
+    for (auto it = canvas_manager->getData().begin(); it != canvas_manager->getData().end(); ++it) {
+        TextButtonWindow* button = new TextButtonWindow(button_x, button_y, 0, button_y * i, dgrey_c, dgrey_c, 1, silver_c, (*it)->getName(),
+                                                        main_font, 6, 20, ALIGN_LEFT, render, layer, new HideCanvasFunctor(*it));
+        ++i;
+        //button->setPointed(new GlowBorderFunctor(button, navy_c, navy_c));
+
+        layer->addChild(button);
+    }
+
+    return layer;
 }

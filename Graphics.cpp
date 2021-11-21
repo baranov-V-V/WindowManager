@@ -75,6 +75,10 @@ void Texture::showOn(const BasicWindow* target, int coord_x, int coord_y) {
     txBitBlt(target->getHdc(), coord_x, coord_y, size.x, size.y, this->getHdc());
 };
 
+COLORREF Renderer::getPixel(double x, double y) {
+    return txGetPixel(this->toPixelX(x), this->toPixelY(y), window->getHdc());
+}
+
 void Renderer::drawLine(double x_begin, double y_begin, double x_end, double y_end, COLORREF color, int thickness) const {
     txSetColor(color, thickness, window->getHdc());
     txLine(this->toPixelX(x_begin), this->toPixelY(y_begin),
@@ -146,3 +150,10 @@ void App::sleep(int millisec) const {
     txSleep(millisec);
 }
 
+RGBQUAD ToRGBQUAD(COLORREF color) {
+    return {GetBValue(color), GetGValue(color), GetRValue(color), 0};
+};
+
+RGBQUAD ToRGBQUAD(BYTE red, BYTE green, BYTE blue) {
+    return {blue, green, red, 0};
+};

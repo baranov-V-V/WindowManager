@@ -599,13 +599,13 @@ class ManagerWindow : public Texture {
     bool proceedPressDown(WindowMouse* mouse);
     bool proceedPressUp(WindowMouse* mouse);
     
-    void setPointed(VFunctor* functor) { delete ManagerWindow::pointed_f; ManagerWindow::pointed_f = functor; };
-    void setPressUp(VFunctor* functor) { delete ManagerWindow::press_up_f; ManagerWindow::press_up_f = functor; };
-    void setPressDown(VFunctor* functor) { delete ManagerWindow::press_down_f; ManagerWindow::press_down_f = functor; };
+    void setPointed(VFunctor* functor);
+    void setPressUp(VFunctor* functor);
+    void setPressDown(VFunctor* functor);
 
-    VFunctor* getPointed() const { return pointed_f; };
-    VFunctor* getPressUp() const { return press_up_f; };
-    VFunctor* getPressDown() const { return press_down_f; };
+    VFunctor* getPointed();
+    VFunctor* getPressUp();
+    VFunctor* getPressDown();
 
     //manager part
     ManagerWindow* getParent() const { return parent; };
@@ -625,9 +625,6 @@ class ManagerWindow : public Texture {
     ManagerWindow** children;
     int count;
     int max_size;
-    VFunctor* pointed_f;
-    VFunctor* press_up_f;
-    VFunctor* press_down_f;
 
   protected:
     bool need_redraw = false;

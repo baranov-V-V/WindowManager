@@ -26,9 +26,11 @@ void App::initBasicTools() {
     ToolFeather* tool_feather = new ToolFeather();
     ToolEraser* tool_eraser = new ToolEraser();
     ToolRect* tool_rect = new ToolRect();
+    Tool1* tool1 = new Tool1(this);
     tool_manager.addTool(tool_feather);
     tool_manager.addTool(tool_eraser);
     tool_manager.addTool(tool_rect);
+    tool_manager.addTool(tool1);
 
     ToolModule* circle_drawer = LoadTool("circle.dll");
     tool_manager.addTool(circle_drawer);
@@ -47,8 +49,7 @@ void App::initWindows() {
     //this->app_window.addChild(new_canvas_layer);
     
     BorderWindow* graph = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), this);
-    
-    
+
     
     InvFunctorTrue* debug_f = new InvFunctorTrue();
     DedWindow* round_wnd    = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
@@ -88,25 +89,40 @@ void App::makeEvents() {
     Event new_event;
 
     if ((mouse.getState() & LEFT_CLICK) && !(state & LEFT_CLICK)) {     //mouse pressed
-        
-        new_event.setType(EVENT_MOUSE_PRESSED);
+        new_event.setType(EVENT_MOUSE_PRESSED_LC);
         new_event.setData(mouse.getAbsCoord());
 
         if (active_window != nullptr) {
-            active_window->getPressDown()->action(new_event.getData());
+            if (active_window->getPressDown() != nullptr) {
+                active_window->getPressDown()->action(new_event.getData());   
+            }
         } else {
-            app_window.ProceedEvent(new_event);
+            app_window.processEvent(new_event);
         }
-        
-    } else if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {      // mouse released
-        
-        new_event.setType(EVENT_MOUSE_RELEASED);
+    
+    } /* else if ((mouse.getState() & RIGHT_CLICK) && !(state & RIGHT_CLICK)) {
+        new_event.setType(EVENT_MOUSE_PRESSED_RC);
         new_event.setData(mouse.getAbsCoord());
 
         if (active_window != nullptr) {
-            active_window->getPressUp()->action(new_event.getData());
+            if (active_window->getFunctor(EVENT_MOUSE_PRESSED_RC) != nullptr) {
+                active_window->getFunctor(EVENT_MOUSE_PRESSED_RC)->action(new_event.getData());   
+            }
         } else {
-            app_window.ProceedEvent(new_event);
+            app_window.processEvent(new_event);
+        } 
+        
+    } */else if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {      // mouse released
+        
+        new_event.setType(EVENT_MOUSE_RELEASED_LC);
+        new_event.setData(mouse.getAbsCoord());
+
+        if (active_window != nullptr) {
+            if (active_window->getPressUp() != nullptr) {
+                active_window->getPressUp()->action(new_event.getData());
+            }
+        } else {
+            app_window.processEvent(new_event);
         }
         
     } else if (mouse.getAbsCoord() != abs_coord) {  //mouse moved
@@ -115,14 +131,28 @@ void App::makeEvents() {
         new_event.setData(MouseData(abs_coord, mouse.getAbsCoord() - abs_coord, mouse.getState() & LEFT_CLICK));
         
         if (active_window != nullptr) {
-            active_window->getPointed()->action(new_event.getData());
+            if (active_window->getPointed() != nullptr) {
+                active_window->getPointed()->action(new_event.getData());
+            }
         } else {
             //cout << "sending mouse move to active\n";
-            app_window.ProceedEvent(new_event);
+            app_window.processEvent(new_event);
         }
         
+    } else if (!(mouse.getState() & RIGHT_CLICK) && (state & RIGHT_CLICK)) {  //mouse moved
+        
+        new_event.setType(EVENT_MOUSE_RELEASED_RC);
+        new_event.setData(mouse.getAbsCoord());
+        
+        if (active_window != nullptr) {
+            if (active_window->getFunctor(EVENT_MOUSE_RELEASED_RC) != nullptr) {
+                active_window->getFunctor(EVENT_MOUSE_RELEASED_RC)->action(new_event.getData());
+            }
+        } else {
+            //cout << "sending mouse move to active\n";
+            app_window.processEvent(new_event);
+        }
     }
- 
  
     state = mouse.getState();
     abs_coord = mouse.getAbsCoord();

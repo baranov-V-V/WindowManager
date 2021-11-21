@@ -67,6 +67,8 @@ const int MIN_THICKNESS = 2;
 const int close_button_x = 30;
 const int menu_size_y = 25;
 
+static const char* main_font = "Helvetica";
+
 #define IS_CLICKABLE(type) (type & TYPE_CLICKABLE)
 #define IS_GLOWABLE(type)  (type & TYPE_GLOWABLE)
 
@@ -179,14 +181,16 @@ void GetMouse(double& x, double& y, const Renderer& render);
 RGBQUAD ToRGBQUAD(COLORREF color);
 RGBQUAD ToRGBQUAD(BYTE red, BYTE green, BYTE blue);
 
-PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int but_x = 30);
+PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, App* app, int but_x = 30);
 PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, App* app);
 PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, int comp_x, Renderer* render, App* app);
 void MakeMovable(ManagerWindow* activate_wnd, ManagerWindow* move_wnd, App* app);
 void WriteCanvasName(CanvasWindow* canvas_layer, Renderer* render);
 
-InvisibleWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, App* app);
+CanvasWindow* MakeResizeCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, App* app);
 InvisibleWindow* MakeStaticCanvas(int size_x, int size_y, int coord_x, int coord_y, char* name, ManagerWindow* parent, Renderer* render, App* app);
 void ReplaceFunctors(ManagerWindow* lhs, ManagerWindow* rhs);
 void ResizeCanvasWindow(CanvasWindow* canvas_layer, Renderer* render, Pair<int> new_size, Pair<int> new_coord);
 BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, App* app);
+InvisibleWindow* MakeToolsMenu(int coord_x, int coord_y, ToolManager* tools, Renderer* render, ManagerWindow* parent);
+InvisibleWindow* MakeCanvasMenu(int coord_x, int coord_y, DisplayManager* canvas_manager, Renderer* render, ManagerWindow* parent);

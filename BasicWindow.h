@@ -68,6 +68,8 @@ class Renderer {
     void setWindow(BasicWindow* new_window);
     BasicWindow* getWindow() const { return window; };
     
+    COLORREF getPixel(double x, double y);
+
     void clear() const;
     void drawLine(double x_begin, double y_begin, double x_end, double y_end, COLORREF color = black_c, int thickness = 1) const;
     void setPixel(double x, double y, COLORREF color) const;
