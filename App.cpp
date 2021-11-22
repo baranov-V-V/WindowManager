@@ -7,7 +7,7 @@
 
 App::App(int app_x, int app_y) : users_window(app_x, app_y), app_size(app_x, app_y),
     app_window(app_x, app_y, 0, 0, img_back_font, nullptr, nullptr, nullptr, nullptr, true),
-    mouse(static_cast<ManagerWindow*>(&app_window)), render(&app_window, 0, 0, app_x, app_y), on_run(false) {
+    mouse(static_cast<ManagerWindow*>(&app_window)), render(&app_window, 0, 0, app_x, app_y), on_run(false), canvas_manager(&render) {
     this->initBasicTools();
     this->initWindows();
 };
@@ -20,6 +20,7 @@ void App::run() {
         app_window.showOn(&users_window);
         this->makeEvents();
     }
+
 };
 
 void App::initBasicTools() {
@@ -55,7 +56,6 @@ void App::initWindows() {
     DedWindow* round_wnd    = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
     PicWindow* menu         = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, this); //menu->children[0] == close_button;
     PicWindow* palette      = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), this);
-    
     /*
     InvFunctorTrue* invs_f = new InvFunctorTrue();    
     InvisibleWindow* inv_wnd = new InvisibleWindow(app_size.x / 8, app_size.y / 8, 3 * app_size.x / 4, 3 * app_size.y / 4, &(this->app_window), invs_f);

@@ -6775,7 +6775,7 @@ _TX_END_NAMESPACE
 //-----------------------------------------------------------------------------------------------------------------
 
 #if defined (_MSC_VER)
-    #pragma warning (push, 3)                    // MSVC: At level /Wall, some std headers emit warnings... O_o
+    //#pragma warning (push, 3)                    // MSVC: At level /Wall, some std headers emit warnings... O_o
 
     #pragma warning (disable: 4365)              // 'argument': conversion from 'long' to 'unsigned int', signed/unsigned mismatch
     #pragma warning (disable: 4005)              // 'name': macro redefinition

@@ -231,16 +231,17 @@ class CloseCanvasFunctor : public VFunctor {
     DisplayManager* canvas_manager;
 };
 
-class HideCanvasFunctor : public VFunctor {
+class SetShowFunctor : public VFunctor {
   public:
-    HideCanvasFunctor();
-    HideCanvasFunctor(CanvasWindow* window);
-    virtual ~HideCanvasFunctor() {};
+    SetShowFunctor();
+    SetShowFunctor(CanvasWindow* window, bool is_shown);
+    virtual ~SetShowFunctor() {};
 
     bool action(const EventData& data) override;
 
   private:
     CanvasWindow* window_to_hide;
+    bool is_shown;
 };
 
 class HideAllCanvasFunctor : public VFunctor {
@@ -631,4 +632,28 @@ class SetHideFunctor : public VFunctor {
   private:
     ManagerWindow* window;
     bool is_shown;
+};
+
+class ShowCanvasMenuFunctor : public VFunctor {
+  public:
+    ShowCanvasMenuFunctor();
+    ShowCanvasMenuFunctor(DisplayManager* canvas_manager);
+    virtual ~ShowCanvasMenuFunctor() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    DisplayManager* canvas_manager;
+};
+
+class ShowToolMenuFunctor : public VFunctor {
+  public:
+    ShowToolMenuFunctor();
+    ShowToolMenuFunctor(ToolManager* tool_manager);
+    virtual ~ShowToolMenuFunctor() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    ToolManager* tool_manager;
 };

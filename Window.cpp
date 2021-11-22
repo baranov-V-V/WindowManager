@@ -42,13 +42,17 @@ double Renderer::toCoordY(int y) const {
     return double(y) / scale.y + min.y;
 };
 
-DisplayManager::DisplayManager() : canvas_menu(nullptr) {};
+DisplayManager::DisplayManager(Renderer* render) : canvas_menu(nullptr), render(render) { assert(render); };
 DisplayManager::~DisplayManager() {};
 
-void DisplayManager::updateCanvasMenu(Renderer* render) {
+void DisplayManager::updateCanvasMenu() {
+    bool state = canvas_menu->getShow();
     InvisibleWindow* new_menu = MakeCanvasMenu(canvas_menu->getCoordX(), canvas_menu->getCoordY(), this, render, canvas_menu->getParent());
-    delete canvas_menu;
+    ManagerWindow* parent = canvas_menu->getParent();
+    parent->delChild(canvas_menu);
+    parent->addChild(new_menu);
     canvas_menu = new_menu;
+    canvas_menu->setShow(state);
 };
 
 void DisplayManager::addWindow(CanvasWindow* window) {
@@ -86,6 +90,12 @@ void DisplayManager::showAll() {
         (*it)->setShow(true);
     }
 };
+
+void DisplayManager::invertShowMenu() {
+    canvas_menu->setShow(!canvas_menu->getShow());
+    std::cout << "iverted\n";
+};
+
 
 ManagerWindow::ManagerWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, ManagerWindow* parent,
                              VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
@@ -299,12 +309,12 @@ bool ManagerWindow::checkPointed(WindowMouse* mouse) {
 
 EventState ManagerWindow::processEvent(const Event& event) {
     if (event.getType() == EVENT_MOUSE_PRESSED_LC && this->checkPointed(event.getData().abs_coord)) {
-        std::cout << "in window [" << this << "]\n";
-        std::cout << "child count: " << count << "\n";
+        //std::cout << "in window [" << this << "]\n";
+        //std::cout << "child count: " << count << "\n";
     }
     
     if (!is_shown) {
-        std::cout << "not shown\n";
+        //std::cout << "not shown\n";
         return EVENT_NEW;
     }
 
@@ -328,7 +338,7 @@ EventState ManagerWindow::processEvent(const Event& event) {
 
     for (int i = count - 1; i >= 0; --i) {
         if (event.getType() == EVENT_MOUSE_PRESSED_LC && this->checkPointed(event.getData().abs_coord)) {
-            std::cout << "giving from [" << this << "] to child [" << children[i] << "]\n";
+            //std::cout << "giving from [" << this << "] to child [" << children[i] << "]\n";
         }
         result = children[i]->processEvent(event);
 
@@ -336,11 +346,11 @@ EventState ManagerWindow::processEvent(const Event& event) {
             if (event.getType() == EVENT_MOUSE_RELEASED_LC) {
                 is_clicked = false;
             }
-            std::cout << "Event done!\n";
+            //std::cout << "Event done!\n";
             return EVENT_DONE;
         }
         if (result == EVENT_IN_PROCESS) {
-            std::cout << "Event in progress!\n";
+            //std::cout << "Event in progress!\n";
             break;
         }
     }
@@ -393,9 +403,9 @@ EventState ManagerWindow::processEvent(const Event& event) {
                     } else {
                         result = EVENT_IN_PROCESS; 
                     };
-                    std::cout << "in release if\n";
+                    //std::cout << "in release if\n";
                 }
-                std::cout << "released result: " << result << "\n";
+                //std::cout << "released result: " << result << "\n";
             }
             is_clicked = false;
 
@@ -519,6 +529,8 @@ PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic
 };
     
 void PicWindow::draw(Renderer* render) const {
+    assert(render);
+    
     if (!is_shown) {
         return;
     }

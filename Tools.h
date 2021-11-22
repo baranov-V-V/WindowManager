@@ -66,6 +66,9 @@ class ToolManager {
     ToolManager() : curr_tool(0) {};
     ~ToolManager() {};
 
+    void setMenu(InvisibleWindow* menu) { tools_menu = menu; };
+    void updateToolsMenu();
+
     size_t getCount() const { return tools.size(); };
     VTool* getCurrTool() const { return tools[curr_tool]; };
     void setCurrTool(int tool_index) { curr_tool = tool_index; };
@@ -80,8 +83,12 @@ class ToolManager {
     void setNext();
     void setPrev();
 
+    void invertShowMenu();  
+
   private:
     std::vector<VTool*> tools;
+
+    InvisibleWindow* tools_menu;
 
     size_t curr_tool;
 };

@@ -72,7 +72,7 @@ bool ChangeBasicTool::action(const EventData& data) {
 ChangeToolFalse::ChangeToolFalse() : tools(nullptr) { tool_index = 0; };
 ChangeToolFalse::ChangeToolFalse(ToolManager* tools, int tool_index) : tools(tools), tool_index(tool_index) {};
 bool ChangeToolFalse::action(const EventData& data) {
-    std::cout << "clicked!\n";
+    //std::cout << "clicked!\n";
     tools->setCurrTool(tool_index);
     return false;
 };
@@ -157,15 +157,20 @@ bool CloseCanvasFunctor::action(const EventData& data) {
     ManagerWindow* parent = window_to_close->getParent();
     assert(parent);
     canvas_manager->delWindow(window_to_close);
+
     parent->delChild(window_to_close);
-    std::cout << "canvas_count: " << canvas_manager->getCount() << "\n";
+    //std::cout << "canvas_count: " << canvas_manager->getCount() << "\n";
+    
+    canvas_manager->updateCanvasMenu();
+    
     return true;
 };
 
-HideCanvasFunctor::HideCanvasFunctor() {};
-HideCanvasFunctor::HideCanvasFunctor(CanvasWindow* window) : window_to_hide(window) {};
-bool HideCanvasFunctor::action(const EventData& data)  {
-    window_to_hide->setShow(!window_to_hide->getShow());
+SetShowFunctor::SetShowFunctor() {};
+SetShowFunctor::SetShowFunctor(CanvasWindow* window, bool is_shown) : window_to_hide(window), is_shown(is_shown) {};
+bool SetShowFunctor::action(const EventData& data)  {
+    window_to_hide->setShow(is_shown);
+    //std::cout << "done!\n";
     return true;
 };
 
@@ -190,7 +195,7 @@ bool FileFunctor::action(const EventData& data) {
     CanvasWindow* canvas_layer = MakeResizeCanvas(window->getSizeX() / 2, window->getSizeY() / 2, window->getSizeX() / 4, window->getSizeY() / 4, "Canvas", window, render, app);
     window->addChild(canvas_layer);
     app->getCanvasManager()->addWindow(canvas_layer);
-    //app->getCanvasManager()->updateCanvasMenu(render);
+    app->getCanvasManager()->updateCanvasMenu();
     return true;
 };
 
@@ -523,4 +528,19 @@ bool SetHideFunctor::action(const EventData& data) {
     //std::cout << "hiding menu!\n";
     window->setShow(!window->getShow());
     return true; 
+};
+
+ShowCanvasMenuFunctor::ShowCanvasMenuFunctor() {};
+ShowCanvasMenuFunctor::ShowCanvasMenuFunctor(DisplayManager* canvas_manager) : canvas_manager(canvas_manager) {};
+bool ShowCanvasMenuFunctor::action(const EventData& data) {
+    std::cout << "canvas menu show functor!\n";
+    canvas_manager->invertShowMenu();
+    return true;
+};
+
+ShowToolMenuFunctor::ShowToolMenuFunctor() {};
+ShowToolMenuFunctor::ShowToolMenuFunctor(ToolManager* tool_manager) : tool_manager(tool_manager) {};
+bool ShowToolMenuFunctor::action(const EventData& data) {
+    tool_manager->invertShowMenu();
+    return true;
 };

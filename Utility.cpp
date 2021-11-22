@@ -16,12 +16,12 @@ PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, Manag
     PicWindow* close = new PicWindow(but_x, but_y, x_size - but_x * 1, 0, img_close, menu);
 
     CloseCanvasFunctor* close_f  = new CloseCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent), app->getCanvasManager()); //add app 
-    //HideCanvasFunctor*  hide_f   = new HideCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent->getParent())); 
+    SetShowFunctor*     hide_f   = new SetShowFunctor(reinterpret_cast<CanvasWindow*>(parent), false); 
     
     GlowPicFunctor* close_glow = new GlowPicFunctor(close, img_close, img_close2);
     GlowPicFunctor* hide_glow  = new GlowPicFunctor(hide , img_hide , img_hide2 );
 
-    //hide->setPressUp(hide_f);
+    hide->setPressUp(hide_f);
     close->setPressUp(close_f);
 
     hide->setPointed(hide_glow);
@@ -141,12 +141,12 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     PicWindow* close = new PicWindow(but_x, but_y, x_size - but_x * 1, 0, img_close, menu);
 
     //CloseCanvasFunctor* close_f  = new CloseCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent)); 
-    HideCanvasFunctor*  hide_f   = new HideCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent)); 
+    //HideCanvasFunctor*  hide_f   = new HideCanvasFunctor(reinterpret_cast<CanvasWindow*>(parent)); 
     
     GlowPicFunctor* close_glow = new GlowPicFunctor(close, img_close, img_close2);
     GlowPicFunctor* hide_glow  = new GlowPicFunctor(hide , img_hide , img_hide2);
 
-    hide->setPressUp(hide_f);
+    //hide->setPressUp(hide_f);
 
     hide->setPointed(hide_glow);
     close->setPointed(close_glow);
@@ -174,13 +174,14 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     ClockWindow* clock = new ClockWindow(clock_x, clock_y, x_size - menu->getChild(0)->getSizeX() * menu->getCount() - clock_x, 0, mgrey_c, menu);
     
     InvisibleWindow* tools_menu = MakeToolsMenu(file_x, tools_y, app->getToolManager(), render, parent);
-    tools->setPressUp(new SetHideFunctor(tools_menu, true));
+    app->getToolManager()->setMenu(tools_menu);
+    tools->setPressUp(new ShowToolMenuFunctor(app->getToolManager()));
     parent->addChild(tools_menu);
 
     InvisibleWindow* canvas_menu = MakeCanvasMenu(file_x + tools_x, view_y, app->getCanvasManager(), render, parent);
-    view->setPressUp(new SetHideFunctor(canvas_menu, true));
-    parent->addChild(canvas_menu);
     app->getCanvasManager()->setMenu(canvas_menu);
+    view->setPressUp(new ShowCanvasMenuFunctor(app->getCanvasManager()));
+    parent->addChild(canvas_menu);
     
     file->setPressUp(new FileFunctor(parent, render, app));
     
@@ -395,8 +396,9 @@ InvisibleWindow* MakeToolsMenu(int coord_x, int coord_y, ToolManager* tools, Ren
     int size_y = tools_count * button_y;
     
     InvisibleWindow* layer = new InvisibleWindow(size_x, size_y, coord_x, coord_y, parent);
-    layer->setPressUp(new SetHideFunctor(layer, false));
+    layer->setPressUp(new ShowToolMenuFunctor(tools));
     layer->setShow(false);
+
 
     for (int i = 0; i < tools_count; ++i) {
         TextButtonWindow* button = new TextButtonWindow(button_x, button_y, 0, button_y * i, dgrey_c, dgrey_c, 1, silver_c, (*tools)[i]->getName(),
@@ -419,7 +421,7 @@ InvisibleWindow* MakeCanvasMenu(int coord_x, int coord_y, DisplayManager* canvas
     int size_y = (canvas_count + 2) * button_y;
     
     InvisibleWindow* layer = new InvisibleWindow(size_x, size_y, coord_x, coord_y, parent);
-    layer->setPressUp(new SetHideFunctor(layer, false));
+    layer->setPressUp(new ShowCanvasMenuFunctor(canvas_manager));
     layer->setShow(false);
 
     TextButtonWindow* show_all = new TextButtonWindow(button_x, button_y, 0, 0, dgrey_c, dgrey_c, 1, silver_c, "Show All",
@@ -432,7 +434,7 @@ InvisibleWindow* MakeCanvasMenu(int coord_x, int coord_y, DisplayManager* canvas
     int i = 2;
     for (auto it = canvas_manager->getData().begin(); it != canvas_manager->getData().end(); ++it) {
         TextButtonWindow* button = new TextButtonWindow(button_x, button_y, 0, button_y * i, dgrey_c, dgrey_c, 1, silver_c, (*it)->getName(),
-                                                        main_font, 6, 20, ALIGN_LEFT, render, layer, new HideCanvasFunctor(*it));
+                                                        main_font, 6, 20, ALIGN_LEFT, render, layer, new SetShowFunctor(*it, true));
         ++i;
         //button->setPointed(new GlowBorderFunctor(button, navy_c, navy_c));
 

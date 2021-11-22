@@ -34,6 +34,10 @@ void ToolManager::setPrev() {
     }
 };
 
+void ToolManager::invertShowMenu() {
+    tools_menu->setShow(!tools_menu->getShow());
+}
+
 void ToolFeather::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
     old_coord.x = x;
     old_coord.y = y;
@@ -137,9 +141,9 @@ void Tool1::adjust() {
 void ToolModule::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
     if (press != NULL) {
         press(&funcs, target, render, x, y, info); 
-        std::cout << "pressing!";
+        //std::cout << "pressing!";
     }
-    std::cout << "kinda press!";
+    //std::cout << "kinda press!";
 };
 void ToolModule::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
     if (move != NULL) {

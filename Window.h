@@ -38,11 +38,11 @@ class WindowMouse {
 
 class DisplayManager {
   public:
-    DisplayManager();
+    DisplayManager(Renderer* render);
     ~DisplayManager();
 
     void setMenu(InvisibleWindow* menu) { canvas_menu = menu; };
-    void updateCanvasMenu(Renderer* render);
+    void updateCanvasMenu();
 
     void addWindow(CanvasWindow* window);
     void showWindow(CanvasWindow* window);
@@ -53,6 +53,8 @@ class DisplayManager {
     void hideAll();
     void showAll();
 
+    void invertShowMenu();  
+
     int getCount() const { return windows.size(); };
 
     const std::set<CanvasWindow*>& getData() { return windows; };
@@ -60,6 +62,7 @@ class DisplayManager {
   private:
     std::set<CanvasWindow*> windows;
     InvisibleWindow* canvas_menu;
+    Renderer* render;
 };
 
 class ManagerWindow : public Texture {
