@@ -155,7 +155,7 @@ PicWindow* MakeLayout(int x_size, int y_size, int coord_x, int coord_y, ManagerW
     menu->addChild(hide);
 
     int text_x = 7;
-    int text_y = 18;
+    int text_y = 20;
 
     int file_y = y_size, help_y = y_size, view_y = y_size, tools_y = y_size, clock_y = y_size;
 
@@ -398,7 +398,6 @@ InvisibleWindow* MakeToolsMenu(int coord_x, int coord_y, ToolManager* tools, Ren
     InvisibleWindow* layer = new InvisibleWindow(size_x, size_y, coord_x, coord_y, parent);
     layer->setPressUp(new ShowToolMenuFunctor(tools));
     layer->setShow(false);
-
 
     for (int i = 0; i < tools_count; ++i) {
         TextButtonWindow* button = new TextButtonWindow(button_x, button_y, 0, button_y * i, dgrey_c, dgrey_c, 1, silver_c, (*tools)[i]->getName(),

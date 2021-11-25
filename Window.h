@@ -159,6 +159,8 @@ class PicWindow : public ManagerWindow {
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic_name, ManagerWindow* parent = nullptr,
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
+    PicWindow(int coord_x, int coord_y, char* pic_name, ManagerWindow* parent = nullptr,
+              VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     virtual ~PicWindow() {};
     
     void draw(Renderer* render) const override;

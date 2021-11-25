@@ -42,6 +42,8 @@ class Texture : public BasicWindow {
     Texture();
     Texture(int x_size, int y_size, COLORREF color, int coord_x, int coord_y);
     Texture(int x_size, int y_size, const char* file_name, int coord_x, int coord_y);
+    Texture(const char* file_name, int coord_x, int coord_y);
+
     virtual ~Texture();
     
     int getCoordX() const { return coord.x; };

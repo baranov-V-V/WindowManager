@@ -68,6 +68,8 @@ const int close_button_x = 30;
 const int menu_size_y = 25;
 
 static const char* main_font = "Helvetica";
+const int main_ch_size_x = 7;
+const int main_ch_size_y = 20;
 
 #define IS_CLICKABLE(type) (type & TYPE_CLICKABLE)
 #define IS_GLOWABLE(type)  (type & TYPE_GLOWABLE)

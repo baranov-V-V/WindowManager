@@ -3,6 +3,7 @@
 #include "BasicInfo.h"
 #include "Window.h"
 #include "Events.h"
+#include "PluginApi.h"
 
 enum RESIZE_DIRECTIONS {
     DIRECTION_NONE = 0,
@@ -656,4 +657,16 @@ class ShowToolMenuFunctor : public VFunctor {
 
   private:
     ToolManager* tool_manager;
+};
+
+class ClickCallbackFunctor : public VFunctor {
+  public:
+    ClickCallbackFunctor();
+    ClickCallbackFunctor(plugin::IClickCallback* call_back);
+    virtual ~ClickCallbackFunctor() { delete call_back; };
+
+    bool action(const EventData& data) override;
+
+  private:
+    plugin::IClickCallback* call_back;
 };

@@ -93,7 +93,7 @@ void DisplayManager::showAll() {
 
 void DisplayManager::invertShowMenu() {
     canvas_menu->setShow(!canvas_menu->getShow());
-    std::cout << "iverted\n";
+    //std::cout << "iverted\n";
 };
 
 
@@ -526,6 +526,13 @@ PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic
     PicWindow::need_redraw = need_redraw;
     Texture pic(x_size, y_size, pic_name, 0, 0);
     pic.showOn(this);
+};
+
+PicWindow::PicWindow(int coord_x, int coord_y, char* pic_name, ManagerWindow* parent,
+                     VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) : base_img(pic_name, 0, 0),
+    ManagerWindow(base_img.getSizeX(), base_img.getSizeY(), coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
+    PicWindow::need_redraw = need_redraw;
+    base_img.showOn(this);
 };
     
 void PicWindow::draw(Renderer* render) const {

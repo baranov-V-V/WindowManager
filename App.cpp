@@ -33,8 +33,9 @@ void App::initBasicTools() {
     tool_manager.addTool(tool_rect);
     tool_manager.addTool(tool1);
 
-    ToolModule* circle_drawer = LoadTool("circle.dll");
-    tool_manager.addTool(circle_drawer);
+    LoadTools(&tool_manager, &render, "tools.dll");
+    //ToolModule* circle_drawer = LoadTool("circle.dll");
+    //tool_manager.addTool(circle_drawer);
 }
 
 void App::initWindows() {

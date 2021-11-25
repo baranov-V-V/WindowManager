@@ -1,6 +1,7 @@
 #include "Tools.h"
 #include "BasicWindow.h"
 #include "App.h"
+#include "PluginApiClasses.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
@@ -138,57 +139,66 @@ void Tool1::adjust() {
     
 };
 
-void ToolModule::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
-    if (press != NULL) {
-        press(&funcs, target, render, x, y, info); 
-        //std::cout << "pressing!";
-    }
-    //std::cout << "kinda press!";
+ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, no_name) {};
+void ToolPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
+    RenderTexture texture(target, render);
+    tool->ActionBegin(&texture, x, y);
 };
-void ToolModule::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
-    if (move != NULL) {
-        move(&funcs, target, render, dx, dy, info);
-    }
+void ToolPlugin::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
+    //RenderTexture texture(target, render);
+    //tool->Action(texture, )
 };
-void ToolModule::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
-    if (release != NULL) {
-        release(&funcs, target, render, x, y, info);
-    }
+void ToolPlugin::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
+    RenderTexture texture(target, render);
+    tool->ActionEnd(&texture, x, y);
 };
-ToolModule::ToolModule(char* name, ToolFunc press, ToolFunc move, ToolFunc release, void* info) : 
-    VTool(black_c, 1, name), press(press), move(move), release(release), info(info) {
-    //printf("\n%p", press); 
-    funcs = {&RenderDrawLine,
-             &RenderSetPixel, 
-             &RenderdrawCircle,
-             &RenderdrawRectangle,
-             &RenderdrawFilledRectangle,
-             &RenderdrawRoundRect};
+void ToolPlugin::adjust() {
+    tool->GetPreferencesPanel();
+
+    // later will attach it to real canvas;
+};
+
+FilterPlugin::FilterPlugin(plugin::IFilter* plugin_filter) : filter(plugin_filter), VTool(white_c, 1, plugin_filter->GetName()) {};
+void FilterPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
+    render->setWindow(target);
+    RenderTexture texture(target, render);
+    filter->Apply(&texture);
+};
+void FilterPlugin::adjust() {
+    filter->GetPreferencesPanel();
 };
 
 
-ToolModule* LoadTool(char* file_name) {
+void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name) {
     HMODULE module = LoadLibraryA(file_name);   
     if (module == NULL) {
         std::cout << "couldn't open file" << file_name << "\n";
         assert(0);
     }
 
-    ToolFunc tool_funcs[3];
-    NameFunc func_name = (NameFunc) GetProcAddress(module, func_names[0]);
+    API api(render);
 
-    //printf("loaded %s!", func_name());
+    plugin::CreateFunction create_f = (plugin::CreateFunction) GetProcAddress(module, "Create");
+    assert(create_f);
 
-    for (int i = 1; i < func_count; ++i) {
-        tool_funcs[i - 1] = (ToolFunc) GetProcAddress(module, func_names[i]);
-        if (tool_funcs[i - 1] == NULL) {
-            printf("couldn't find function with name %s\n", func_names[i]);
-            assert(0);
-        }
+    plugin::DestroyFunction destroy_f = (plugin::DestroyFunction) GetProcAddress(module, "Destroy");
+    assert(create_f);
+
+    plugin::VersionFunction version_f = (plugin::VersionFunction) GetProcAddress(module, "Version");
+    assert(create_f);
+
+    plugin::IPlugin* plugin = create_f(&api);
+    
+    std::list<plugin::IFilter*> filter_list = plugin->GetFilters();
+    std::list<plugin::ITool*> tool_list = plugin->GetTools();
+
+    for (auto it = tool_list.begin(); it != tool_list.end(); ++it) {
+        tool_manager->addTool(new ToolPlugin(*it));
     }
 
-    //tool_funcs[0](nullptr, nullptr, 0, 0, nullptr);
-    ToolModule* tool = new ToolModule(func_name(), tool_funcs[0], tool_funcs[1], tool_funcs[2], nullptr);
-    
-    return tool;
+    for (auto it = filter_list.begin(); it != filter_list.end(); ++it) {
+        tool_manager->addTool(new FilterPlugin(*it));
+    }
+
+    destroy_f(plugin);
 }

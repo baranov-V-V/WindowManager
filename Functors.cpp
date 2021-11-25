@@ -533,7 +533,7 @@ bool SetHideFunctor::action(const EventData& data) {
 ShowCanvasMenuFunctor::ShowCanvasMenuFunctor() {};
 ShowCanvasMenuFunctor::ShowCanvasMenuFunctor(DisplayManager* canvas_manager) : canvas_manager(canvas_manager) {};
 bool ShowCanvasMenuFunctor::action(const EventData& data) {
-    std::cout << "canvas menu show functor!\n";
+    //std::cout << "canvas menu show functor!\n";
     canvas_manager->invertShowMenu();
     return true;
 };
@@ -542,5 +542,11 @@ ShowToolMenuFunctor::ShowToolMenuFunctor() {};
 ShowToolMenuFunctor::ShowToolMenuFunctor(ToolManager* tool_manager) : tool_manager(tool_manager) {};
 bool ShowToolMenuFunctor::action(const EventData& data) {
     tool_manager->invertShowMenu();
+    return true;
+};
+
+ClickCallbackFunctor::ClickCallbackFunctor() {};
+ClickCallbackFunctor::ClickCallbackFunctor(plugin::IClickCallback* call_back) : call_back(call_back) {};
+bool ClickCallbackFunctor::action(const EventData& data) {
     return true;
 };

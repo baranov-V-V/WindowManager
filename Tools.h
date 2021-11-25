@@ -2,8 +2,9 @@
 
 #include <vector>
 #include <iostream>
+#include "PluginApi.h"
 #include "BasicInfo.h"
-#include "ToolModule.h"
+//#include "ToolModule.h"
 
 using std::vector;
 
@@ -21,7 +22,7 @@ enum TOOL_OPTIONS {
 
 #define SET_OPTION_COLOR(option)     (option = option | OPTION_COLOR)
 #define SET_OPTION_THICKNESS(option) (option = option | OPTION_THICKNESS)
-#define SET_OPTION_ADJUST(option) (option = option | OPTION_ADJUST)
+#define SET_OPTION_ADJUST(option)    (option = option | OPTION_ADJUST)
 
 #define IS_OPTION_COLOR(option)    (option & OPTION_COLOR)
 #define IS_OPTION_THICKNES(option) (option & OPTION_THICKNESS)
@@ -37,6 +38,7 @@ class VTool {
   public:
     VTool() : color(black_c) {};
     VTool(COLORREF color, int thickness, char* name = no_name) : color(color), thickness(thickness), name(name), options(OPTION_COLOR | OPTION_THICKNESS) {};
+    VTool(COLORREF color, int thickness, const char* name = no_name) : color(color), thickness(thickness), name(const_cast<char*>(name)), options(OPTION_COLOR | OPTION_THICKNESS) {};
     virtual ~VTool() {};
     
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) {};
@@ -155,24 +157,33 @@ class Tool1 : public VTool {
     int d_blue = 10;
 };
 
-
-
-class ToolModule : public VTool {
+class ToolPlugin : public VTool {
   public:
-    ToolModule(char* name, ToolFunc press, ToolFunc move, ToolFunc release, void* info = nullptr);
+    ToolPlugin(plugin::ITool* plugin_tool);
     
-    virtual ~ToolModule() {};
+    virtual ~ToolPlugin() { delete tool; };
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
     virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) override;
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) override;
 
+    virtual void adjust() override;
+
   private:
-    void* info;
-    ToolFunc press;
-    ToolFunc move;
-    ToolFunc release;
-    StandartModuleFuncs funcs;
+    plugin::ITool* tool;
 };
 
-ToolModule* LoadTool(char* file_name);
+class FilterPlugin : public VTool {
+  public:
+    FilterPlugin(plugin::IFilter* plugin_filter);
+    
+    virtual ~FilterPlugin() { delete filter; };
+
+    virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
+    virtual void adjust() override;
+
+  private:
+    plugin::IFilter* filter;
+};
+
+void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name);

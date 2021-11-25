@@ -58,9 +58,35 @@ Texture::Texture(int x_size, int y_size, COLORREF color, int coord_x, int coord_
 Texture::Texture(int x_size, int y_size, const char* file_name, int coord_x, int coord_y) :
     BasicWindow(x_size, y_size, 0), coord(coord_x, coord_y) {
     type = TYPE_TEXTURE;
+    
+    HDC picture = txLoadImage(file_name, x_size, y_size);
+
     screen_buf = nullptr;
-    screen = txLoadImage(file_name, x_size, y_size);
+    screen = txCreateDIBSection(x_size, y_size, &screen_buf);
     assert(screen);
+
+    txBitBlt(screen, 0, 0, x_size, y_size, picture, 0, 0);
+
+    txDeleteDC(picture);
+};
+
+Texture::Texture(const char* file_name, int coord_x, int coord_y) :
+    BasicWindow(0, 0, 0), coord(coord_x, coord_y) {
+    type = TYPE_TEXTURE;
+    
+    HDC picture = txLoadImage(file_name, 0, 0);
+    assert(picture);
+
+    size.x = txGetExtentX(picture);
+    size.y = txGetExtentY(picture);
+
+    screen_buf = nullptr;
+    screen = txCreateDIBSection(size.x, size.x, &screen_buf);
+    assert(screen);
+
+    txBitBlt(screen, 0, 0, size.x, size.x, picture, 0, 0);
+
+    txDeleteDC(picture);
 };
 
 Texture::~Texture() {
