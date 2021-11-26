@@ -2404,3 +2404,293 @@ Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main
 Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
 
 --------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe, файл: TXLib.h, строка: 8526, функция: HWND__* {anonymous}::TX::txCreateWindow(double, double, bool),
+
+Сообщение: Окно рисования уже создано!
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000466900 (64-bit), Flags: CMdRe0, Thread: 0x496C (Main), GetLastError(): 13 (Недопустимые данные). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000040F2B4 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _txError() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (10702)
+# 1 0x000000000040708C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: txCreateWindow() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/TXLib.h (8526)
+
+# 2 0x00000000004217B2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Graphics.cpp (23):
+
+     21: 
+     22: Window::Window(int x_size, int y_size, COLORREF color) : BasicWindow(x_size, y_size, color) {    
+=>   23:     hWnd = txCreateWindow(x_size, y_size);
+     24:     screen = txDC();
+     25:     type = TYPE_WINDOW;
+
+# 3 0x0000000000428266 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (12):
+
+     10: App::App() : users_window(1196, 690), app_size(1196, 690),
+     11:     app_window(1196, 690, 0, 0, img_back_font, nullptr, nullptr, nullptr, nullptr, true),
+=>   12:     mouse(static_cast<ManagerWindow*>(&app_window)), on_run(false) {
+     13: 
+     14:     //app_window.setFunctor(EVENT_MOUSE_PRESSED_RC, new InvFunctorTrue());
+
+# 4 0x0000000000438AFB in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: getInstance() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.h (14):
+
+     12:     static App* getInstance() {
+     13:         if (instance == nullptr) {
+=>   14:             instance = new App();
+     15:         }
+     16:         return instance;
+
+# 5 0x0000000000438E6E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: setAdjustWindow() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.h (30):
+
+     28:     DisplayManager* getCanvasManager() { return canvas_manager; };
+     29: 
+=>   30:     ManagerWindow* getAppWindow() { return &app_window; };
+     31: 
+     32:   public:
+
+# 6 0x0000000000429EB5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Tools.cpp (170):
+
+    168:     if (panel != nullptr) {
+    169:         std::cout << "added filter adjust window!\n";
+=>  170:         this->setAdjustWindow(panel->getLayout());
+    171:     }
+    172: };
+
+# 7 0x000000000042A1EB in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: LoadTools() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Tools.cpp (209):
+
+    207: 
+    208:     for (auto it = filter_list.begin(); it != filter_list.end(); ++it) {
+=>  209:         tool_manager->addTool(new FilterPlugin(*it));
+    210:     }
+    211: 
+
+# 8 0x000000000042854D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: initBasicTools() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (43):
+
+     41:     tool_manager->addTool(tool1);
+     42: 
+=>   43:     LoadTools(tool_manager, Renderer::getInstance(), "tools.dll");
+     44:     //ToolModule* circle_drawer = LoadTool("circle.dll");
+     45:     //tool_manager.addTool(circle_drawer);
+
+# 9 0x0000000000428361 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (18):
+
+     16:     tool_manager = new ToolManager();
+     17:     canvas_manager = new DisplayManager(Renderer::getInstance());
+=>   18:     this->initBasicTools();
+     19:     this->initWindows();
+     20: };
+
+#10 0x0000000000438AFB in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: getInstance() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.h (14):
+
+     12:     static App* getInstance() {
+     13:         if (instance == nullptr) {
+=>   14:             instance = new App();
+     15:         }
+     16:         return instance;
+
+#11 0x00000000004015AE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (16):
+
+     14:     }
+     15: 
+=>   16:     App::getInstance()->run();
+     17:     
+     18:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Nov 26 2021 23:30:25, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Nov 26 2021 23:30:40
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000042ADFE в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Functors.cpp на строке 134. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000466900 (64-bit), Flags: CMdRe0, Thread: 0x5614 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000042ADFE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Functors.cpp (134):
+
+    132:     //cout << "in draw!" << "\n";
+    133:     if (is_drawing) {
+=>  134:         curr_tool->ProceedMove(canvas, render, data.mouse_data.d.x, data.mouse_data.d.y); //dx, dy coordinates
+    135:         //abs_old_coord = mouse->getAbsCoord();
+    136:     }
+
+# 1 0x0000000000402EB2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (371):
+
+    369:             if (is_pointed) {
+    370:                 if (this->getPointed() != nullptr) {
+=>  371:                     if (this->getPointed()->action(event.getData())) {
+    372:                         result = EVENT_DONE;
+    373:                     } else {
+
+# 2 0x0000000000402DB7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (351):
+
+    349:             //std::cout << "giving from [" << this << "] to child [" << children[i] << "]\n";
+    350:         }
+=>  351:         result = children[i]->processEvent(event);
+    352: 
+    353:         if (result == EVENT_DONE) {
+
+# 3 0x0000000000402DB7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (351):
+
+    349:             //std::cout << "giving from [" << this << "] to child [" << children[i] << "]\n";
+    350:         }
+=>  351:         result = children[i]->processEvent(event);
+    352: 
+    353:         if (result == EVENT_DONE) {
+
+# 4 0x0000000000428DEE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: makeEvents() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (147):
+
+    145:         } else {
+    146:             //cout << "sending mouse move to active\n";
+=>  147:             app_window.processEvent(new_event);
+    148:         }
+    149:         
+
+# 5 0x00000000004283C3 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (23):
+
+     21:         app_window.draw(Renderer::getInstance());
+     22:         app_window.showOn(&users_window);
+=>   23:         this->makeEvents();
+     24:     }
+     25: 
+
+# 6 0x00000000004015D0 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (20):
+
+     18:     App::getInstance()->initWindows();
+     19:     
+=>   20:     App::getInstance()->run();
+     21:     
+     22:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Nov 26 2021 23:34:14, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Nov 26 2021 23:41:27
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x000000000042ADFE в функции action() в файле C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Functors.cpp на строке 134. Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x0000000000466900 (64-bit), Flags: CMdRe0, Thread: 0x5614 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x000000000042ADFE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: action() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Functors.cpp (134):
+
+    132:     //cout << "in draw!" << "\n";
+    133:     if (is_drawing) {
+=>  134:         curr_tool->ProceedMove(canvas, render, data.mouse_data.d.x, data.mouse_data.d.y); //dx, dy coordinates
+    135:         //abs_old_coord = mouse->getAbsCoord();
+    136:     }
+
+# 1 0x0000000000402EB2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (371):
+
+    369:             if (is_pointed) {
+    370:                 if (this->getPointed() != nullptr) {
+=>  371:                     if (this->getPointed()->action(event.getData())) {
+    372:                         result = EVENT_DONE;
+    373:                     } else {
+
+# 2 0x0000000000402DB7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (351):
+
+    349:             //std::cout << "giving from [" << this << "] to child [" << children[i] << "]\n";
+    350:         }
+=>  351:         result = children[i]->processEvent(event);
+    352: 
+    353:         if (result == EVENT_DONE) {
+
+# 3 0x0000000000402DB7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/Window.cpp (351):
+
+    349:             //std::cout << "giving from [" << this << "] to child [" << children[i] << "]\n";
+    350:         }
+=>  351:         result = children[i]->processEvent(event);
+    352: 
+    353:         if (result == EVENT_DONE) {
+
+# 4 0x0000000000428DEE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: makeEvents() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (147):
+
+    145:         } else {
+    146:             //cout << "sending mouse move to active\n";
+=>  147:             app_window.processEvent(new_event);
+    148:         }
+    149:         
+
+# 5 0x00000000004283C3 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: run() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/App.cpp (23):
+
+     21:         app_window.draw(Renderer::getInstance());
+     22:         app_window.showOn(&users_window);
+=>   23:         this->makeEvents();
+     24:     }
+     25: 
+
+# 6 0x00000000004015D0 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main() at C:/Documents and Settings/VBAR/Documents/Programs_C/WindowManager/main.cpp (20):
+
+     18:     App::getInstance()->initWindows();
+     19:     
+=>   20:     App::getInstance()->run();
+     21:     
+     22:     return 0;
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Nov 26 2021 23:34:14, GNU g++ 8.1.0, std=201402L, MinGW-W64 Runtime 6.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Nov 26 2021 23:41:26
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------

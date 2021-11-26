@@ -53,6 +53,8 @@ class WidgetInfo : public plugin::IWidget {
   public:
     WidgetInfo() : window_info(nullptr) {};
     WidgetInfo(ManagerWindow* window) : window_info(window) {};
+    
+    virtual ~WidgetInfo() {};
 
     ManagerWindow* getWindow() { return window_info; };
     ManagerWindow* setWindow(ManagerWindow* new_window) { window_info = new_window; };
@@ -109,13 +111,23 @@ class PicButton : public plugin::IButton, public WidgetInfo {
 
 class Slider : public plugin::ISlider, public WidgetInfo {
   public:
-    Slider();
-    virtual ~Slider() {}
+    Slider(float range_min, float range_max);
+    Slider(int32_t width, int32_t height, float range_min, float range_max);
+    Slider(int32_t width, int32_t height, float thumb_width, float thumb_height, float range_min, float range_max);
+    
+    virtual ~Slider() {};
 
     virtual void SetSliderCallback(plugin::ISliderCallback* callback) override;
 
     virtual float GetValue() override;
     virtual void SetValue(float value) override;
+  
+  private:
+    BorderWindow* slider_layout;
+    BorderWindow* slider;
+    float value;
+    float min_val;
+    float max_val;
 };
 
 class Label : public plugin::ILabel {
@@ -145,7 +157,7 @@ class PreferencesPanel : public plugin::IPreferencesPanel, public WidgetInfo {
 
 class WidgetFactory : public plugin::IWidgetFactory {
   public:
-    WidgetFactory(Renderer* render);;
+    WidgetFactory(Renderer* render);
     virtual ~WidgetFactory() {}
 
     virtual plugin::IButton* CreateDefaultButtonWithIcon(const char* icon_file_name) override;

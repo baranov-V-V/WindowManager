@@ -4,6 +4,7 @@
 #include "Functors.h"
 #include "Window.h"
 #include "App.h"
+#include "Tools.h"
 #include "SkinsConfig.h"
 
 PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, App* app, int but_x) {

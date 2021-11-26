@@ -162,7 +162,6 @@ void ToolPlugin::ProceedPressUp(Texture* target, Renderer* render, int x, int y)
     tool->ActionEnd(&texture, x, y);
 };
 
-
 FilterPlugin::FilterPlugin(plugin::IFilter* plugin_filter) : filter(plugin_filter), VTool(white_c, 1, plugin_filter->GetName()) {
     PreferencesPanel* panel = dynamic_cast<PreferencesPanel*>(filter->GetPreferencesPanel());
     if (panel != nullptr) {
@@ -175,8 +174,6 @@ void FilterPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, in
     RenderTexture texture(target, render);
     filter->Apply(&texture);
 };
-
-
 
 void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name) {
     HMODULE module = LoadLibraryA(file_name);   

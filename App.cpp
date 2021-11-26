@@ -7,17 +7,11 @@
 
 Renderer* Renderer::instance = nullptr;
 
-App::App(int app_x, int app_y) : users_window(app_x, app_y), app_size(app_x, app_y),
-    app_window(app_x, app_y, 0, 0, img_back_font, nullptr, nullptr, nullptr, nullptr, true),
+App::App() : users_window(1196, 690), app_size(1196, 690),
+    app_window(1196, 690, 0, 0, img_back_font, nullptr, nullptr, nullptr, nullptr, true),
     mouse(static_cast<ManagerWindow*>(&app_window)), on_run(false) {
 
     //app_window.setFunctor(EVENT_MOUSE_PRESSED_RC, new InvFunctorTrue());
-
-
-    tool_manager = new ToolManager();
-    canvas_manager = new DisplayManager(Renderer::getInstance());
-    this->initBasicTools();
-    this->initWindows();
 };
     
 void App::run() {
@@ -32,6 +26,8 @@ void App::run() {
 };
 
 void App::initBasicTools() {
+    tool_manager = new ToolManager();
+
     ToolFeather* tool_feather = new ToolFeather();
     ToolEraser* tool_eraser = new ToolEraser();
     ToolRect* tool_rect = new ToolRect();
@@ -47,6 +43,8 @@ void App::initBasicTools() {
 }
 
 void App::initWindows() {
+    canvas_manager = new DisplayManager(Renderer::getInstance());
+
     const int palette_x = app_size.x / 2;
     const int palette_y = 2 * app_size.y / 3;
 

@@ -4,13 +4,18 @@
 
 #include "BasicInfo.h"
 #include "Window.h"
-#include "Tools.h"
-
 
 class App {
+  private:
+    App();
   public:
-    App(int app_x, int app_y);
-    App(int app_x, int app_y, const std::string& skin_name);
+    static App* getInstance() {
+        if (instance == nullptr) {
+            instance = new App();
+        }
+        return instance;
+    };
+    //App(int app_x, int app_y, const std::string& skin_name);
     ~App() {};
     
     void run();
@@ -22,7 +27,11 @@ class App {
     ToolManager* getToolManager() { return tool_manager; };
     DisplayManager* getCanvasManager() { return canvas_manager; };
 
+    ManagerWindow* getAppWindow() { return &app_window; };
+
   public:
+    static App* instance;
+
     void initWindows();
     void initBasicTools();
     void makeEvents();

@@ -1,5 +1,7 @@
 #include "App.h"
 
+App* App::instance = nullptr;
+
 int main(int argc, const char* argv[]) {
     int x = 1196;
     int y = 690;
@@ -11,8 +13,11 @@ int main(int argc, const char* argv[]) {
         y = atoi(argv[2]);
     }
 
-    App app(x, y);
-    app.run();
+    App::getInstance()->initBasicTools();
+    
+    App::getInstance()->initWindows();
+    
+    App::getInstance()->run();
     
     return 0;
 }

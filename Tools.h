@@ -4,6 +4,8 @@
 #include <iostream>
 #include "PluginApi.h"
 #include "BasicInfo.h"
+#include "App.h"
+
 //#include "ToolModule.h"
 
 using std::vector;
@@ -48,8 +50,13 @@ class VTool {
     void adjust();
 
     void setAdjustWindow(ManagerWindow* window) { 
-        adjust_window = window;
-        //adjust_window->setParent();
+        if (adjust_window == nullptr) {
+            adjust_window = window;
+            adjust_window->setShow(false);
+            App::getInstance()->getAppWindow()->addChild(adjust_window);
+        } else {
+            std::cout << "trying set new adjust window while old is attached\n";
+        }
     };
 
     void setColor(COLORREF color) { VTool::color = color; };

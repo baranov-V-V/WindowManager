@@ -103,8 +103,19 @@ void PicButton::SetClickCallback(plugin::IClickCallback* callback) {
     window->setPressUp(new ClickCallbackFunctor(callback));
 }
 
-Slider::Slider() {};
-void Slider::SetSliderCallback(plugin::ISliderCallback* callback) {};
+
+Slider::Slider(float range_min, float range_max) {
+
+};
+Slider::Slider(int32_t width, int32_t height, float range_min, float range_max) {
+
+};
+Slider::Slider(int32_t width, int32_t height, float thumb_width, float thumb_height, float range_min, float range_max) {
+
+};
+void Slider::SetSliderCallback(plugin::ISliderCallback* callback) {
+
+};
 float Slider::GetValue() { return 0; };
 void Slider::SetValue(float value) {};
 
@@ -112,7 +123,7 @@ Label::Label() {};
 void Label::SetText(const char* text) {};
 
 PreferencesPanel::PreferencesPanel() {
-    layout = new BorderWindow(400, 400, 0, 0, dgrey_c, dgrey_c, 1, Renderer::getInstance());
+    layout = new BorderWindow(400, 400, 300, 150, dgrey_c, dgrey_c, 1, Renderer::getInstance());
     this->setWindow(layout);
 };
 void PreferencesPanel::Attach(IWidget* widget, int32_t x, int32_t y) {

@@ -221,6 +221,7 @@ void ManagerWindow::drawChilds(Renderer* renderer) const {
 void ManagerWindow::addChild(ManagerWindow* window) {
     if (count < max_size) {
         children[count++] = window;
+        window->setParent(this);
     } else {
         std::cerr << "Overflow!!" << std::endl;
     }
