@@ -5,9 +5,17 @@
 #include "Window.h"
 #include "Events.h"
 
+Renderer* Renderer::instance = nullptr;
+
 App::App(int app_x, int app_y) : users_window(app_x, app_y), app_size(app_x, app_y),
     app_window(app_x, app_y, 0, 0, img_back_font, nullptr, nullptr, nullptr, nullptr, true),
-    mouse(static_cast<ManagerWindow*>(&app_window)), render(&app_window, 0, 0, app_x, app_y), on_run(false), canvas_manager(&render) {
+    mouse(static_cast<ManagerWindow*>(&app_window)), on_run(false) {
+
+    //app_window.setFunctor(EVENT_MOUSE_PRESSED_RC, new InvFunctorTrue());
+
+
+    tool_manager = new ToolManager();
+    canvas_manager = new DisplayManager(Renderer::getInstance());
     this->initBasicTools();
     this->initWindows();
 };
@@ -16,7 +24,7 @@ void App::run() {
     on_run = true;
 
     while (on_run) {
-        app_window.draw(&render);
+        app_window.draw(Renderer::getInstance());
         app_window.showOn(&users_window);
         this->makeEvents();
     }
@@ -28,12 +36,12 @@ void App::initBasicTools() {
     ToolEraser* tool_eraser = new ToolEraser();
     ToolRect* tool_rect = new ToolRect();
     Tool1* tool1 = new Tool1(this);
-    tool_manager.addTool(tool_feather);
-    tool_manager.addTool(tool_eraser);
-    tool_manager.addTool(tool_rect);
-    tool_manager.addTool(tool1);
+    tool_manager->addTool(tool_feather);
+    tool_manager->addTool(tool_eraser);
+    tool_manager->addTool(tool_rect);
+    tool_manager->addTool(tool1);
 
-    LoadTools(&tool_manager, &render, "tools.dll");
+    LoadTools(tool_manager, Renderer::getInstance(), "tools.dll");
     //ToolModule* circle_drawer = LoadTool("circle.dll");
     //tool_manager.addTool(circle_drawer);
 }
@@ -50,13 +58,13 @@ void App::initWindows() {
     //InvisibleWindow* new_canvas_layer = GetResizedCanvas(canvas_layer, &render, &feather, &mouse, {app_size.x / 2 + 20, app_size.y / 2 + 20}, {app_size.x / 4 + 20, app_size.y / 4 + 20});
     //this->app_window.addChild(new_canvas_layer);
     
-    BorderWindow* graph = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), &(this->render), this);
+    BorderWindow* graph = MakeGraphWindow(500, 400, app_size.x / 7, app_size.y / 7, &(this->app_window), Renderer::getInstance(), this);
 
     
     InvFunctorTrue* debug_f = new InvFunctorTrue();
-    DedWindow* round_wnd    = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, &(this->render), &(this->app_window), debug_f);
-    PicWindow* menu         = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, &render, this); //menu->children[0] == close_button;
-    PicWindow* palette      = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), &(this->render), this);
+    DedWindow* round_wnd    = new DedWindow(50, 400, 300, app_size.x / 4, app_size.y / 4, silver_c, black_c, 4, Renderer::getInstance(), &(this->app_window), debug_f);
+    PicWindow* menu         = MakeLayout(app_size.x, app_size.y / 23, 0, 0, &(this->app_window), 26, Renderer::getInstance(), this); //menu->children[0] == close_button;
+    PicWindow* palette      = MakePalette(app_size.x / 8, app_size.y / 2, 0, app_size.y / 23, &(this->app_window), Renderer::getInstance(), this);
     /*
     InvFunctorTrue* invs_f = new InvFunctorTrue();    
     InvisibleWindow* inv_wnd = new InvisibleWindow(app_size.x / 8, app_size.y / 8, 3 * app_size.x / 4, 3 * app_size.y / 4, &(this->app_window), invs_f);
@@ -101,7 +109,7 @@ void App::makeEvents() {
             app_window.processEvent(new_event);
         }
     
-    } /* else if ((mouse.getState() & RIGHT_CLICK) && !(state & RIGHT_CLICK)) {
+    }  else if ((mouse.getState() & RIGHT_CLICK) && !(state & RIGHT_CLICK)) {
         new_event.setType(EVENT_MOUSE_PRESSED_RC);
         new_event.setData(mouse.getAbsCoord());
 
@@ -110,10 +118,11 @@ void App::makeEvents() {
                 active_window->getFunctor(EVENT_MOUSE_PRESSED_RC)->action(new_event.getData());   
             }
         } else {
+            std::cout << "send event rc!\n";
             app_window.processEvent(new_event);
         } 
         
-    } */else if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {      // mouse released
+    } else if (!(mouse.getState() & LEFT_CLICK) && (state & LEFT_CLICK)) {      // mouse released
         
         new_event.setType(EVENT_MOUSE_RELEASED_LC);
         new_event.setData(mouse.getAbsCoord());
@@ -140,7 +149,7 @@ void App::makeEvents() {
             app_window.processEvent(new_event);
         }
         
-    } else if (!(mouse.getState() & RIGHT_CLICK) && (state & RIGHT_CLICK)) {  //mouse moved
+    } /*else if (!(mouse.getState() & RIGHT_CLICK) && (state & RIGHT_CLICK)) {  //mouse moved
         
         new_event.setType(EVENT_MOUSE_RELEASED_RC);
         new_event.setData(mouse.getAbsCoord());
@@ -153,7 +162,7 @@ void App::makeEvents() {
             //cout << "sending mouse move to active\n";
             app_window.processEvent(new_event);
         }
-    }
+    } */
  
     state = mouse.getState();
     abs_coord = mouse.getAbsCoord();

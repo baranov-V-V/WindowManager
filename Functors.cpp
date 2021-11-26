@@ -33,7 +33,7 @@ bool DebugFunctorTrue::action(const EventData& data) {
 
 InvFunctorTrue::InvFunctorTrue() {};
 bool InvFunctorTrue::action(const EventData& data) { 
-    //std::cout << "Click true on invs_wnd\n"; 
+    std::cout << "Right CLick registered\n"; 
     return true; 
 };
 
@@ -548,5 +548,14 @@ bool ShowToolMenuFunctor::action(const EventData& data) {
 ClickCallbackFunctor::ClickCallbackFunctor() {};
 ClickCallbackFunctor::ClickCallbackFunctor(plugin::IClickCallback* call_back) : call_back(call_back) {};
 bool ClickCallbackFunctor::action(const EventData& data) {
+    call_back->RespondOnClick();
+    return true;
+};
+
+AdjustVToolFunctor::AdjustVToolFunctor() {};
+AdjustVToolFunctor::AdjustVToolFunctor(VTool* tool) : tool(tool) {};
+bool AdjustVToolFunctor::action(const EventData& data) {
+    std::cout << "in adjust functor\n";
+    tool->adjust();
     return true;
 };

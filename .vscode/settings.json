@@ -51,6 +51,7 @@
         "*.rh": "cpp",
         "cstring": "cpp",
         "assert.h": "c",
-        "set": "cpp"
+        "set": "cpp",
+        "list": "cpp"
     }
 }

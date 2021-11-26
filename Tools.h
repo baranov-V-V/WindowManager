@@ -37,17 +37,23 @@ static char* no_name = "Unnamed instrument";
 class VTool {
   public:
     VTool() : color(black_c) {};
-    VTool(COLORREF color, int thickness, char* name = no_name) : color(color), thickness(thickness), name(name), options(OPTION_COLOR | OPTION_THICKNESS) {};
-    VTool(COLORREF color, int thickness, const char* name = no_name) : color(color), thickness(thickness), name(const_cast<char*>(name)), options(OPTION_COLOR | OPTION_THICKNESS) {};
+    VTool(COLORREF color, int thickness, char* name = no_name) : color(color), thickness(thickness), name(name), options(OPTION_COLOR | OPTION_THICKNESS), adjust_window(nullptr) {};
+    VTool(COLORREF color, int thickness, const char* name = no_name) : color(color), thickness(thickness), name(const_cast<char*>(name)), options(OPTION_COLOR | OPTION_THICKNESS), adjust_window(nullptr) {};
     virtual ~VTool() {};
     
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) {};
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) = 0;
     virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) {};
-    virtual void adjust() {};
+    
+    void adjust();
+
+    void setAdjustWindow(ManagerWindow* window) { 
+        adjust_window = window;
+        //adjust_window->setParent();
+    };
 
     void setColor(COLORREF color) { VTool::color = color; };
-    COLORREF getColor() const { return color;}
+    COLORREF getColor() const { return color; }
 
     void setThickness(int thickness) { VTool::thickness = thickness; };
     int getThickness() const { return thickness; };
@@ -57,6 +63,7 @@ class VTool {
 
   private:
     char* name;
+    ManagerWindow* adjust_window; //must be already be child of app_window in App class;
   protected:
     COLORREF color;
     int thickness;
@@ -141,7 +148,6 @@ class Tool1 : public VTool {
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
     virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) override;
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) override;
-    virtual void adjust() override;
 
   private:
     void draw(Texture* target, Renderer* render, int x, int y);
@@ -167,8 +173,6 @@ class ToolPlugin : public VTool {
     virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) override;
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) override;
 
-    virtual void adjust() override;
-
   private:
     plugin::ITool* tool;
 };
@@ -180,7 +184,6 @@ class FilterPlugin : public VTool {
     virtual ~FilterPlugin() { delete filter; };
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
-    virtual void adjust() override;
 
   private:
     plugin::IFilter* filter;

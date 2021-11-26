@@ -28,7 +28,10 @@ class RenderTexture : public plugin::ITexture {
     virtual void DrawRect(int32_t x, int32_t y, int32_t width, int32_t height, Color color) override;
 
     virtual void CopyTexture(ITexture* texture, int32_t x, int32_t y, int32_t width, int32_t height) override;
-  
+
+    Texture* getTexture() const { return texture; };
+    Renderer* getRenderer() const { return render; };
+
   private:
     Texture* texture;
     Renderer* render;
@@ -44,6 +47,18 @@ class TextureFactory : public plugin::ITextureFactory {
 
   private:
     Renderer* render;
+};
+
+class WidgetInfo : public plugin::IWidget {
+  public:
+    WidgetInfo() : window_info(nullptr) {};
+    WidgetInfo(ManagerWindow* window) : window_info(window) {};
+
+    ManagerWindow* getWindow() { return window_info; };
+    ManagerWindow* setWindow(ManagerWindow* new_window) { window_info = new_window; };
+
+  private:
+    ManagerWindow* window_info;
 };
 
 class ClickCallback : public plugin::IClickCallback {
@@ -64,27 +79,35 @@ class SliderCallback : public plugin::ISliderCallback {
   private:
 };
 
-class TextButton : public plugin::IButton {
+class TextButton : public plugin::IButton, public WidgetInfo {
   public:
     TextButton(const char* text);
     TextButton(int32_t width, int32_t height, const char* text, int32_t char_size);
     virtual ~TextButton() {}
+
+    int32_t GetWidth() override { return window->getSizeX(); };
+    int32_t GetHieght() override { return window->getSizeY(); };
 
     virtual void SetClickCallback(plugin::IClickCallback* callback) override;
   private:
     TextButtonWindow* window;
 };
 
-class PicButton : public plugin::IButton {
+class PicButton : public plugin::IButton, public WidgetInfo {
   public:
     PicButton(const char* icon_file_name);
     PicButton(int32_t width, int32_t height, const char* icon_file_name);
-    virtual ~PicButton() {}
+    virtual ~PicButton() {};
+
+    int32_t GetWidth() override { return window->getSizeX(); };
+    int32_t GetHieght() override { return window->getSizeY(); };
 
     virtual void SetClickCallback(plugin::IClickCallback* callback) override;
+  private:
+    PicWindow* window;
 };
 
-class Slider : public plugin::ISlider {
+class Slider : public plugin::ISlider, public WidgetInfo {
   public:
     Slider();
     virtual ~Slider() {}
@@ -103,12 +126,21 @@ class Label : public plugin::ILabel {
     virtual void SetText(const char* text) override;
 };
 
-class PreferencesPanel : public plugin::IPreferencesPanel {
+class PreferencesPanel : public plugin::IPreferencesPanel, public WidgetInfo {
   public:
     PreferencesPanel();
     virtual ~PreferencesPanel() {}
 
+    int32_t GetWidth()  override { return layout->getSizeX(); };
+    int32_t GetHieght() override { return layout->getSizeY(); };
+
     virtual void Attach(IWidget* widget, int32_t x, int32_t y) override;
+
+    BorderWindow* getLayout() const { return layout; };
+
+  public:
+    BorderWindow* layout;
+    std::list<plugin::IWidget*> children;
 };
 
 class WidgetFactory : public plugin::IWidgetFactory {
@@ -135,7 +167,7 @@ class WidgetFactory : public plugin::IWidgetFactory {
 
 class API : public plugin::IAPI {
   public:
-    API(Renderer* render);
+    API();
     virtual ~API() {};
 
     virtual plugin::IWidgetFactory*  GetWidgetFactory () override;

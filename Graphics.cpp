@@ -4,6 +4,10 @@
 #include "TXLib.h"
 #include "App.h"
 
+void DisableCursorInCmd() {
+    txTextCursor(false);
+};
+
 BasicWindow::BasicWindow(int x_size, int y_size, COLORREF color) :
     size(x_size, y_size), color(color) {};
 
@@ -99,6 +103,10 @@ void Texture::showOn(const BasicWindow* target) const {
 
 void Texture::showOn(const BasicWindow* target, int coord_x, int coord_y) {
     txBitBlt(target->getHdc(), coord_x, coord_y, size.x, size.y, this->getHdc());
+};
+
+void Texture::showOn(const BasicWindow* target, int coord_x, int coord_y, int size_x, int size_y) {
+    txBitBlt(target->getHdc(), coord_x, coord_y, size_x, size_y, this->getHdc());
 };
 
 COLORREF Renderer::getPixel(double x, double y) {

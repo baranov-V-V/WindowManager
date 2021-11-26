@@ -7,10 +7,7 @@
 #include "Tools.h"
 #include "App.h"
 
-Renderer::Renderer(BasicWindow* window, double min_x, double min_y, double max_x, double max_y) :
-    window(window), max(max_x, max_y), min(min_x, min_y) {
-    this->calcScale();    
-};
+Renderer::Renderer() : window(nullptr), max(0, 0), min(0, 0) {};
 
 void Renderer::calcScale() {
     scale.x = double(window->getSizeX()) / double(max.x - min.x);
@@ -197,6 +194,16 @@ VFunctor* ManagerWindow::getPressDown() const {
     //return press_down_f;
 };
 VFunctor* ManagerWindow::getFunctor(EventType type) const {
+    /*
+    if (type == EVENT_MOUSE_PRESSED_RC) {
+        std::cout << "Have functors for events:\n";
+        for (auto it = functors.begin(); it != functors.end(); ++it) {
+            std::cout << it->first << " ";
+        }
+        std::cout << "\n";
+    }
+    */
+   
     auto it = functors.find(type);
     if (it != functors.end()) {
         return it->second;
@@ -411,16 +418,18 @@ EventState ManagerWindow::processEvent(const Event& event) {
 
             break;
         
-        case EVENT_MOUSE_RELEASED_RC:
+        case EVENT_MOUSE_PRESSED_RC:
 
             if (this->checkPointed(event.getData().abs_coord)) {
-                if (is_clicked && this->getFunctor(EVENT_MOUSE_RELEASED_RC) != nullptr) {
-                    if (this->getFunctor(EVENT_MOUSE_RELEASED_RC)->action(event.getData())) {
+                if (this->getFunctor(EVENT_MOUSE_PRESSED_RC) != nullptr) {
+                    if (this->getFunctor(EVENT_MOUSE_PRESSED_RC)->action(event.getData())) {
                         result = EVENT_DONE;
                     } else {
                         result = EVENT_IN_PROCESS; 
                     };
                     //std::cout << "in release if\n";
+                } else {
+                    //std::cout << "didn't find functor for rc\n";
                 }
                 //std::cout << "released result: " << result << "\n";
             }

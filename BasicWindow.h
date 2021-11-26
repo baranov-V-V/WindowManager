@@ -1,4 +1,6 @@
 #pragma once
+#include <cassert>
+#include <iostream>
 #include "BasicInfo.h"
 
 class BasicWindow {
@@ -57,6 +59,7 @@ class Texture : public BasicWindow {
 
     void showOn(const BasicWindow* target) const;
     void showOn(const BasicWindow* target, int coord_x, int coord_y);
+    void showOn(const BasicWindow* target, int coord_x, int coord_y, int size_x, int size_y);
 
   protected:
     Pair<int> coord;
@@ -65,8 +68,13 @@ class Texture : public BasicWindow {
 
 class Renderer {
   public:
-    Renderer(BasicWindow* window, double min_x, double min_y, double max_x, double max_y);
-
+    static Renderer* getInstance() {
+        if (instance == nullptr) {
+            instance = new Renderer();
+        }
+        return instance;
+    };
+  
     void setWindow(BasicWindow* new_window);
     BasicWindow* getWindow() const { return window; };
     
@@ -105,7 +113,11 @@ class Renderer {
     void setMaxY(double y) { max.y = y; };    
     void setMinY(double y) { min.y = y; };
 
+    static Renderer* instance;
+
   private:
+    Renderer();
+
     BasicWindow* window;
     Pair<double> scale;
     Pair<double> max;

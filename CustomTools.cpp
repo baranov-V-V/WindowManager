@@ -3,9 +3,13 @@
 
 namespace plugin {
 
+IAPI* api = nullptr;
+
 class Filler : public IFilter {
   public:
-    Filler() {};
+    Filler() {
+        this->ConstructPreferencePanel();
+    };
     virtual ~Filler() {};
 
     virtual void Apply(ITexture* canvas) override {
@@ -18,8 +22,15 @@ class Filler : public IFilter {
     };
 
     virtual IPreferencesPanel* GetPreferencesPanel() const override {
-        return nullptr;
+        return panel;
     };
+
+    void ConstructPreferencePanel() {
+        panel = api->GetWidgetFactory()->CreateDefaultPreferencesPanel();
+    };
+
+  private:
+    IPreferencesPanel* panel;
 };
 
 class Plugin : public IPlugin {
@@ -43,7 +54,8 @@ class Plugin : public IPlugin {
 
 }
 
-extern "C" TOOLAPI plugin::IPlugin* TOOLCALL Create(plugin::IAPI* api) {
+extern "C" TOOLAPI plugin::IPlugin* TOOLCALL Create(plugin::IAPI* gui_api) {
+    plugin::api = gui_api;
     return new plugin::Plugin(new plugin::Filler());
 };
 

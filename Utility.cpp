@@ -402,6 +402,7 @@ InvisibleWindow* MakeToolsMenu(int coord_x, int coord_y, ToolManager* tools, Ren
     for (int i = 0; i < tools_count; ++i) {
         TextButtonWindow* button = new TextButtonWindow(button_x, button_y, 0, button_y * i, dgrey_c, dgrey_c, 1, silver_c, (*tools)[i]->getName(),
                                                         main_font, 8, 20, ALIGN_LEFT, render, layer, new ChangeToolFalse(tools, i), nullptr, new ChangeToolFalse(tools, i));
+        button->setFunctor(EVENT_MOUSE_PRESSED_RC, new AdjustVToolFunctor((*tools)[i]));
         //button->setPointed(new GlowBorderFunctor(button, navy_c, navy_c));
         button->setShow(true);
         layer->addChild(button);

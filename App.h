@@ -19,8 +19,8 @@ class App {
     void setActiveWindow(ManagerWindow* window) { active_window = window; };
     ManagerWindow* getActiveWindow(ManagerWindow* window) const { return active_window; };
 
-    ToolManager* getToolManager() { return &tool_manager; };
-    DisplayManager* getCanvasManager() { return &canvas_manager; };
+    ToolManager* getToolManager() { return tool_manager; };
+    DisplayManager* getCanvasManager() { return canvas_manager; };
 
   public:
     void initWindows();
@@ -32,12 +32,11 @@ class App {
     Window users_window;
     PicWindow app_window;
     WindowMouse mouse;
-    Renderer render;
     bool on_run;
 
     std::queue<VFunctor*> events_queue;
     
-    DisplayManager canvas_manager;
-    ToolManager tool_manager;
+    DisplayManager* canvas_manager;
+    ToolManager* tool_manager;
     ManagerWindow* active_window = nullptr;
 };

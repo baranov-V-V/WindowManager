@@ -1,11 +1,18 @@
 #include "Tools.h"
-#include "BasicWindow.h"
+#include "Window.h"
 #include "App.h"
 #include "PluginApiClasses.h"
 #include <algorithm>
 #include <cassert>
 #include <iostream>
     
+
+void VTool::adjust() {
+    if (adjust_window != nullptr) {
+        adjust_window->setShow(!adjust_window->getShow());
+    }
+};
+
 void ToolManager::addTool(VTool* tool) {
     tools.push_back(tool);
 };
@@ -91,7 +98,7 @@ void ToolRect::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
 
 Tool1::Tool1(App* app) : VTool(black_c, 1, tool1_name), app(app) {
     SET_OPTION_ADJUST(options);
-    adjust_window = MakeGraphWindow(500, 400, app->app_window.getSizeX() / 7, app->app_window.getSizeY() / 7, &(app->app_window), &(app->render), app);
+    adjust_window = MakeGraphWindow(500, 400, app->app_window.getSizeX() / 7, app->app_window.getSizeY() / 7, &(app->app_window), Renderer::getInstance(), app);
     adjust_window->setShow(false);
 };
 void Tool1::draw(Texture* target, Renderer* render, int x, int y) {
@@ -134,12 +141,14 @@ void Tool1::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
 void Tool1::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
     mark.clear();
 };
-void Tool1::adjust() {
-    adjust_window->setShow(true);
-    
-};
 
-ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, no_name) {};
+ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, no_name) {
+    PreferencesPanel* panel = dynamic_cast<PreferencesPanel*>(tool->GetPreferencesPanel());
+    if (panel != nullptr) {
+        std::cout << "added tool adjust window!\n";
+        this->setAdjustWindow(panel->getLayout());
+    }   
+};
 void ToolPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
     RenderTexture texture(target, render);
     tool->ActionBegin(&texture, x, y);
@@ -152,21 +161,21 @@ void ToolPlugin::ProceedPressUp(Texture* target, Renderer* render, int x, int y)
     RenderTexture texture(target, render);
     tool->ActionEnd(&texture, x, y);
 };
-void ToolPlugin::adjust() {
-    tool->GetPreferencesPanel();
 
-    // later will attach it to real canvas;
+
+FilterPlugin::FilterPlugin(plugin::IFilter* plugin_filter) : filter(plugin_filter), VTool(white_c, 1, plugin_filter->GetName()) {
+    PreferencesPanel* panel = dynamic_cast<PreferencesPanel*>(filter->GetPreferencesPanel());
+    if (panel != nullptr) {
+        std::cout << "added filter adjust window!\n";
+        this->setAdjustWindow(panel->getLayout());
+    }
 };
-
-FilterPlugin::FilterPlugin(plugin::IFilter* plugin_filter) : filter(plugin_filter), VTool(white_c, 1, plugin_filter->GetName()) {};
 void FilterPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
     render->setWindow(target);
     RenderTexture texture(target, render);
     filter->Apply(&texture);
 };
-void FilterPlugin::adjust() {
-    filter->GetPreferencesPanel();
-};
+
 
 
 void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name) {
@@ -176,7 +185,7 @@ void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name) {
         assert(0);
     }
 
-    API api(render);
+    API api;
 
     plugin::CreateFunction create_f = (plugin::CreateFunction) GetProcAddress(module, "Create");
     assert(create_f);

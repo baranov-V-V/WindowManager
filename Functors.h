@@ -670,3 +670,15 @@ class ClickCallbackFunctor : public VFunctor {
   private:
     plugin::IClickCallback* call_back;
 };
+
+class AdjustVToolFunctor : public VFunctor {
+  public:
+    AdjustVToolFunctor();
+    AdjustVToolFunctor(VTool* tool);
+    virtual ~AdjustVToolFunctor() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    VTool* tool;
+};

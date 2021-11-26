@@ -174,6 +174,8 @@ class GlowPicFunctor;
 class GlowBorderFunctor;
 class MakeFirst;
 
+void DisableCursorInCmd();
+
 RGBQUAD ToRGBQUAD(COLORREF color);
 
 void PrintMousePos();

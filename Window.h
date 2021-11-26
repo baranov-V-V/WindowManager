@@ -112,6 +112,7 @@ class ManagerWindow : public Texture {
 
     //manager part
     ManagerWindow* getParent() const { return parent; };
+    void setParent(ManagerWindow* new_parent) { parent = new_parent; };
     void drawChilds(Renderer* render) const;
     void addChild(ManagerWindow* window);
     void makeFirst(ManagerWindow* window);
