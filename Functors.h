@@ -110,11 +110,11 @@ class ChangeColor : public VFunctor {
     COLORREF color;  
 };
 
-class ChangeBasicTool : public VFunctor {
+class ChangeToolTrue : public VFunctor {
   public:
-    ChangeBasicTool();
-    ChangeBasicTool(ToolManager* tools, int tool_index);
-    virtual ~ChangeBasicTool() {};
+    ChangeToolTrue();
+    ChangeToolTrue(ToolManager* tools, int tool_index);
+    virtual ~ChangeToolTrue() {};
 
     bool action(const EventData& data) override;
 

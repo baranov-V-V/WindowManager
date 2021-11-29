@@ -930,11 +930,11 @@ class ChangeColor : public VFunctor {
     COLORREF color;  
 };
 
-class ChangeBasicTool : public VFunctor {
+class ChangeToolTrue : public VFunctor {
   public:
-    ChangeBasicTool() : tools(nullptr) { tool_index = 0; };
-    ChangeBasicTool(ToolManager* tools, int tool_index) : tools(tools), tool_index(tool_index) {};
-    virtual ~ChangeBasicTool() {};
+    ChangeToolTrue() : tools(nullptr) { tool_index = 0; };
+    ChangeToolTrue(ToolManager* tools, int tool_index) : tools(tools), tool_index(tool_index) {};
+    virtual ~ChangeToolTrue() {};
 
     bool action() override { tools->setCurrTool(tool_index); return true; };
 

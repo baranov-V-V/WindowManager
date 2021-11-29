@@ -4,6 +4,7 @@
 #include <iostream>
 #include "PluginApi.h"
 #include "BasicInfo.h"
+#include "SkinsConfig.h"
 #include "App.h"
 
 //#include "ToolModule.h"
@@ -30,17 +31,22 @@ enum TOOL_OPTIONS {
 #define IS_OPTION_THICKNES(option) (option & OPTION_THICKNESS)
 #define IS_OPTION_ADJUST(option) (option & OPTION_ADJUST)
 
-static char* feather_name = "Feather";
-static char* eraser_name = "Eraser";
-static char* rect_fill_name = "Rects drawer";
-static char* tool1_name = "Tool1";
-static char* no_name = "Unnamed instrument";
+static const char* feather_name = "Feather";
+static const char* eraser_name = "Eraser";
+static const char* rect_fill_name = "Rects drawer";
+static const char* tool1_name = "Tool1";
+static const char* no_name = "Unnamed instrument";
 
 class VTool {
   public:
     VTool() : color(black_c) {};
-    VTool(COLORREF color, int thickness, char* name = no_name) : color(color), thickness(thickness), name(name), options(OPTION_COLOR | OPTION_THICKNESS), adjust_window(nullptr) {};
-    VTool(COLORREF color, int thickness, const char* name = no_name) : color(color), thickness(thickness), name(const_cast<char*>(name)), options(OPTION_COLOR | OPTION_THICKNESS), adjust_window(nullptr) {};
+    VTool(COLORREF color, int thickness, const char* name) : color(color), thickness(thickness), name(name), options(OPTION_COLOR | OPTION_THICKNESS), adjust_window(nullptr), icon(nullptr) {};
+    VTool(COLORREF color, int thickness, const char* name, const char* icon_name) : color(color), thickness(thickness), name(name), options(OPTION_COLOR | OPTION_THICKNESS), adjust_window(nullptr), icon(nullptr) {
+        if (icon_name) {
+            icon = new PicWindow(0, 0, icon_name);
+        }
+    };
+    VTool(COLORREF color, int thickness, const char* name, ManagerWindow* icon) : color(color), thickness(thickness), name(name), options(OPTION_COLOR | OPTION_THICKNESS), adjust_window(nullptr), icon(icon) {};
     virtual ~VTool() {};
     
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) {};
@@ -58,6 +64,7 @@ class VTool {
             std::cout << "trying set new adjust window while old is attached\n";
         }
     };
+    ManagerWindow* getAdjustWindow() const { return adjust_window; };
 
     void setColor(COLORREF color) { VTool::color = color; };
     COLORREF getColor() const { return color; }
@@ -66,11 +73,14 @@ class VTool {
     int getThickness() const { return thickness; };
 
     int getOption() const { return options; };
-    char* getName() const { return name; };
+    const char* getName() const { return name; };
+
+    ManagerWindow* getIcon() const { return icon; };
 
   private:
-    char* name;
+    const char* name;
     ManagerWindow* adjust_window; //must be already be child of app_window in App class;
+    ManagerWindow* icon;
   protected:
     COLORREF color;
     int thickness;
@@ -111,7 +121,7 @@ class ToolManager {
 
 class ToolFeather : public VTool {
   public:
-    ToolFeather(COLORREF color = black_c, char* name = feather_name, int thickness = 2) : VTool(color, thickness, name) {};
+    ToolFeather() : VTool(black_c, 2, feather_name, img_feather) {};
     virtual ~ToolFeather() {};
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
@@ -123,7 +133,7 @@ class ToolFeather : public VTool {
 
 class ToolEraser : public VTool {
   public:
-    ToolEraser() : VTool(white_c, 5, eraser_name) {};
+    ToolEraser() : VTool(white_c, 5, eraser_name, img_eraser) {};
     virtual ~ToolEraser() {};
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;

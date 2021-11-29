@@ -29,14 +29,10 @@ void App::run() {
 void App::initBasicTools() {
     tool_manager = new ToolManager();
 
-    ToolFeather* tool_feather = new ToolFeather();
-    ToolEraser* tool_eraser = new ToolEraser();
-    ToolRect* tool_rect = new ToolRect();
-    Tool1* tool1 = new Tool1(this);
-    tool_manager->addTool(tool_feather);
-    tool_manager->addTool(tool_eraser);
-    tool_manager->addTool(tool_rect);
-    tool_manager->addTool(tool1);
+    tool_manager->addTool(new ToolFeather());
+    tool_manager->addTool(new ToolEraser());
+    tool_manager->addTool(new ToolRect());
+    tool_manager->addTool(new Tool1(this));
 
     LoadTools(tool_manager, Renderer::getInstance(), "tools.dll");
     //ToolModule* circle_drawer = LoadTool("circle.dll");
@@ -46,7 +42,7 @@ void App::initBasicTools() {
 void App::initWindows() {
     canvas_manager = new DisplayManager(Renderer::getInstance());
 
-    this->app_window.addChild(new BasicSliderX(160, 25, 800, 600, 0, 10, new SliderAction(0, 10)));
+    this->app_window.addChild(new PicWindow(800, 600, img_eraser));
 
     const int palette_x = app_size.x / 2;
     const int palette_y = 2 * app_size.y / 3;

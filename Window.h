@@ -70,6 +70,8 @@ class ManagerWindow : public Texture {
     ManagerWindow();
     ManagerWindow(int x_size, int y_size, int coord_x, int coord_y, COLORREF color, ManagerWindow* parent = nullptr,
                   VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
+    ManagerWindow(int coord_x, int coord_y, const char* file_name, ManagerWindow* parent = nullptr,
+                  VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr);
     virtual ~ManagerWindow();
 
     //general part
@@ -160,7 +162,7 @@ class PicWindow : public ManagerWindow {
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic_name, ManagerWindow* parent = nullptr,
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
-    PicWindow(int coord_x, int coord_y, char* pic_name, ManagerWindow* parent = nullptr,
+    PicWindow(int coord_x, int coord_y, const char* pic_name, ManagerWindow* parent = nullptr,
               VFunctor* press_up_f = nullptr, VFunctor* pointed_f = nullptr, VFunctor* press_down_f = nullptr, bool need_redraw = false);
     virtual ~PicWindow() {};
     

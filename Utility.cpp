@@ -70,26 +70,50 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
 
     int inst_x = x_size / 4;
     int inst_y = 3 * inst_x / 4;
+    
+    //need
     int inst_dx = c_box_dx;
     int inst_dy = c_box_dy;
 
-    ChangeBasicTool* change_to_feather = new ChangeBasicTool(app->getToolManager(), TOOL_FEATHER);
-    ChangeBasicTool* change_to_eraser  = new ChangeBasicTool(app->getToolManager(), TOOL_ERASER);
-    PicWindow* feather_button = new PicWindow(inst_x, inst_y, inst_dx, feather_y                         , img_feather, palette, change_to_feather);
-    PicWindow* eraser_button  = new PicWindow(inst_x, inst_y, inst_dx, feather_y + (inst_dy + inst_y) * 1, img_eraser , palette, change_to_eraser ); 
     ThicknessWindow* thick_ind_w = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y                         , white_c, mgrey_c, 1, app->getToolManager(), render, palette);
     ThicknessWindow* thick_ind_b = new ThicknessWindow(2 * inst_x, inst_y, 2 * inst_dx + inst_x, feather_y + (inst_dy + inst_y) * 1, black_c, mgrey_c, 1, app->getToolManager(), render, palette);
 
-    GlowPicFunctor* feather_glow = new GlowPicFunctor(feather_button, img_feather, img_feather2);
-    GlowPicFunctor* eraser_glow  = new GlowPicFunctor(eraser_button , img_eraser , img_eraser2 );
-    feather_button->setPointed(feather_glow);
-    eraser_button->setPointed(eraser_glow); 
+    ToolManager* tools = App::getInstance()->getToolManager();
+    
+    int curr_ins_y = feather_y;
+    for (int i = 0; i < tools->getCount(); ++i) {
+        VTool* tool = (*tools)[i];
+        ManagerWindow* icon = tool->getIcon();
+        if (icon != nullptr) {
+            icon->setCoord({inst_dx, curr_ins_y});
+            curr_ins_y += icon->getSizeY() + inst_dy;
+            icon->setPressUp(new ChangeToolTrue(tools, i));
+            if (tool->getAdjustWindow()) {
+                icon->setFunctor(EVENT_MOUSE_PRESSED_RC, new AdjustVToolFunctor(tool));
+            }
+            palette->addChild(icon);
+        }
+    }
 
+    /*
+    ChangeToolTrue* change_to_feather = new ChangeToolTrue(app->getToolManager(), TOOL_FEATHER);
+    ChangeToolTrue* change_to_eraser  = new ChangeToolTrue(app->getToolManager(), TOOL_ERASER);
+    PicWindow* feather_button = new PicWindow(inst_x, inst_y, inst_dx, feather_y                         , img_feather, palette, change_to_feather);
+    PicWindow* eraser_button  = new PicWindow(inst_x, inst_y, inst_dx, feather_y + (inst_dy + inst_y) * 1, img_eraser , palette, change_to_eraser ); 
+    */
+
+    //useless
+    //GlowPicFunctor* feather_glow = new GlowPicFunctor(feather_button, img_feather, img_feather2);
+    //GlowPicFunctor* eraser_glow  = new GlowPicFunctor(eraser_button , img_eraser , img_eraser2 );
+    //feather_button->setPointed(feather_glow);
+    //eraser_button->setPointed(eraser_glow); 
+
+    
     int layer_size_x = x_size - 2 * c_box_dx;
     int layer_size_y = 14;
     int arrow_size_x = 14;
     int arrow_size_y = 14;
-    InvisibleWindow* layer = new InvisibleWindow(layer_size_x, layer_size_y, inst_dx, feather_y + (inst_dy + inst_y) * 2, palette);
+    InvisibleWindow* layer = new InvisibleWindow(layer_size_x, layer_size_y, inst_dx, curr_ins_y, palette);
     
     int bar_size_x = layer_size_x - 2 * arrow_size_x;
     int bar_size_y = arrow_size_y;
@@ -107,9 +131,10 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     PlaceBarOnClickX* start_move = new PlaceBarOnClickX(placer, thickness_bar, move_x_axis);
     StartMove* start_move_bar = new StartMove(move_x_axis);
     EndMove* end_move = new EndMove(move_x_axis);
+    
 
-    NextBasicTool* change_next = new NextBasicTool(app->getToolManager());
-    TextButtonWindow* next_instrument = new TextButtonWindow(80, 25, inst_dx, feather_y + (inst_dy + inst_y) * 2 + layer_size_y + inst_dy, dgrey_c, lgrey_c, 1, silver_c, "next tool", "Helvetica", 7, 20, ALIGN_LEFT, render, palette, change_next);
+    //NextBasicTool* change_next = new NextBasicTool(app->getToolManager());
+    //TextButtonWindow* next_instrument = new TextButtonWindow(80, 25, inst_dx, feather_y + (inst_dy + inst_y) * 2 + layer_size_y + inst_dy, dgrey_c, lgrey_c, 1, silver_c, "next tool", "Helvetica", 7, 20, ALIGN_LEFT, render, palette, change_next);
 
     dec_thickness_button->setPressUp(move_left);
     inc_thickness_button->setPressUp(move_right);
@@ -124,11 +149,15 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     thickness_bar->addChild(moving_bar);
 
     palette->addChild(layer);
+    
+
     palette->addChild(thick_ind_w);
     palette->addChild(thick_ind_b);
-    palette->addChild(feather_button);
-    palette->addChild(eraser_button);
-    palette->addChild(next_instrument);
+    //palette->addChild(feather_button);
+    //palette->addChild(eraser_button);
+    
+    
+    //palette->addChild(next_instrument);
 
     return palette;
 };

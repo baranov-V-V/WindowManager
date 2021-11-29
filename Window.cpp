@@ -124,7 +124,35 @@ ManagerWindow::ManagerWindow(int x_size, int y_size, int coord_x, int coord_y, C
     max_size = 100;
     count = 0;
     ManagerWindow::children = new ManagerWindow*[max_size];
-}
+};
+
+ManagerWindow::ManagerWindow(int coord_x, int coord_y, const char* file_name, ManagerWindow* parent,
+                  VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f) :
+    Texture(file_name, coord_x, coord_y), parent(parent) {
+    if (press_up_f == nullptr) {
+        functors[EVENT_MOUSE_RELEASED_LC] = new DebugFunctorTrue(this);
+    } else {
+        functors[EVENT_MOUSE_RELEASED_LC] = press_up_f;
+    }
+    
+    if (press_down_f == nullptr) {
+        functors[EVENT_MOUSE_PRESSED_LC] = new DebugFunctorTrue(this);
+    } else {
+        functors[EVENT_MOUSE_PRESSED_LC] = press_down_f;
+    }
+
+    if (pointed_f == nullptr) {
+        functors[EVENT_MOUSE_MOVE] = new DebugFunctorTrue(this);
+    } else {
+        functors[EVENT_MOUSE_MOVE] = pointed_f;
+    }
+
+    is_clicked = false;
+    is_pointed = false;
+    max_size = 100;
+    count = 0;
+    ManagerWindow::children = new ManagerWindow*[max_size];
+};
 
 ManagerWindow::~ManagerWindow() {
     for (int i = 0; i < count; ++i) {
@@ -545,11 +573,11 @@ PicWindow::PicWindow(int x_size, int y_size, int coord_x, int coord_y, char* pic
     pic.showOn(this);
 };
 
-PicWindow::PicWindow(int coord_x, int coord_y, char* pic_name, ManagerWindow* parent,
+PicWindow::PicWindow(int coord_x, int coord_y, const char* pic_name, ManagerWindow* parent,
                      VFunctor* press_up_f, VFunctor* pointed_f, VFunctor* press_down_f, bool need_redraw) : base_img(pic_name, 0, 0),
-    ManagerWindow(base_img.getSizeX(), base_img.getSizeY(), coord_x, coord_y, 0, parent, press_up_f, pointed_f, press_down_f) {
+    ManagerWindow(coord_x, coord_y, pic_name, parent, press_up_f, pointed_f, press_down_f) {
     PicWindow::need_redraw = need_redraw;
-    base_img.showOn(this);
+    //base_img.showOn(this);
 };
     
 void PicWindow::draw(Renderer* render) const {

@@ -63,9 +63,9 @@ bool ChangeColor::action(const EventData& data) {
     return true;
 };
 
-ChangeBasicTool::ChangeBasicTool() : tools(nullptr) { tool_index = 0; };
-ChangeBasicTool::ChangeBasicTool(ToolManager* tools, int tool_index) : tools(tools), tool_index(tool_index) {};
-bool ChangeBasicTool::action(const EventData& data) {
+ChangeToolTrue::ChangeToolTrue() : tools(nullptr) { tool_index = 0; };
+ChangeToolTrue::ChangeToolTrue(ToolManager* tools, int tool_index) : tools(tools), tool_index(tool_index) {};
+bool ChangeToolTrue::action(const EventData& data) {
     tools->setCurrTool(tool_index);
     return true;
 };

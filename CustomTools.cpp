@@ -22,7 +22,7 @@ void MakeSliderWithTitleMeasure(int size_x, int size_y, int coord_x, int coord_y
                              
     ILabel* label = api->GetWidgetFactory()->CreateLabel(title_size_x, title_size_y, title, ch_size);
     panel->Attach(label, coord_x + size_x / 2 - title_size_x / 2, coord_y - title_size_y);
-    panel->Attach(num_label, coord_x + size_x / 2 + title_size_x / 8, coord_y - title_size_y);
+    panel->Attach(num_label, coord_x + size_x / 2 + title_size_x / 4, coord_y - title_size_y);
 
     ISlider* slider_size = api->GetWidgetFactory()->CreateSlider(size_x, size_y, max_val, min_val);
     slider_size->SetSliderCallback(callback);
@@ -131,7 +131,7 @@ void ShapesDrawer::SetSize(int new_size) {
     size = new_size;
 };
 const char* ShapesDrawer::GetIconFileName() const {
-    static const char* name = "Shapes Drawer";
+    static const char* name = "shapes_drawer.bmp";
     return name;
 };
 IPreferencesPanel* ShapesDrawer::GetPreferencesPanel() const {

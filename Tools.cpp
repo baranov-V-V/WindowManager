@@ -164,7 +164,7 @@ void Tool1::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
     mark.clear();
 };
 
-ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, plugin_tool->GetIconFileName()) {
+ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, plugin_tool->GetIconFileName(), plugin_tool->GetIconFileName()) {
     PreferencesPanel* panel = dynamic_cast<PreferencesPanel*>(tool->GetPreferencesPanel());
     if (panel != nullptr) {
         std::cout << "added tool adjust window!\n";
@@ -210,10 +210,10 @@ void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name) {
     assert(create_f);
 
     plugin::DestroyFunction destroy_f = (plugin::DestroyFunction) GetProcAddress(module, "Destroy");
-    assert(create_f);
+    assert(destroy_f);
 
     plugin::VersionFunction version_f = (plugin::VersionFunction) GetProcAddress(module, "Version");
-    assert(create_f);
+    assert(version_f);
 
     plugin::IPlugin* plugin = create_f(&api);
     
