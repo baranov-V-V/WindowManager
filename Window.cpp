@@ -89,6 +89,9 @@ void DisplayManager::showAll() {
 };
 
 void DisplayManager::invertShowMenu() {
+    if (!canvas_menu->getShow()) {
+        canvas_menu->getParent()->makeFirst(canvas_menu);
+    }
     canvas_menu->setShow(!canvas_menu->getShow());
     //std::cout << "iverted\n";
 };
@@ -464,7 +467,9 @@ void BorderWindow::draw(Renderer* render) const {
         render->drawRectangle(0, 0, size.x, size.y, border_color, thickness);
     }
     this->drawChilds(render);
-    this->showOn(this->getParent());
+    if (this->getParent() != nullptr) {
+        this->showOn(this->getParent());
+    }
     //cerr << "ended drawing: [" << this << "]\n";
 };
 
@@ -491,7 +496,9 @@ void ClockWindow::draw(Renderer* render) const {
     
     render->drawText(size.x / 20, size.y / 6, buf, "Helvetica", 2 * size.y / 3, size.y / 4, silver_c);
     this->drawChilds(render);
-    this->showOn(this->getParent());
+    if (this->getParent() != nullptr) {
+        this->showOn(this->getParent());
+    }
 };
 
 int WindowMouse::getState() const {
@@ -581,7 +588,9 @@ void ThicknessWindow::draw(Renderer* render) const {
     ToolFeather* feather = reinterpret_cast<ToolFeather*>(tools->operator[](TOOL_FEATHER));
     render->drawLine(6, size.y / 2, size.x - 6, size.y / 2, feather->getColor(), feather->getThickness());
     this->drawChilds(render);
-    this->showOn(this->getParent());
+    if (this->getParent()) {
+        this->showOn(this->getParent());
+    }
 };
 
 InvisibleWindow::InvisibleWindow(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent,
@@ -618,7 +627,6 @@ TextButtonWindow::TextButtonWindow(int x_size, int y_size, int coord_x, int coor
     assert(text);
     assert(font_name);
 
-    
     need_redraw = true;
     this->draw(render);
     need_redraw = false;
@@ -655,7 +663,9 @@ void TextButtonWindow::draw(Renderer* render) const {
         }
         const_cast<TextButtonWindow*>(this)->setRedraw(false);
     }
-    this->showOn(this->getParent());
+    if (this->getParent() != nullptr) {
+        this->showOn(this->getParent());
+    }
 };
 
 CanvasWindow::CanvasWindow(int x_size, int y_size, int coord_x, int coord_y, char* name, ManagerWindow* parent,
@@ -752,8 +762,9 @@ void GraphWindow::draw(Renderer* render) const {
         render->drawLine(left_x, left_dot_pos - thickness, right_x, right_dot_pos, line_color, 2);
         const_cast<GraphWindow*>(this)->setRedraw(false);
     }
-
-    this->showOn(this->getParent());
+    if (this->getParent()) {
+        this->showOn(this->getParent());
+    }
 };
 
 RoundWindow::RoundWindow(int radius, int coord_x, int coord_y, COLORREF color, COLORREF border_color, int thickness, Renderer* render,
@@ -803,7 +814,9 @@ void DedWindow::draw(Renderer* render) const {
         this->drawChilds(render);
     }
 
-    this->showOnTexture(this->getParent());
+    if (this->getParent()) {
+        this->showOnTexture(this->getParent());
+    }
 };
 
 bool DedWindow::hitTest(double x, double y) const {

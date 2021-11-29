@@ -9,6 +9,7 @@
 
 void VTool::adjust() {
     if (adjust_window != nullptr) {
+        adjust_window->getParent()->makeFirst(adjust_window);
         adjust_window->setShow(!adjust_window->getShow());
     }
 };
@@ -43,15 +44,26 @@ void ToolManager::setPrev() {
 };
 
 void ToolManager::invertShowMenu() {
+    if (!tools_menu->getShow()) {
+        tools_menu->getParent()->makeFirst(tools_menu);
+    }
     tools_menu->setShow(!tools_menu->getShow());
 }
 
 void ToolFeather::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
-    old_coord.x = x;
-    old_coord.y = y;
+    //old_coord.x = x;
+    //old_coord.y = y;
+    render->drawLine(x, y, x, y, color, thickness);
 };
-void ToolFeather::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
+void ToolFeather::ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) {
     render->setWindow(reinterpret_cast<BasicWindow*>(target));
+    
+    if (x + dx > target->getSizeX() || y + dy > target->getSizeY()) {
+        return;
+    }
+    render->drawLine(x, y, x + dx, y + dy, color, thickness);
+    
+    /*
     if (old_coord.x + dx > target->getSizeX() || old_coord.y + dy > target->getSizeY()) {
         old_coord.x += dx;
         old_coord.y += dy;
@@ -61,14 +73,23 @@ void ToolFeather::ProceedMove(Texture* target, Renderer* render, int dx, int dy)
     
     old_coord.x += dx;
     old_coord.y += dy;
+    */
 };
 
 void ToolEraser::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
+    /*
     old_coord.x = x;
     old_coord.y = y;
+    */
+    render->drawLine(x, y, x + 1, y + 1, white_c, thickness);
 };
-void ToolEraser::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
+void ToolEraser::ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) {
     render->setWindow(reinterpret_cast<BasicWindow*>(target));
+    if (x + dx > target->getSizeX() || y + dy > target->getSizeY()) {
+        return;
+    }
+    render->drawLine(x, y, x + dx, y + dy, white_c, thickness);
+    /*
     if (old_coord.x + dx > target->getSizeX() || old_coord.y + dy > target->getSizeY()) {
         old_coord.x += dx;
         old_coord.y += dy;
@@ -78,6 +99,7 @@ void ToolEraser::ProceedMove(Texture* target, Renderer* render, int dx, int dy) 
     
     old_coord.x += dx;
     old_coord.y += dy;
+    */
 };
 
 void ToolRect::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
@@ -85,7 +107,7 @@ void ToolRect::ProceedPressDown(Texture* target, Renderer* render, int x, int y)
         old_coord.y = y;
         new_coord = old_coord;
 };  
-void ToolRect::ProceedMove(Texture* target, Renderer* render, int dx, int dy) { 
+void ToolRect::ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) { 
     new_coord.x += dx;
     new_coord.y += dy;
 };
@@ -126,7 +148,7 @@ void Tool1::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
 
     this->draw(target, render, x, y);
 };
-void Tool1::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
+void Tool1::ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) {
     render->setWindow(target);
     if (old_coord.x + dx > target->getSizeX() || old_coord.y + dy > target->getSizeY()) {
         old_coord.x += dx;
@@ -142,7 +164,7 @@ void Tool1::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
     mark.clear();
 };
 
-ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, no_name) {
+ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, plugin_tool->GetIconFileName()) {
     PreferencesPanel* panel = dynamic_cast<PreferencesPanel*>(tool->GetPreferencesPanel());
     if (panel != nullptr) {
         std::cout << "added tool adjust window!\n";
@@ -153,7 +175,7 @@ void ToolPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, int 
     RenderTexture texture(target, render);
     tool->ActionBegin(&texture, x, y);
 };
-void ToolPlugin::ProceedMove(Texture* target, Renderer* render, int dx, int dy) {
+void ToolPlugin::ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) {
     //RenderTexture texture(target, render);
     //tool->Action(texture, )
 };

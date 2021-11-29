@@ -1,4 +1,7 @@
+#pragma once
+
 #include "PluginApi.h"
+#include "Slider.h"
 #include "BasicInfo.h"
 #include "Window.h"
 
@@ -6,6 +9,8 @@ using plugin::Buffer;
 using plugin::Color;
 using plugin::ITexture;
 using plugin::ITextureFactory;
+
+COLORREF ToCOLORREF(plugin::Color color);
 
 class RenderTexture : public plugin::ITexture {
   public:
@@ -56,8 +61,8 @@ class WidgetInfo : public plugin::IWidget {
     
     virtual ~WidgetInfo() {};
 
-    ManagerWindow* getWindow() { return window_info; };
-    ManagerWindow* setWindow(ManagerWindow* new_window) { window_info = new_window; };
+    ManagerWindow* getAttachWindow() { return window_info; };
+    void setAttachWindow(ManagerWindow* new_window) { window_info = new_window; };
 
   private:
     ManagerWindow* window_info;
@@ -119,23 +124,28 @@ class Slider : public plugin::ISlider, public WidgetInfo {
 
     virtual void SetSliderCallback(plugin::ISliderCallback* callback) override;
 
-    virtual float GetValue() override;
-    virtual void SetValue(float value) override;
+    virtual float GetValue() override { return slider->getValue(); };
+    virtual void SetValue(float value) override { slider->setValue(value); };
   
+    virtual int32_t GetWidth() override { return slider->getSizeX(); };
+    virtual int32_t GetHieght() override { return slider->getSizeY(); };
+
   private:
-    BorderWindow* slider_layout;
-    BorderWindow* slider;
-    float value;
-    float min_val;
-    float max_val;
+    BasicSliderX* slider;
 };
 
-class Label : public plugin::ILabel {
+class Label : public plugin::ILabel, public WidgetInfo {
   public:
-    Label();
+    Label(const char* text);
+    Label(int32_t width, int32_t height, const char* text, int32_t char_size);
     virtual ~Label() {}
 
+    virtual int32_t GetWidth() override { return window->getSizeX(); };
+    virtual int32_t GetHieght() override { return window->getSizeY(); };
+
     virtual void SetText(const char* text) override;
+  private:
+    TextButtonWindow* window;
 };
 
 class PreferencesPanel : public plugin::IPreferencesPanel, public WidgetInfo {
@@ -152,7 +162,6 @@ class PreferencesPanel : public plugin::IPreferencesPanel, public WidgetInfo {
 
   public:
     BorderWindow* layout;
-    std::list<plugin::IWidget*> children;
 };
 
 class WidgetFactory : public plugin::IWidgetFactory {

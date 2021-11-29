@@ -4,6 +4,7 @@
 #include "Functors.h"
 #include "Window.h"
 #include "Events.h"
+#include "Slider.h"
 
 Renderer* Renderer::instance = nullptr;
 
@@ -45,6 +46,8 @@ void App::initBasicTools() {
 void App::initWindows() {
     canvas_manager = new DisplayManager(Renderer::getInstance());
 
+    this->app_window.addChild(new BasicSliderX(160, 25, 800, 600, 0, 10, new SliderAction(0, 10)));
+
     const int palette_x = app_size.x / 2;
     const int palette_y = 2 * app_size.y / 3;
 
@@ -80,8 +83,8 @@ void App::initWindows() {
 
     this->app_window.addChild(palette);
     this->app_window.addChild(menu);
-    this->app_window.addChild(round_wnd);
-    this->app_window.addChild(graph);
+    //this->app_window.addChild(round_wnd);
+    //this->app_window.addChild(graph);
     //this->app_window.addChild(canvas_layer);
     //this->app_window.addChild(canvas_layer2);
     //this->app_window.addChild(canvas_2);

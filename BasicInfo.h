@@ -83,6 +83,7 @@ const COLORREF red_c       = RGB(255,   2,   2);
 const COLORREF grey_c      = RGB(153,  76,   0);
 const COLORREF green_c     = RGB(  0, 128,   0);
 const COLORREF dgrey_c     = RGB( 38,  38,  38);
+const COLORREF mdgrey_c    = RGB( 47,  47,  47);
 const COLORREF lgrey_c     = RGB( 83,  83,  83);
 const COLORREF llgrey_c    = RGB(137, 137, 137);
 const COLORREF silver_c    = RGB(192, 192, 192);
@@ -173,6 +174,7 @@ class MoveBarRandomY;
 class GlowPicFunctor;
 class GlowBorderFunctor;
 class MakeFirst;
+class BasicSliderX;
 
 void DisableCursorInCmd();
 

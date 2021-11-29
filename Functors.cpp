@@ -4,6 +4,7 @@
 #include "Functors.h"
 #include "Window.h"
 #include "Tools.h"
+#include "Slider.h"
 #include "App.h"
 
 DummyFunctor::DummyFunctor() {};
@@ -131,7 +132,8 @@ void DrawFunctor::endDraw(const EventData& data) {
 bool DrawFunctor::action(const EventData& data)  {
     //cout << "in draw!" << "\n";
     if (is_drawing) {
-        curr_tool->ProceedMove(canvas, render, data.mouse_data.d.x, data.mouse_data.d.y); //dx, dy coordinates
+        Pair<int> rel_coord = canvas->toRelCoord(data.mouse_data.start);
+        curr_tool->ProceedMove(canvas, render, rel_coord.x, rel_coord.y, data.mouse_data.d.x, data.mouse_data.d.y); //dx, dy coordinates
         //abs_old_coord = mouse->getAbsCoord();
     }
     return true;
@@ -559,3 +561,12 @@ bool AdjustVToolFunctor::action(const EventData& data) {
     tool->adjust();
     return true;
 };
+
+MoveBarX::MoveBarX() {};
+MoveBarX::MoveBarX(BasicSliderX* slider) : slider(slider), MoveFunctor(slider->getBar(), App::getInstance()) {};
+bool MoveBarX::action(const EventData& data) {
+    if (on_move) {
+        slider->place(slider->getCoord() + data.mouse_data.d.x);
+    }
+    return true;
+}

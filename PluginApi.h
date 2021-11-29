@@ -15,7 +15,7 @@
 namespace plugin {
 
 const uint32_t kVersion = 1;
-typedef uint32_t Color; // RGBA8888
+typedef uint32_t Color; // ABGR;
     
 class ITexture;
 

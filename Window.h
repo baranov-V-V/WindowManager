@@ -210,6 +210,13 @@ class TextButtonWindow : public BorderWindow {
     virtual ~TextButtonWindow() {};
 
     void draw(Renderer* render) const override;
+
+    void setText(char* new_text) {
+        text = new_text;
+        this->setRedraw(true);
+        this->draw(Renderer::getInstance());
+        this->setRedraw(false);
+    }
   
   private:
     COLORREF text_color;

@@ -45,7 +45,7 @@ class VTool {
     
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) {};
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) = 0;
-    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) {};
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) {};
     
     void adjust();
 
@@ -115,7 +115,7 @@ class ToolFeather : public VTool {
     virtual ~ToolFeather() {};
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
-    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) override;
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) override;
 
   private:
     Pair<int> old_coord;
@@ -127,7 +127,7 @@ class ToolEraser : public VTool {
     virtual ~ToolEraser() {};
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
-    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) override;
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) override;
 
   private:
     Pair<int> old_coord;
@@ -139,7 +139,7 @@ class ToolRect : public VTool {
     virtual ~ToolRect() {};
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
-    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) override;
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) override;
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) override;
 
   private:
@@ -153,7 +153,7 @@ class Tool1 : public VTool {
     virtual ~Tool1() {};
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
-    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) override;
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) override;
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) override;
 
   private:
@@ -177,7 +177,7 @@ class ToolPlugin : public VTool {
     virtual ~ToolPlugin() { delete tool; };
 
     virtual void ProceedPressDown(Texture* target, Renderer* render, int x, int y) override;
-    virtual void ProceedMove(Texture* target, Renderer* render, int dx, int dy) override;
+    virtual void ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) override;
     virtual void ProceedPressUp(Texture* target, Renderer* render, int x, int y) override;
 
   private:

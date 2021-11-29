@@ -1,6 +1,11 @@
 #include <cassert>
 #include "PluginApiClasses.h"
 #include "Functors.h"
+#include "App.h"
+
+COLORREF ToCOLORREF(plugin::Color color) {
+    return color & 0x00FFFFFF;
+}
 
 RenderTexture::RenderTexture(Texture* texture, Renderer* render) : texture(texture), render(render) {};
 int32_t RenderTexture::GetWidth() {
@@ -34,18 +39,20 @@ void RenderTexture::Present() {
 }
 void RenderTexture::DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, Color color) {
     render->setWindow(texture);
-    render->drawLine(x0, y0, x1, y1, color, 1);
+    render->drawLine(x0, y0, x1, y1, ToCOLORREF(color), 1);
 }
 void RenderTexture::DrawThickLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t thickness, Color color) {
     render->setWindow(texture);
-    render->drawLine(x0, y0, x1, y1, color, thickness);
+    render->drawLine(x0, y0, x1, y1, ToCOLORREF(color), thickness);
 }
 void RenderTexture::DrawCircle(int32_t x, int32_t y, int32_t radius, Color color) {
     render->setWindow(texture);
-    render->drawCircle(x, y, radius, color, color);
+    render->drawCircle(x, y, radius, ToCOLORREF(color), ToCOLORREF(color));
 }
 void RenderTexture::DrawRect(int32_t x, int32_t y, int32_t width, int32_t height, Color color) {
-    render->drawFilledRectangle(x, y, x + width, y + height, color, color, 1);
+    std::cout << "in draw rect!\n";
+    render->setWindow(texture);
+    render->drawFilledRectangle(x, y, x + width, y + height, ToCOLORREF(color), ToCOLORREF(color), 1);
 }
 void RenderTexture::CopyTexture(ITexture* texture, int32_t x, int32_t y, int32_t width, int32_t height) {
     RenderTexture* source = dynamic_cast<RenderTexture*>(texture);
@@ -72,14 +79,18 @@ TextButton::TextButton(const char* text) {
     assert(text);
     int text_len = strlen(text);
     
-    window = new TextButtonWindow(main_ch_size_x * (text_len + 3), main_ch_size_y * 3 / 2, 0, 0, mgrey_c, dgrey_c, 1, silver_c, text, main_font, main_ch_size_x, main_ch_size_y, ALIGN_LEFT, Renderer::getInstance(), nullptr);
-    this->setWindow(window);
+    window = new TextButtonWindow(main_ch_size_x * (text_len + 3), main_ch_size_y * 3 / 2, 0, 0, mdgrey_c, mdgrey_c, 2, silver_c, text, main_font, main_ch_size_x, main_ch_size_y, ALIGN_LEFT, Renderer::getInstance(), nullptr);
+    this->setAttachWindow(window);
+
+    window->setPointed(new GlowBorderFunctor(window, mdgrey_c, lgrey_c));
 };
 TextButton::TextButton(int32_t width, int32_t height, const char* text, int32_t char_size) {
     assert(text);
     
-    window = new TextButtonWindow(width, height, 0, 0, mgrey_c, dgrey_c, 1, silver_c, text, main_font, char_size * 2 / 3, char_size * 2, ALIGN_LEFT, Renderer::getInstance(), nullptr);
-    this->setWindow(window);
+    window = new TextButtonWindow(width, height, 0, 0, mdgrey_c, mdgrey_c, 2, silver_c, text, main_font, char_size * 2 / 3, char_size * 2, ALIGN_LEFT, Renderer::getInstance(), nullptr);
+    this->setAttachWindow(window);
+
+    window->setPointed(new GlowBorderFunctor(window, mdgrey_c, lgrey_c));
 };
 void TextButton::SetClickCallback(plugin::IClickCallback* callback) {
     assert(callback);
@@ -90,12 +101,12 @@ void TextButton::SetClickCallback(plugin::IClickCallback* callback) {
 PicButton::PicButton(const char* icon_file_name) {
     assert(icon_file_name);
     window = new PicWindow(0, 0, const_cast<char*>(icon_file_name));
-    this->setWindow(window);
+    this->setAttachWindow(window);
 };
 PicButton::PicButton(int32_t width, int32_t height, const char* icon_file_name) {
     assert(icon_file_name);
     window = new PicWindow(width, height, 0, 0, icon_file_name);
-    this->setWindow(window);
+    this->setAttachWindow(window);
 };
 void PicButton::SetClickCallback(plugin::IClickCallback* callback) {
     assert(callback);
@@ -103,34 +114,49 @@ void PicButton::SetClickCallback(plugin::IClickCallback* callback) {
     window->setPressUp(new ClickCallbackFunctor(callback));
 }
 
-
 Slider::Slider(float range_min, float range_max) {
-
+    slider = new BasicSliderX(100, 15, 0, 0, range_min, range_max);
+    this->setAttachWindow(slider);
 };
 Slider::Slider(int32_t width, int32_t height, float range_min, float range_max) {
-
+    slider = new BasicSliderX(width, height, 0, 0, range_min, range_max);
+    this->setAttachWindow(slider);
 };
 Slider::Slider(int32_t width, int32_t height, float thumb_width, float thumb_height, float range_min, float range_max) {
-
+    slider = new BasicSliderX(width, height, 0, 0, range_min, range_max, thumb_width);
+    this->setAttachWindow(slider);
 };
 void Slider::SetSliderCallback(plugin::ISliderCallback* callback) {
-
+    slider->SetSliderAction(new SliderCallbackAction(callback));
 };
-float Slider::GetValue() { return 0; };
-void Slider::SetValue(float value) {};
 
-Label::Label() {};
-void Label::SetText(const char* text) {};
+Label::Label(const char* text) {
+    assert(text);
+    int text_len = strlen(text);
+    
+    window = new TextButtonWindow(main_ch_size_x * (text_len + 3), main_ch_size_y * 3 / 2, 0, 0, palette_c, palette_c, 1, silver_c, text, main_font, main_ch_size_x, main_ch_size_y, ALIGN_MID, Renderer::getInstance(), nullptr);
+    this->setAttachWindow(window);
+};
+Label::Label(int32_t width, int32_t height, const char* text, int32_t char_size) {
+    assert(text);
+    
+    window = new TextButtonWindow(width, height, 0, 0, palette_c, palette_c, 1, silver_c, text, main_font, char_size * 2 / 3, char_size * 2, ALIGN_MID, Renderer::getInstance(), nullptr);
+    this->setAttachWindow(window);
+};
+void Label::SetText(const char* text) {
+    window->setText(const_cast<char*>(text));
+};
 
 PreferencesPanel::PreferencesPanel() {
-    layout = new BorderWindow(400, 400, 300, 150, dgrey_c, dgrey_c, 1, Renderer::getInstance());
-    this->setWindow(layout);
+    layout = new BorderWindow(400, 400, 300, 150, palette_c, dgrey_c, 1, Renderer::getInstance());
+    this->setAttachWindow(layout);
+    MakeMovable(layout, layout, App::getInstance());
 };
 void PreferencesPanel::Attach(IWidget* widget, int32_t x, int32_t y) {
     WidgetInfo* info = dynamic_cast<WidgetInfo*>(widget);
-    info->getWindow()->setCoord({x, y});
-    layout->addChild(info->getWindow());
-    info->getWindow()->setParent(layout);
+    info->getAttachWindow()->setCoord({x, y});
+    layout->addChild(info->getAttachWindow());
+    info->getAttachWindow()->setParent(layout);
 };
 
 WidgetFactory::WidgetFactory(Renderer* render) : render(render) {};
@@ -147,19 +173,19 @@ plugin::IButton* WidgetFactory::CreateButtonWithText(int32_t width, int32_t heig
     return new TextButton(width, height, text, char_size);
 };
 plugin::ISlider* WidgetFactory::CreateDefaultSlider(float range_min, float range_max) {
-
+    return new Slider(range_min, range_max);
 };
 plugin::ISlider* WidgetFactory::CreateSlider(int32_t width, int32_t height, float range_min, float range_max) {
-
+    return new Slider(width, height, range_min, range_max);
 };
 plugin::ISlider* WidgetFactory::CreateSlider(int32_t width, int32_t height, float thumb_width, float thumb_height, float range_min, float range_max) {
-
+    return new Slider(width, height, thumb_width, thumb_height, range_min, range_max);
 };
 plugin::ILabel*  WidgetFactory::CreateDefaultLabel(const char* text) {
-
-};
+    return new Label(text);  
+};  
 plugin::ILabel*  WidgetFactory::CreateLabel(int32_t width, int32_t height, const char* text, int32_t char_size) {
-
+    return new Label(width, height, text, char_size);
 };
 plugin::IPreferencesPanel* WidgetFactory::CreateDefaultPreferencesPanel() {
     return new PreferencesPanel();

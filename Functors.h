@@ -376,10 +376,12 @@ class PlaceBar {
 
   private: 
     VFunctor* action;
+    
     bool is_fixed_pos;
     char type;
     int min_coord;
     int max_coord;
+
     ManagerWindow* bar;
 };
 
@@ -681,4 +683,15 @@ class AdjustVToolFunctor : public VFunctor {
 
   private:
     VTool* tool;
+};
+
+class MoveBarX : public MoveFunctor {
+  public:
+    MoveBarX();
+    MoveBarX(BasicSliderX* slider);
+
+    bool action(const EventData& data) override;
+
+  private:
+    BasicSliderX* slider;
 };
