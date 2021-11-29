@@ -174,11 +174,15 @@ class MoveBarRandomY;
 class GlowPicFunctor;
 class GlowBorderFunctor;
 class MakeFirst;
-class BasicSliderX;
+class SliderBasicX;
+class VSlider;
+class SliderX;
 
 void DisableCursorInCmd();
 
 RGBQUAD ToRGBQUAD(COLORREF color);
+
+COLORREF toCOLORREF(RGBQUAD);
 
 void PrintMousePos();
 int NumOfDigits(int num);

@@ -1,11 +1,12 @@
+#include <filesystem>
+#include <algorithm>
+#include <cassert>
+#include <iostream>
+
 #include "Tools.h"
 #include "Window.h"
 #include "App.h"
 #include "PluginApiClasses.h"
-#include <algorithm>
-#include <cassert>
-#include <iostream>
-    
 
 void VTool::adjust() {
     if (adjust_window != nullptr) {
@@ -167,7 +168,7 @@ void Tool1::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
 ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, plugin_tool->GetIconFileName(), plugin_tool->GetIconFileName()) {
     PreferencesPanel* panel = dynamic_cast<PreferencesPanel*>(tool->GetPreferencesPanel());
     if (panel != nullptr) {
-        std::cout << "added tool adjust window!\n";
+        //std::cout << "added tool adjust window!\n";
         this->setAdjustWindow(panel->getLayout());
     }   
 };
@@ -197,7 +198,7 @@ void FilterPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, in
     filter->Apply(&texture);
 };
 
-void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name) {
+void LoadTool(ToolManager* tool_manager, char* file_name) {
     HMODULE module = LoadLibraryA(file_name);   
     if (module == NULL) {
         std::cout << "couldn't open file" << file_name << "\n";
@@ -230,3 +231,15 @@ void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name) {
 
     destroy_f(plugin);
 }
+
+
+void LoadTools(ToolManager* tool_manager) {
+    std::filesystem::path folder(plugins_folder);
+    for(auto const& dir_entry: std::filesystem::directory_iterator(folder)) {
+        std::filesystem::path curr_path(dir_entry);
+        if (curr_path.extension() == ".dll") {
+            LoadTool(tool_manager, curr_path.string().data());
+        }
+    }
+}
+

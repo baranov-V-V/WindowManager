@@ -2,9 +2,16 @@
 #include "PluginApiClasses.h"
 #include "Functors.h"
 #include "App.h"
+#include "SkinsConfig.h"
+
+using plugin::Buffer;
 
 COLORREF ToCOLORREF(plugin::Color color) {
     return color & 0x00FFFFFF;
+}
+
+plugin::Color ToColor(COLORREF color) {
+    return color | 0xFF'00'00'00;
 }
 
 RenderTexture::RenderTexture(Texture* texture, Renderer* render) : texture(texture), render(render) {};
@@ -19,20 +26,44 @@ Buffer RenderTexture::ReadBuffer() {
     buf.texture = this;
     buf.pixels = new Color[this->GetHieght() * this->GetWidth()];
 
-    memcpy(buf.pixels, texture->getBuf(), this->GetHieght() * this->GetWidth());
+    for (int ix = 0; ix < texture->getSizeX(); ++ix) {
+        for (int iy = 0; iy < texture->getSizeY(); ++iy) {
+            buf.pixels[ix + iy * texture->getSizeX()] = ToColor(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy - 1) * max_canvas_x]));
+        }
+    }
+    /*
+    for (int i = 0; i < this->GetHieght() * this->GetWidth(); ++i) {
+        buf.pixels[i] = ToColor(toCOLORREF(texture->getBuf()[i]));
+        //std::cout << buf.pixels[i] << "\n";
+    }
+    */
 
     return buf;
 }
 void RenderTexture::ReleaseBuffer(Buffer buffer) {
 
+    /*
+    for (int ix = 0; ix < texture->getSizeX(); ++ix) {
+        for (int iy = 0; iy <= texture->getSizeY(); ++iy) {
+            texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x] = {128, 128, 128, 0};
+        }
+    }
+    */
+
+    delete[] buffer.pixels;
 }
 void RenderTexture::LoadBuffer(Buffer buffer) {
-    for (int i = 0; i < this->GetWidth() * this->GetHieght(); ++i) {
-        texture->getBuf()[i] = ToRGBQUAD(buffer.pixels[i]);
+
+    for (int ix = 0; ix < texture->getSizeX(); ++ix) {
+        for (int iy = 0; iy < texture->getSizeY(); ++iy) {
+            texture->getBuf()[ix + (max_canvas_y - iy - 1) * max_canvas_x] = ToRGBQUAD(ToCOLORREF(buffer.pixels[ix + iy * texture->getSizeX()]));
+        }
     }
+
 }
 void RenderTexture::Clear(Color color) {
-
+    render->setWindow(texture);
+    render->drawFilledRectangle(0, 0, texture->getSizeX(), texture->getSizeY(), ToCOLORREF(color), ToCOLORREF(color), 1);
 }
 void RenderTexture::Present() {
     //lol nothing;
@@ -50,7 +81,7 @@ void RenderTexture::DrawCircle(int32_t x, int32_t y, int32_t radius, Color color
     render->drawCircle(x, y, radius, ToCOLORREF(color), ToCOLORREF(color));
 }
 void RenderTexture::DrawRect(int32_t x, int32_t y, int32_t width, int32_t height, Color color) {
-    std::cout << "in draw rect!\n";
+    //std::cout << "in draw rect!\n";
     render->setWindow(texture);
     render->drawFilledRectangle(x, y, x + width, y + height, ToCOLORREF(color), ToCOLORREF(color), 1);
 }
@@ -115,15 +146,15 @@ void PicButton::SetClickCallback(plugin::IClickCallback* callback) {
 }
 
 Slider::Slider(float range_min, float range_max) {
-    slider = new BasicSliderX(100, 15, 0, 0, range_min, range_max);
+    slider = new SliderBasicX(100, 15, 0, 0, range_min, range_max);
     this->setAttachWindow(slider);
 };
 Slider::Slider(int32_t width, int32_t height, float range_min, float range_max) {
-    slider = new BasicSliderX(width, height, 0, 0, range_min, range_max);
+    slider = new SliderBasicX(width, height, 0, 0, range_min, range_max);
     this->setAttachWindow(slider);
 };
 Slider::Slider(int32_t width, int32_t height, float thumb_width, float thumb_height, float range_min, float range_max) {
-    slider = new BasicSliderX(width, height, 0, 0, range_min, range_max, thumb_width);
+    slider = new SliderBasicX(width, height, 0, 0, range_min, range_max, thumb_width);
     this->setAttachWindow(slider);
 };
 void Slider::SetSliderCallback(plugin::ISliderCallback* callback) {
@@ -149,6 +180,13 @@ void Label::SetText(const char* text) {
 
 PreferencesPanel::PreferencesPanel() {
     layout = new BorderWindow(400, 400, 300, 150, palette_c, dgrey_c, 1, Renderer::getInstance());
+
+    PicWindow* close = new PicWindow(40, 25, 400 - 40 * 1, 0, img_close, layout);
+    layout->addChild(close);
+    
+    close->setPressUp(new SetShowFunctor(layout, false));
+    close->setPointed(new GlowPicFunctor(close, img_close, img_close2));
+
     this->setAttachWindow(layout);
     MakeMovable(layout, layout, App::getInstance());
 };

@@ -1,7 +1,7 @@
 //graphics engine
 
-#include "Window.h"
 #include "TXLib.h"
+#include "Window.h"
 #include "App.h"
 
 void DisableCursorInCmd() {
@@ -190,4 +190,8 @@ RGBQUAD ToRGBQUAD(COLORREF color) {
 
 RGBQUAD ToRGBQUAD(BYTE red, BYTE green, BYTE blue) {
     return {blue, green, red, 0};
+};
+
+COLORREF toCOLORREF(RGBQUAD quad) {
+    return RGB(quad.rgbRed, quad.rgbGreen, quad.rgbBlue);
 };

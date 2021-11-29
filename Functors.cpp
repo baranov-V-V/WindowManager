@@ -169,7 +169,7 @@ bool CloseCanvasFunctor::action(const EventData& data) {
 };
 
 SetShowFunctor::SetShowFunctor() {};
-SetShowFunctor::SetShowFunctor(CanvasWindow* window, bool is_shown) : window_to_hide(window), is_shown(is_shown) {};
+SetShowFunctor::SetShowFunctor(ManagerWindow* window, bool is_shown) : window_to_hide(window), is_shown(is_shown) {};
 bool SetShowFunctor::action(const EventData& data)  {
     window_to_hide->setShow(is_shown);
     //std::cout << "done!\n";
@@ -557,16 +557,37 @@ bool ClickCallbackFunctor::action(const EventData& data) {
 AdjustVToolFunctor::AdjustVToolFunctor() {};
 AdjustVToolFunctor::AdjustVToolFunctor(VTool* tool) : tool(tool) {};
 bool AdjustVToolFunctor::action(const EventData& data) {
-    std::cout << "in adjust functor\n";
+    //std::cout << "in adjust functor\n";
     tool->adjust();
     return true;
 };
 
 MoveBarX::MoveBarX() {};
-MoveBarX::MoveBarX(BasicSliderX* slider) : slider(slider), MoveFunctor(slider->getBar(), App::getInstance()) {};
+MoveBarX::MoveBarX(VSlider* slider) : slider(slider), MoveFunctor(slider->getBar(), App::getInstance()) {};
 bool MoveBarX::action(const EventData& data) {
     if (on_move) {
         slider->place(slider->getCoord() + data.mouse_data.d.x);
     }
+    return true;
+}
+
+MoveSliderBarLeft::MoveSliderBarLeft(SliderX* slider) : slider(slider) {};
+bool MoveSliderBarLeft::action(const EventData& data) {
+    slider->moveBarLeft();
+    return true;
+};
+
+MoveSliderBarRight::MoveSliderBarRight(SliderX* slider) : slider(slider) {};;
+bool MoveSliderBarRight::action(const EventData& data) {
+    slider->moveBarRight();
+    return true;
+};
+
+PlaceSliderBarOnClickX::PlaceSliderBarOnClickX(SliderX* slider) : slider(slider) {};
+bool PlaceSliderBarOnClickX::action(const EventData& data) {
+    Pair<int> rel_coord = slider->getChild(2)->toRelCoord(data.abs_coord);
+
+    slider->place(rel_coord.x - slider->getBar()->getSizeX() / 2);
+    slider->getBar()->getPressDown()->action(data);
     return true;
 }

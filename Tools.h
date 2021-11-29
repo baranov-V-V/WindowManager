@@ -2,6 +2,7 @@
 
 #include <vector>
 #include <iostream>
+#include <string>
 #include "PluginApi.h"
 #include "BasicInfo.h"
 #include "SkinsConfig.h"
@@ -9,7 +10,11 @@
 
 //#include "ToolModule.h"
 
+
+using std::string;
 using std::vector;
+
+const string plugins_folder = "plugins";
 
 enum BASIC_TOOLS {
     TOOL_FEATHER = 0,
@@ -206,4 +211,5 @@ class FilterPlugin : public VTool {
     plugin::IFilter* filter;
 };
 
-void LoadTools(ToolManager* tool_manager, Renderer* render, char* file_name);
+void LoadTool(ToolManager* tool_manager, char* file_name);
+void LoadTools(ToolManager* tool_manager);

@@ -131,7 +131,7 @@ class Slider : public plugin::ISlider, public WidgetInfo {
     virtual int32_t GetHieght() override { return slider->getSizeY(); };
 
   private:
-    BasicSliderX* slider;
+    SliderBasicX* slider;
 };
 
 class Label : public plugin::ILabel, public WidgetInfo {

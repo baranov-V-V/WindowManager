@@ -52,6 +52,10 @@
         "cstring": "cpp",
         "assert.h": "c",
         "set": "cpp",
-        "list": "cpp"
+        "list": "cpp",
+        "filesystem": "cpp",
+        "chrono": "cpp",
+        "codecvt": "cpp",
+        "ratio": "cpp"
     }
 }

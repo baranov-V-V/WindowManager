@@ -235,13 +235,13 @@ class CloseCanvasFunctor : public VFunctor {
 class SetShowFunctor : public VFunctor {
   public:
     SetShowFunctor();
-    SetShowFunctor(CanvasWindow* window, bool is_shown);
+    SetShowFunctor(ManagerWindow* window, bool is_shown);
     virtual ~SetShowFunctor() {};
 
     bool action(const EventData& data) override;
 
   private:
-    CanvasWindow* window_to_hide;
+    ManagerWindow* window_to_hide;
     bool is_shown;
 };
 
@@ -688,10 +688,43 @@ class AdjustVToolFunctor : public VFunctor {
 class MoveBarX : public MoveFunctor {
   public:
     MoveBarX();
-    MoveBarX(BasicSliderX* slider);
+    MoveBarX(VSlider* slider);
 
     bool action(const EventData& data) override;
 
   private:
-    BasicSliderX* slider;
+    VSlider* slider;
+};
+
+class MoveSliderBarLeft : public VFunctor {
+  public:
+    MoveSliderBarLeft(SliderX* slider);
+    virtual ~MoveSliderBarLeft() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    SliderX* slider;  
+};
+
+class MoveSliderBarRight : public VFunctor {
+  public:
+    MoveSliderBarRight(SliderX* slider);
+    virtual ~MoveSliderBarRight() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    SliderX* slider;  
+};
+
+class PlaceSliderBarOnClickX : public StartMove {
+  public:
+    PlaceSliderBarOnClickX(SliderX* slider);
+    virtual ~PlaceSliderBarOnClickX() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    SliderX* slider;
 };

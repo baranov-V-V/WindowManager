@@ -90,12 +90,24 @@ Filler::Filler() {
     this->ConstructPreferencePanel();
 };
 void Filler::Apply(ITexture* canvas) {
-        canvas->DrawRect(0, 0, canvas->GetWidth(), canvas->GetHieght(), 0x00'FF'00'FF);    
-    };
+    Buffer buf = canvas->ReadBuffer();
+    
+    //std::cout << "ApplyFilter\n";
+    
+    for (int i = 0; i < canvas->GetHieght() * canvas->GetWidth(); ++i) {
+        Color pixel = buf.pixels[i];
+        pixel = 0xFF'FF'FF'FF - pixel;
+        pixel |= 0xFF'00'00'00;
+        buf.pixels[i] = pixel;
+    }
+
+    canvas->LoadBuffer(buf);
+    canvas->ReleaseBuffer(buf);
+};
 const char* Filler::GetName() const {
-        static const char* name = "Filler";
-        return name;
-    };
+    static const char* name = "Filler";
+    return name;
+};
 IPreferencesPanel* Filler::GetPreferencesPanel() const {
     return nullptr;
 };
@@ -112,7 +124,7 @@ ShapesDrawer::ShapesDrawer() : type(TYPE_CIRCLE), size(1), color(0xFF'00'00'00) 
     this->ConstructPreferencePanel();
 };
 void ShapesDrawer::ActionBegin(ITexture* canvas, int x, int y) {
-    std::cout << "started drawing shapes!\n";
+    //std::cout << "started drawing shapes!\n";
     switch (type) {
         case TYPE_CIRCLE:
             canvas->DrawCircle(x, y, size, color);
@@ -142,8 +154,8 @@ void ShapesDrawer::ConstructPreferencePanel() {
     
     panel = api->GetWidgetFactory()->CreateDefaultPreferencesPanel();
 
-    ILabel* tool_name = api->GetWidgetFactory()->CreateLabel(170, 30 , "Shapes drawer", 12);
-    panel->Attach(tool_name, panel->GetWidth() / 2 - 170 / 2, 5);
+    ILabel* tool_name = api->GetWidgetFactory()->CreateLabel(170, 30, "Shapes drawer", 12);
+    panel->Attach(tool_name, panel->GetWidth() / 2 - 170 / 2, 0);
 
     Point coord();
     int button_x = 5 * panel->GetWidth() / 8;
@@ -159,8 +171,6 @@ void ShapesDrawer::ConstructPreferencePanel() {
     IButton* square_button = api->GetWidgetFactory()->CreateButtonWithText(button_size_x, button_size_y, "Square", 10);
     square_button->SetClickCallback(new ChangeShapeeCallback(this, TYPE_SQUARE));
     panel->Attach(square_button, button_x, button_y + button_size_y + dy);
-    
-    //ILabel* asdfa = factory->CreateLabel(50, 30, "0", 10);
 
     ILabel* red_count   = factory->CreateLabel(50, 30, "0", 10);
     ILabel* green_count = factory->CreateLabel(50, 30, "0", 10);
@@ -172,12 +182,6 @@ void ShapesDrawer::ConstructPreferencePanel() {
     MakeSliderWithTitleMeasure(150, 15, panel->GetWidth() / 8, panel->GetHieght() / 5 + 120, 0, 255, "green:", panel, green_count, new ChangeColorSlideCallback(this, green_count, COMPONENT_GREEN));
     MakeSliderWithTitleMeasure(150, 15, panel->GetWidth() / 8, panel->GetHieght() / 5 + 180, 0, 255, "blue:",  panel, blue_count,  new ChangeColorSlideCallback(this, blue_count,  COMPONENT_BLUE));
 
-
-    //ILabel* name_size = api->GetWidgetFactory()->CreateLabel(80, 30, "size", 11);
-    //panel->Attach(tool_name, panel->GetWidth() / 8 + 150 / 2 - 40, panel->GetHieght() / 4 - 30);
-    //ISlider* slider_size = api->GetWidgetFactory()->CreateSlider(150, 25, 0, 255);
-    //slider_size->SetSliderCallback(new TestSliderCallback());
-    //panel->Attach(slider_size, panel->GetWidth() / 8, panel->GetHieght() / 4);
 };
 
 Plugin::Plugin(Filler* filler, ShapesDrawer* drawer) : filler(filler), drawer(drawer) {}

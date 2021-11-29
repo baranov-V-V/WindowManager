@@ -34,7 +34,8 @@ void App::initBasicTools() {
     tool_manager->addTool(new ToolRect());
     tool_manager->addTool(new Tool1(this));
 
-    LoadTools(tool_manager, Renderer::getInstance(), "tools.dll");
+    //LoadTool(tool_manager, "tools.dll");
+    LoadTools(tool_manager);
     //ToolModule* circle_drawer = LoadTool("circle.dll");
     //tool_manager.addTool(circle_drawer);
 }
@@ -42,7 +43,7 @@ void App::initBasicTools() {
 void App::initWindows() {
     canvas_manager = new DisplayManager(Renderer::getInstance());
 
-    this->app_window.addChild(new PicWindow(800, 600, img_eraser));
+    this->app_window.addChild(new SliderX(150, 20, 800, 600, 0, 10, 0.2, new SliderAction(0, 10)));
 
     const int palette_x = app_size.x / 2;
     const int palette_y = 2 * app_size.y / 3;
@@ -115,7 +116,7 @@ void App::makeEvents() {
                 active_window->getFunctor(EVENT_MOUSE_PRESSED_RC)->action(new_event.getData());   
             }
         } else {
-            std::cout << "send event rc!\n";
+            //std::cout << "send event rc!\n";
             app_window.processEvent(new_event);
         } 
         

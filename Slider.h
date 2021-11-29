@@ -37,20 +37,57 @@ class SliderCallbackAction : public VSliderAction {
     plugin::ISliderCallback* callback;
 };
 
-class BasicSliderX : public BorderWindow {
+class VSlider {
   public:
-    BasicSliderX(int size_x, int size_y, int coord_x, int coord_y, float min_val, float max_val, VSliderAction* action = nullptr);
-    BasicSliderX(int size_x, int size_y, int coord_x, int coord_y, float min_val, float max_val, int thumb_width, VSliderAction* action = nullptr);
-    virtual ~BasicSliderX() { delete action; };
+    VSlider(float min_val, float max_val, VSliderAction* action = nullptr) : min_val(min_val), max_val(max_val), action(action) {};
+    virtual ~VSlider() {};
 
-    void place(int new_coord);
-    int getCoord() const { return bar->getCoordX(); };
+    virtual void place(int new_coord) = 0;
+    virtual int getCoord() const = 0;
 
     float getValue() const { return value; };
     void setValue(float new_value) {
         action->RespondOnSlide(value, new_value);
         value = new_value;
-    } 
+    }
+
+    ManagerWindow* getBar() const { return bar; };
+    void SetSliderAction(VSliderAction* new_action) {
+        if (action != nullptr) {
+            delete action;
+        }
+        action = new_action;
+    };
+
+    float calcValue(int coord) {
+        return min_val + (max_val - min_val) / (max_bar - min_bar) * (coord - min_bar);
+    }
+    int calcCoord(float value) {
+        return min_bar + (max_bar - min_bar) * (value - min_val) / (max_val - min_val);
+    }
+  protected:
+
+    VSliderAction* action;
+
+    float value;
+    
+    float min_val;
+    float max_val;
+
+    int min_bar;
+    int max_bar;
+    
+    ManagerWindow* bar;
+};
+
+class SliderBasicX : public VSlider, public BorderWindow {
+  public:
+    SliderBasicX(int size_x, int size_y, int coord_x, int coord_y, float min_val, float max_val, VSliderAction* action = nullptr);
+    SliderBasicX(int size_x, int size_y, int coord_x, int coord_y, float min_val, float max_val, int thumb_width, VSliderAction* action = nullptr);
+    virtual ~SliderBasicX() { delete action; };
+
+    virtual void place(int new_coord) override;
+    virtual int getCoord() const override { return bar->getCoordX(); };
 
     ManagerWindow* getBar() const { return bar; };
     void SetSliderAction(VSliderAction* new_action) {
@@ -61,19 +98,31 @@ class BasicSliderX : public BorderWindow {
     };
 
   private:
-    float calcValue(int coord) {
-        return min_val + (max_val - min_val) / (max_bar_x - min_bar_x) * (coord - min_bar_x);
+};
+
+class SliderX : public VSlider, public InvisibleWindow {
+  public:
+    SliderX(int size_x, int size_y, int coord_x, int coord_y, float min_val, float max_val, float delta, VSliderAction* action = nullptr);
+    virtual ~SliderX() { delete action; };
+
+    virtual void place(int new_coord) override;
+    virtual int getCoord() const override { return bar->getCoordX(); };
+
+    ManagerWindow* getBar() const { return bar; };
+    void SetSliderAction(VSliderAction* new_action) {
+        if (action != nullptr) {
+            delete action;
+        }
+        action = new_action;
+    };
+
+    void moveBarLeft() {
+        this->place(this->calcCoord(this->getValue() - delta));
     }
+    void moveBarRight() {
+        this->place(this->calcCoord(this->getValue() + delta));
+    } 
 
-    VSliderAction* action;
-
-    float value;
-    
-    float min_val;
-    float max_val;
-
-    int min_bar_x;
-    int max_bar_x;
-    
-    ManagerWindow* bar;
+  private:
+    float delta;
 };
