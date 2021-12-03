@@ -177,6 +177,7 @@ class MakeFirst;
 class SliderBasicX;
 class VSlider;
 class SliderX;
+class ChangeCursors;
 
 void DisableCursorInCmd();
 
@@ -204,3 +205,5 @@ void ResizeCanvasWindow(CanvasWindow* canvas_layer, Renderer* render, Pair<int> 
 BorderWindow* MakeGraphWindow(int size_x, int size_y, int coord_x, int coord_y, ManagerWindow* parent, Renderer* render, App* app);
 InvisibleWindow* MakeToolsMenu(int coord_x, int coord_y, ToolManager* tools, Renderer* render, ManagerWindow* parent);
 InvisibleWindow* MakeCanvasMenu(int coord_x, int coord_y, DisplayManager* canvas_manager, Renderer* render, ManagerWindow* parent);
+
+LRESULT CALLBACK CursorSetProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam);

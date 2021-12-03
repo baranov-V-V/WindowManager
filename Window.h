@@ -10,6 +10,8 @@
 using std::map;
 using std::set;
 
+
+
 class WindowMouse {
   public:
     WindowMouse(ManagerWindow* window) : window(window), abs_coord(0, 0), rel_coord(0, 0), state(NONE_CLICK) {};

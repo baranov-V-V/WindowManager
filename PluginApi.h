@@ -1,6 +1,12 @@
 #ifndef _PLUGIN_HPP_INCLUDED_
 #define _PLUGIN_HPP_INCLUDED_
 
+/*
+  TO ADD:
+    1) ITexture in widget factory to make drawings in pref panel
+    2) Name to Tools;
+*/
+
 #include <cstdint>
 #include <list>
 

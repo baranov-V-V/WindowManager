@@ -1,3 +1,5 @@
+#include <mutex>
+
 #include "App.h"
 #include "Tools.h"
 #include "SkinsConfig.h"
@@ -7,6 +9,9 @@
 #include "Slider.h"
 
 Renderer* Renderer::instance = nullptr;
+std::mutex cursors_mutex;
+extern ResizeCursors cursors;
+HCURSOR curr_cursor = LoadCursor(NULL, IDC_CROSS);
 
 App::App() : users_window(1196, 690), app_size(1196, 690),
     app_window(1196, 690, 0, 0, img_back_font, nullptr, nullptr, nullptr, nullptr, true),
@@ -43,7 +48,7 @@ void App::initBasicTools() {
 void App::initWindows() {
     canvas_manager = new DisplayManager(Renderer::getInstance());
 
-    this->app_window.addChild(new SliderX(150, 20, 800, 600, 0, 10, 0.2, new SliderAction(0, 10)));
+    //this->app_window.addChild(new SliderX(150, 20, 800, 600, 0, 10, 0.2, new SliderAction(0, 10)));
 
     const int palette_x = app_size.x / 2;
     const int palette_y = 2 * app_size.y / 3;
@@ -80,7 +85,7 @@ void App::initWindows() {
 
     this->app_window.addChild(palette);
     this->app_window.addChild(menu);
-    //this->app_window.addChild(round_wnd);
+    this->app_window.addChild(round_wnd);
     //this->app_window.addChild(graph);
     //this->app_window.addChild(canvas_layer);
     //this->app_window.addChild(canvas_layer2);
@@ -138,6 +143,8 @@ void App::makeEvents() {
         new_event.setType(EVENT_MOUSE_MOVE);
         new_event.setData(MouseData(abs_coord, mouse.getAbsCoord() - abs_coord, mouse.getState() & LEFT_CLICK));
         
+        cursors.SetCurrCursor(CURSOR_ARROW);
+
         if (active_window != nullptr) {
             if (active_window->getPointed() != nullptr) {
                 active_window->getPointed()->action(new_event.getData());
@@ -147,21 +154,40 @@ void App::makeEvents() {
             app_window.processEvent(new_event);
         }
         
-    } /*else if (!(mouse.getState() & RIGHT_CLICK) && (state & RIGHT_CLICK)) {  //mouse moved
-        
-        new_event.setType(EVENT_MOUSE_RELEASED_RC);
-        new_event.setData(mouse.getAbsCoord());
-        
-        if (active_window != nullptr) {
-            if (active_window->getFunctor(EVENT_MOUSE_RELEASED_RC) != nullptr) {
-                active_window->getFunctor(EVENT_MOUSE_RELEASED_RC)->action(new_event.getData());
-            }
-        } else {
-            //cout << "sending mouse move to active\n";
-            app_window.processEvent(new_event);
-        }
-    } */
+    }
  
     state = mouse.getState();
     abs_coord = mouse.getAbsCoord();
+};
+
+ResizeCursors::ResizeCursors() {
+    cursors[CURSOR_ARROW] = LoadCursor(NULL, IDC_ARROW);
+    cursors[CURSOR_CROSS] = LoadCursor(NULL, IDC_CROSS);
+    cursors[CURSOR_RESIZE_E] = LoadCursor(NULL, IDC_SIZEWE);
+    cursors[CURSOR_RESIZE_N] = LoadCursor(NULL, IDC_SIZENS);
+    cursors[CURSOR_RESIZE_NE] = LoadCursor(NULL, IDC_SIZENESW);
+    cursors[CURSOR_RESIZE_SE] = LoadCursor(NULL, IDC_SIZENWSE);
+    curr_type = CURSOR_ARROW;
+};
+
+ResizeCursors::~ResizeCursors() {
+
+};
+
+void ResizeCursors::SetCurrCursor(CURSOR_TYPE new_type) {
+    curr_type = new_type;
+    curr_cursor = cursors[curr_type];
+};
+
+void ResizeCursors::setResizeCursor(int resize_direction) {
+    if (resize_direction == DIRECTION_RIGHT || resize_direction == DIRECTION_LEFT) {
+        curr_type = CURSOR_RESIZE_E;
+    } else if (resize_direction == DIRECTION_UP || resize_direction == DIRECTION_DOWN) {
+        curr_type = CURSOR_RESIZE_N;
+    } else if ((IS_DIR_DOWN(resize_direction) && IS_DIR_RIGHT(resize_direction)) || (IS_DIR_UP(resize_direction) && IS_DIR_LEFT(resize_direction))) {
+        curr_type = CURSOR_RESIZE_SE;
+    } else {
+        curr_type = CURSOR_RESIZE_NE;
+    }
+    curr_cursor = cursors[curr_type];
 };

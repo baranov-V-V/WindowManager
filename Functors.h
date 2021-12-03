@@ -20,10 +20,10 @@ enum RESIZE_DIRECTIONS {
 #define SET_DIR_UP(direction)    (direction = direction | DIRECTION_UP)
 #define SET_DIR_DOWN(direction)  (direction = direction | DIRECTION_DOWN)
 
-#define IS_DIR_LEFT(direction)  (direction & DIRECTION_LEFT)
-#define IS_DIR_RIGHT(direction) (direction & DIRECTION_RIGHT)
-#define IS_DIR_UP(direction)    (direction & DIRECTION_UP)
-#define IS_DIR_DOWN(direction)  (direction & DIRECTION_DOWN)
+#define IS_DIR_LEFT(direction)  ((direction & DIRECTION_LEFT))
+#define IS_DIR_RIGHT(direction) ((direction & DIRECTION_RIGHT))
+#define IS_DIR_UP(direction)    ((direction & DIRECTION_UP))
+#define IS_DIR_DOWN(direction)  ((direction & DIRECTION_DOWN))
 
 class VFunctor {
   public:
@@ -533,6 +533,8 @@ class ResizeCanvas : public MoveFunctor {
     bool action(const EventData& data) override;
   
   private:
+    void changeCursor(Pair<int> rel_coord);
+
     Pair<int> new_size;
     Pair<int> new_coord;
     int resize_dx = 0;

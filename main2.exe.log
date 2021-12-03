@@ -4999,3 +4999,320 @@ Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main
 Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
 
 --------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF7DA4AC347 в функции action(). Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF7DA637940 (64-bit), Flags: CMdRe0, Thread: 0x3BC0 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF7DA4AC347 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: action()
+# 1 0x00007FF7DA4831E2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 2 0x00007FF7DA4830D5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 3 0x00007FF7DA4830D5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 4 0x00007FF7DA4A9F35 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: makeEvents()
+# 5 0x00007FF7DA4A9501 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: run()
+# 6 0x00007FF7DA4815C0 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec  1 2021 15:48:08, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 01 2021 17:05:06
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF7DA4AC347 в функции action(). Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF7DA637940 (64-bit), Flags: CMdRe0, Thread: 0x3BC0 (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF7DA4AC347 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: action()
+# 1 0x00007FF7DA4831E2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 2 0x00007FF7DA4830D5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 3 0x00007FF7DA4830D5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 4 0x00007FF7DA4A9F35 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: makeEvents()
+# 5 0x00007FF7DA4A9501 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: run()
+# 6 0x00007FF7DA4815C0 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec  1 2021 15:48:08, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 01 2021 17:05:06
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF6CDBCC66D в функции action(). Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF6CDD57940 (64-bit), Flags: CMdRe0, Thread: 0x3ECC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6CDBCC66D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: action()
+# 1 0x00007FF6CDBA31E2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 2 0x00007FF6CDBA30D5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 3 0x00007FF6CDBA30D5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 4 0x00007FF6CDBCA015 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: makeEvents()
+# 5 0x00007FF6CDBC95E1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: run()
+# 6 0x00007FF6CDBA15C0 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec  3 2021 14:14:45, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 03 2021 14:15:27
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF6CDBCC66D в функции action(). Попытка прочесть данные по адресу NULL. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF6CDD57940 (64-bit), Flags: CMdRe0, Thread: 0x3ECC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6CDBCC66D in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: action()
+# 1 0x00007FF6CDBA31E2 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 2 0x00007FF6CDBA30D5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 3 0x00007FF6CDBA30D5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: processEvent()
+# 4 0x00007FF6CDBCA015 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: makeEvents()
+# 5 0x00007FF6CDBC95E1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: run()
+# 6 0x00007FF6CDBA15C0 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec  3 2021 14:14:45, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 03 2021 14:15:27
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF6D83A95E4 в функции operator()(). Попытка прочесть данные по адресу 0x0000000000000026. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF6D84E9940 (64-bit), Flags: CMdRe0, Thread: 0x4410 (Canvas). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6D83A95E4 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: operator()()
+# 1 0x00007FF6D847AE9F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _M_lower_bound()
+# 2 0x00007FF6D847ABBE in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: lower_bound()
+# 3 0x00007FF6D8481910 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: lower_bound()
+# 4 0x00007FF6D8481963 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: operator[]()
+# 5 0x00007FF6D83909D4 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: getCurrCursor()
+# 6 0x00007FF6D8353EE5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: CursorSetProc()
+# 7 0x00007FF6D833C1E5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _txCanvas_WndProc()
+# 8 0x00007FFFECC6E7E8 in C:\Windows\System32\USER32.dll: CallWindowProcW()
+# 9 0x00007FFFECC6E36C in C:\Windows\System32\USER32.dll: DispatchMessageW()
+#10 0x00007FFFECC80F93 in C:\Windows\System32\USER32.dll: SendMessageTimeoutW()
+#11 0x00007FFFEDF50BA4 in C:\Windows\SYSTEM32\ntdll.dll: KiUserCallbackDispatcher()
+#12 0x00007FFFEB661104 in C:\Windows\System32\win32u.dll: NtUserGetMessage()
+#13 0x00007FFFECC88BF6 in C:\Windows\System32\USER32.dll: GetMessageA()
+#14 0x00007FF6D833B2CF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _txCanvas_ThreadProc()
+#15 0x00007FFFECE4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#16 0x00007FFFECE4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#17 0x00007FFFECBB7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#18 0x00007FFFEDF02651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec  3 2021 18:59:29, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 03 2021 19:03:15
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF6B8629534 в функции operator()(). Попытка прочесть данные по адресу 0x0000000000000026. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF6B8769940 (64-bit), Flags: CMdRe0, Thread: 0x4AC (Canvas). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF6B8629534 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: operator()()
+# 1 0x00007FF6B86FADEF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _M_lower_bound()
+# 2 0x00007FF6B86FAB0E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: lower_bound()
+# 3 0x00007FF6B8701860 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: lower_bound()
+# 4 0x00007FF6B87018B3 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: operator[]()
+# 5 0x00007FF6B8610924 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: getCurrCursor()
+# 6 0x00007FF6B85D3EC9 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: CursorSetProc()
+# 7 0x00007FF6B85BC1E5 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _txCanvas_WndProc()
+# 8 0x00007FFFECC6E7E8 in C:\Windows\System32\USER32.dll: CallWindowProcW()
+# 9 0x00007FFFECC6E36C in C:\Windows\System32\USER32.dll: DispatchMessageW()
+#10 0x00007FFFECC80F93 in C:\Windows\System32\USER32.dll: SendMessageTimeoutW()
+#11 0x00007FFFEDF50BA4 in C:\Windows\SYSTEM32\ntdll.dll: KiUserCallbackDispatcher()
+#12 0x00007FFFEB661104 in C:\Windows\System32\win32u.dll: NtUserGetMessage()
+#13 0x00007FFFECC88BF6 in C:\Windows\System32\USER32.dll: GetMessageA()
+#14 0x00007FF6B85BB2CF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _txCanvas_ThreadProc()
+#15 0x00007FFFECE4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#16 0x00007FFFECE4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#17 0x00007FFFECBB7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#18 0x00007FFFEDF02651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec  3 2021 19:08:24, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 03 2021 19:08:49
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF7D86B9534 в функции operator()(). Попытка прочесть данные по адресу 0x0000000000000026. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF7D87F9980 (64-bit), Flags: CMdRe0, Thread: 0x4678 (Canvas). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF7D86B9534 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: operator()()
+# 1 0x00007FF7D878ADEF in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _M_lower_bound()
+# 2 0x00007FF7D878AB0E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: lower_bound()
+# 3 0x00007FF7D8791860 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: lower_bound()
+# 4 0x00007FF7D87918B3 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: operator[]()
+# 5 0x00007FF7D86A0924 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: getCurrCursor()
+# 6 0x00007FF7D8663F09 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: CursorSetProc()
+# 7 0x00007FF7D864C225 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _txCanvas_WndProc()
+# 8 0x00007FFFECC6E7E8 in C:\Windows\System32\USER32.dll: CallWindowProcW()
+# 9 0x00007FFFECC6E36C in C:\Windows\System32\USER32.dll: DispatchMessageW()
+#10 0x00007FFFECC80F93 in C:\Windows\System32\USER32.dll: SendMessageTimeoutW()
+#11 0x00007FFFEDF50BA4 in C:\Windows\SYSTEM32\ntdll.dll: KiUserCallbackDispatcher()
+#12 0x00007FFFEB661104 in C:\Windows\System32\win32u.dll: NtUserGetMessage()
+#13 0x00007FFFECC88BF6 in C:\Windows\System32\USER32.dll: GetMessageA()
+#14 0x00007FF7D864B30F in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: _txCanvas_ThreadProc()
+#15 0x00007FFFECE4AF5A in C:\Windows\System32\msvcrt.dll: beginthreadex()
+#16 0x00007FFFECE4B02C in C:\Windows\System32\msvcrt.dll: endthreadex()
+#17 0x00007FFFECBB7034 in C:\Windows\System32\KERNEL32.dll: BaseThreadInitThunk()
+#18 0x00007FFFEDF02651 in C:\Windows\SYSTEM32\ntdll.dll: RtlUserThreadStart()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec  3 2021 19:11:30, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 03 2021 19:11:50
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------

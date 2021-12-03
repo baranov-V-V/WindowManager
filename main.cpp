@@ -2,6 +2,8 @@
 
 App* App::instance = nullptr;
 
+ResizeCursors cursors;
+
 int main(int argc, const char* argv[]) {
     int x = 1196;
     int y = 690;

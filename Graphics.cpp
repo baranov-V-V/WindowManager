@@ -1,8 +1,14 @@
 //graphics engine
+//#include <mutex>
 
 #include "TXLib.h"
 #include "Window.h"
 #include "App.h"
+#include "Functors.h"
+
+//extern std::mutex cursors_mutex;
+extern ResizeCursors cursors;
+extern HCURSOR curr_cursor;
 
 void DisableCursorInCmd() {
     txTextCursor(false);
@@ -35,6 +41,8 @@ Window::Window(int x_size, int y_size, COLORREF color) : BasicWindow(x_size, y_s
             //printf("Successful");
         }
     
+    txSetWindowsHook(CursorSetProc);
+
     //HINSTANCE hInst = (HINSTANCE) GetWindowLongA(hWnd, GWLP_HINSTANCE); //
     //assert(hInst != 0);
 
@@ -194,4 +202,17 @@ RGBQUAD ToRGBQUAD(BYTE red, BYTE green, BYTE blue) {
 
 COLORREF toCOLORREF(RGBQUAD quad) {
     return RGB(quad.rgbRed, quad.rgbGreen, quad.rgbBlue);
+};
+
+LRESULT CALLBACK CursorSetProc(HWND window, UINT message, WPARAM wParam, LPARAM lParam) {
+    
+    if (message == WM_SETCURSOR || message == WM_MOUSEMOVE || message == WM_LBUTTONDOWN || message == WM_RBUTTONDOWN || message == WM_LBUTTONUP || message == WM_RBUTTONUP) {
+        
+        //cursors_mutex.lock();
+        SetCursor(curr_cursor);
+        //cursors_mutex.unlock();
+        //txUpdateWindow();
+
+    }
+    return false;
 };

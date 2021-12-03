@@ -49,3 +49,29 @@ class App {
     ToolManager* tool_manager;
     ManagerWindow* active_window = nullptr;
 };
+
+enum CURSOR_TYPE {
+    CURSOR_ARROW,
+    CURSOR_CROSS,
+    CURSOR_RESIZE_E,
+    CURSOR_RESIZE_N,
+    CURSOR_RESIZE_NE,
+    CURSOR_RESIZE_SE,
+};
+
+class ResizeCursors {
+  public:
+    ResizeCursors();
+    ~ResizeCursors();
+
+    HCURSOR getCurrCursor() { return cursors[curr_type]; };
+    void SetCurrCursor(CURSOR_TYPE new_type);
+
+    void setResizeCursor(int direction);
+
+  private:
+    
+    std::map<CURSOR_TYPE, HCURSOR> cursors;
+
+    CURSOR_TYPE curr_type;
+};

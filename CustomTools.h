@@ -35,7 +35,6 @@ void MakeSliderWithTitleMeasure(int size_x, int size_y, int coord_x, int coord_y
                          IPreferencesPanel* panel, ILabel* num_label, ISliderCallback* callback,
                          int title_size_x = 80, int title_size_y = 30, int ch_size = 10);
 
-
 class ChangeShapeeCallback : public IClickCallback {
   public:
     ChangeShapeeCallback(ShapesDrawer* drawer, ShapeType type);

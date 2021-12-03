@@ -1,11 +1,15 @@
 #include <cassert>
 #include <iostream>
+#include <mutex>
 
 #include "Functors.h"
 #include "Window.h"
 #include "Tools.h"
 #include "Slider.h"
 #include "App.h"
+
+extern std::mutex cursors_mutex;
+extern ResizeCursors cursors;
 
 DummyFunctor::DummyFunctor() {};
 bool DummyFunctor::action(const EventData& data) {
@@ -131,6 +135,8 @@ void DrawFunctor::endDraw(const EventData& data) {
 }
 bool DrawFunctor::action(const EventData& data)  {
     //cout << "in draw!" << "\n";
+    cursors.SetCurrCursor(CURSOR_CROSS);
+
     if (is_drawing) {
         Pair<int> rel_coord = canvas->toRelCoord(data.mouse_data.start);
         curr_tool->ProceedMove(canvas, render, rel_coord.x, rel_coord.y, data.mouse_data.d.x, data.mouse_data.d.y); //dx, dy coordinates
@@ -445,10 +451,39 @@ void ResizeCanvas::startMove(const EventData& data) {
 void ResizeCanvas::endMove(const EventData& data) {
     on_move = false;
     CLEAR_DIR(direction);
+
     app->setActiveWindow(nullptr);
 };
+void ResizeCanvas::changeCursor(Pair<int> rel_coord) {
+    
+    CLEAR_DIR(direction);
+
+    if (rel_coord.x >= (move_window->getSizeX() - grab_len)) {
+        SET_DIR_RIGHT(direction);
+    }
+    if (rel_coord.x <= grab_len) {
+        SET_DIR_LEFT(direction);
+    }
+    if (rel_coord.y <= grab_len) {
+        SET_DIR_UP(direction);
+    }
+    if (rel_coord.y >= (move_window->getSizeY() - grab_len)) {
+        SET_DIR_DOWN(direction);
+    }
+
+    cursors_mutex.lock();
+    cursors.setResizeCursor(direction);
+    cursors_mutex.unlock();
+
+    std::cout << "changed dir to " << direction << "\n";
+};
 bool ResizeCanvas::action(const EventData& data) {
+    if (!on_move) {
+        this->changeCursor(move_window->toRelCoord(data.mouse_data.start));
+    }
+
     if (on_move) {
+        cursors.setResizeCursor(direction);
         new_size = move_window->getSize();
         new_coord = move_window->getCoord();
         Pair<int> d_mouse_move = data.mouse_data.d;
@@ -469,9 +504,10 @@ bool ResizeCanvas::action(const EventData& data) {
         if (d_mouse_move.x != 0 || d_mouse_move.y != 0) {
             ResizeCanvasWindow(dynamic_cast<CanvasWindow*>(move_window), render, new_size, new_coord);
         }
-    } else {
-      this->endMove(data);
-    }
+    } 
+    //else {
+    //  this->endMove(data);
+    //}
     return true;
 };
 
