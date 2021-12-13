@@ -165,15 +165,15 @@ void Tool1::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
     mark.clear();
 };
 
-ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, plugin_tool->GetIconFileName(), plugin_tool->GetIconFileName()) {
-    PreferencesPanel* panel = dynamic_cast<PreferencesPanel*>(tool->GetPreferencesPanel());
+ToolPlugin::ToolPlugin(plugin::ITool* plugin_tool) : tool(plugin_tool), VTool(white_c, 1, plugin_tool->GetName(), plugin_tool->GetIconFileName()) {
+    plugin::PreferencesPanel* panel = dynamic_cast<plugin::PreferencesPanel*>(tool->GetPreferencesPanel());
     if (panel != nullptr) {
         //std::cout << "added tool adjust window!\n";
         this->setAdjustWindow(panel->getLayout());
     }   
 };
 void ToolPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
-    RenderTexture texture(target, render);
+    plugin::RenderTexture texture(target, render);
     tool->ActionBegin(&texture, x, y);
 };
 void ToolPlugin::ProceedMove(Texture* target, Renderer* render, int x, int y, int dx, int dy) {
@@ -181,12 +181,12 @@ void ToolPlugin::ProceedMove(Texture* target, Renderer* render, int x, int y, in
     //tool->Action(texture, )
 };
 void ToolPlugin::ProceedPressUp(Texture* target, Renderer* render, int x, int y) {
-    RenderTexture texture(target, render);
+    plugin::RenderTexture texture(target, render);
     tool->ActionEnd(&texture, x, y);
 };
 
 FilterPlugin::FilterPlugin(plugin::IFilter* plugin_filter) : filter(plugin_filter), VTool(white_c, 1, plugin_filter->GetName()) {
-    PreferencesPanel* panel = dynamic_cast<PreferencesPanel*>(filter->GetPreferencesPanel());
+    plugin::PreferencesPanel* panel = dynamic_cast<plugin::PreferencesPanel*>(filter->GetPreferencesPanel());
     if (panel != nullptr) {
         std::cout << "added filter adjust window!\n";
         this->setAdjustWindow(panel->getLayout());
@@ -194,7 +194,7 @@ FilterPlugin::FilterPlugin(plugin::IFilter* plugin_filter) : filter(plugin_filte
 };
 void FilterPlugin::ProceedPressDown(Texture* target, Renderer* render, int x, int y) {
     render->setWindow(target);
-    RenderTexture texture(target, render);
+    plugin::RenderTexture texture(target, render);
     filter->Apply(&texture);
 };
 
@@ -205,7 +205,7 @@ void LoadTool(ToolManager* tool_manager, char* file_name) {
         assert(0);
     }
 
-    API api;
+    plugin::API api;
 
     plugin::CreateFunction create_f = (plugin::CreateFunction) GetProcAddress(module, "Create");
     assert(create_f);
@@ -218,20 +218,19 @@ void LoadTool(ToolManager* tool_manager, char* file_name) {
 
     plugin::IPlugin* plugin = create_f(&api);
     
-    std::list<plugin::IFilter*> filter_list = plugin->GetFilters();
-    std::list<plugin::ITool*> tool_list = plugin->GetTools();
+    plugin::Filters filter_list = plugin->GetFilters();
+    plugin::Tools tool_list = plugin->GetTools();
 
-    for (auto it = tool_list.begin(); it != tool_list.end(); ++it) {
-        tool_manager->addTool(new ToolPlugin(*it));
+    for (int i = 0; i < tool_list.count; ++i) {
+        tool_manager->addTool(new ToolPlugin(tool_list.tools + i));
     }
 
-    for (auto it = filter_list.begin(); it != filter_list.end(); ++it) {
-        tool_manager->addTool(new FilterPlugin(*it));
+    for (int i = 0; i < filter_list.count; ++i) {
+        tool_manager->addTool(new FilterPlugin(filter_list.filters + i));
     }
 
     destroy_f(plugin);
 }
-
 
 void LoadTools(ToolManager* tool_manager) {
     std::filesystem::path folder(plugins_folder);

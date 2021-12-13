@@ -1,12 +1,13 @@
 //graphics engine
-//#include <mutex>
-
 #include "TXLib.h"
+
+#include <mutex>
+
 #include "Window.h"
 #include "App.h"
 #include "Functors.h"
 
-//extern std::mutex cursors_mutex;
+extern std::mutex cursor_mutex;
 extern ResizeCursors cursors;
 extern HCURSOR curr_cursor;
 
@@ -208,11 +209,21 @@ LRESULT CALLBACK CursorSetProc(HWND window, UINT message, WPARAM wParam, LPARAM 
     
     if (message == WM_SETCURSOR || message == WM_MOUSEMOVE || message == WM_LBUTTONDOWN || message == WM_RBUTTONDOWN || message == WM_LBUTTONUP || message == WM_RBUTTONUP) {
         
-        //cursors_mutex.lock();
+        cursor_mutex.lock();
         SetCursor(curr_cursor);
-        //cursors_mutex.unlock();
+        cursor_mutex.unlock();
+        //txUpdateWindow();
+
+    } 
+    /*
+    if (message == WM_SETCURSOR) {
+        
+        cursor_mutex.lock();
+        SetCursor(curr_cursor);
+        cursor_mutex.unlock();
         //txUpdateWindow();
 
     }
+    */
     return false;
 };

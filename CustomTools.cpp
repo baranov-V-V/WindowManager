@@ -36,7 +36,7 @@ void ChangeShapeeCallback::RespondOnClick() {
 
 ChangeColorSlideCallback::ChangeColorSlideCallback(ShapesDrawer* drawer, ILabel* num_label, ColorComponent component) : drawer(drawer), num_label(num_label), component(component) {};
 void ChangeColorSlideCallback::RespondOnSlide(float old_value, float current_value) {
-    Color color = drawer->GetColor();
+    color_t color = drawer->GetColor();
 
     static char buf[4] = {};
 
@@ -94,8 +94,8 @@ void Filler::Apply(ITexture* canvas) {
     
     //std::cout << "ApplyFilter\n";
     
-    for (int i = 0; i < canvas->GetHieght() * canvas->GetWidth(); ++i) {
-        Color pixel = buf.pixels[i];
+    for (int i = 0; i < canvas->GetSizeY() * canvas->GetSizeX(); ++i) {
+        color_t pixel = buf.pixels[i];
         pixel = 0xFF'FF'FF'FF - pixel;
         pixel |= 0xFF'00'00'00;
         buf.pixels[i] = pixel;
@@ -112,12 +112,12 @@ IPreferencesPanel* Filler::GetPreferencesPanel() const {
     return nullptr;
 };
 void Filler::ConstructPreferencePanel() {
-    panel = api->GetWidgetFactory()->CreateDefaultPreferencesPanel();
+    panel = api->GetWidgetFactory()->CreatePreferencesPanel();
 
     IButton* text_button = api->GetWidgetFactory()->CreateButtonWithText(120, 30, "Press me", 10);
     text_button->SetClickCallback(new TestCallback());
 
-    panel->Attach(text_button, panel->GetWidth() / 2, panel->GetHieght() / 2);
+    panel->Attach(text_button, panel->GetSizeX() / 2, panel->GetSizeY() / 2);
 };
 
 ShapesDrawer::ShapesDrawer() : type(TYPE_CIRCLE), size(1), color(0xFF'00'00'00) {
@@ -127,11 +127,11 @@ void ShapesDrawer::ActionBegin(ITexture* canvas, int x, int y) {
     //std::cout << "started drawing shapes!\n";
     switch (type) {
         case TYPE_CIRCLE:
-            canvas->DrawCircle(x, y, size, color);
+            canvas->DrawCircle({x, y, size, 1, color, color});
         break;
     
         case TYPE_SQUARE:
-            canvas->DrawRect(x - size / 2, y - size / 2, x + size / 2, y + size / 2, color);
+            canvas->DrawRect({x - size / 2, y - size / 2, x + size / 2, y + size / 2, 1, color, color});
         break;
 
         default:
@@ -146,20 +146,24 @@ const char* ShapesDrawer::GetIconFileName() const {
     static const char* name = "shapes_drawer.bmp";
     return name;
 };
+const char* ShapesDrawer::GetName() const {
+    static const char* name = "Shapes Drawer";
+    return name;
+};
 IPreferencesPanel* ShapesDrawer::GetPreferencesPanel() const {
     return panel;
 };
 void ShapesDrawer::ConstructPreferencePanel() {
     IWidgetFactory* factory = api->GetWidgetFactory();
     
-    panel = api->GetWidgetFactory()->CreateDefaultPreferencesPanel();
+    panel = api->GetWidgetFactory()->CreatePreferencesPanel();
 
     ILabel* tool_name = api->GetWidgetFactory()->CreateLabel(170, 30, "Shapes drawer", 12);
-    panel->Attach(tool_name, panel->GetWidth() / 2 - 170 / 2, 0);
+    panel->Attach(tool_name, panel->GetSizeX() / 2 - 170 / 2, 0);
 
     Point coord();
-    int button_x = 5 * panel->GetWidth() / 8;
-    int button_y = panel->GetHieght() / 8;
+    int button_x = 5 * panel->GetSizeX() / 8;
+    int button_y = panel->GetSizeY() / 8;
     int dy = 10;
     int button_size_x = 80;
     int button_size_y = 30;
@@ -177,22 +181,23 @@ void ShapesDrawer::ConstructPreferencePanel() {
     ILabel* blue_count  = factory->CreateLabel(50, 30, "0", 10);
     ILabel* size_count  = factory->CreateLabel(50, 30, "1", 10);
 
-    MakeSliderWithTitleMeasure(150, 15, panel->GetWidth() / 8, panel->GetHieght() / 5 + 0  , 1, 100, "size:",  panel, size_count,  new ChangeSizeSlideCallback(this, size_count));
-    MakeSliderWithTitleMeasure(150, 15, panel->GetWidth() / 8, panel->GetHieght() / 5 + 60 , 0, 255, "red:",   panel, red_count,   new ChangeColorSlideCallback(this, red_count,   COMPONENT_RED));
-    MakeSliderWithTitleMeasure(150, 15, panel->GetWidth() / 8, panel->GetHieght() / 5 + 120, 0, 255, "green:", panel, green_count, new ChangeColorSlideCallback(this, green_count, COMPONENT_GREEN));
-    MakeSliderWithTitleMeasure(150, 15, panel->GetWidth() / 8, panel->GetHieght() / 5 + 180, 0, 255, "blue:",  panel, blue_count,  new ChangeColorSlideCallback(this, blue_count,  COMPONENT_BLUE));
-
+    MakeSliderWithTitleMeasure(150, 15, panel->GetSizeX() / 8, panel->GetSizeY() / 5 + 0  , 1, 100, "size:",  panel, size_count,  new ChangeSizeSlideCallback(this, size_count));
+    MakeSliderWithTitleMeasure(150, 15, panel->GetSizeX() / 8, panel->GetSizeY() / 5 + 60 , 0, 255, "red:",   panel, red_count,   new ChangeColorSlideCallback(this, red_count,   COMPONENT_RED));
+    MakeSliderWithTitleMeasure(150, 15, panel->GetSizeX() / 8, panel->GetSizeY() / 5 + 120, 0, 255, "green:", panel, green_count, new ChangeColorSlideCallback(this, green_count, COMPONENT_GREEN));
+    MakeSliderWithTitleMeasure(150, 15, panel->GetSizeX() / 8, panel->GetSizeY() / 5 + 180, 0, 255, "blue:",  panel, blue_count,  new ChangeColorSlideCallback(this, blue_count,  COMPONENT_BLUE));
 };
 
 Plugin::Plugin(Filler* filler, ShapesDrawer* drawer) : filler(filler), drawer(drawer) {}
-std::list<IFilter*> Plugin::GetFilters() const {
-    std::list<IFilter*> filter_list;
-    filter_list.push_back(filler);
+Filters Plugin::GetFilters() const {
+    Filters filter_list;
+    filter_list.count = 1;
+    filter_list.filters = filler;
     return filter_list;
 };
-std::list<ITool*> Plugin::GetTools () const {
-    std::list<ITool*> tool_list;
-    tool_list.push_back(drawer);
+Tools Plugin::GetTools () const {
+    Tools tool_list;
+    tool_list.count = 1;
+    tool_list.tools = drawer;
     return tool_list;
 };
 

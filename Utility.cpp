@@ -55,7 +55,7 @@ PicWindow* MakePalette(int x_size, int y_size, int coord_x, int coord_y, Manager
     int c_box_dx = x_size / (6 * x_count_c + 1);
     int c_box_dy = x_size / (6 * x_count_c + 1);
 
-    int start_boxes_y = y_size / 16;
+    int start_boxes_y = 8;
 
     for (int i = 0; i < y_count_c; ++i) {
         for (int j = 0; j < x_count_c; ++j) {

@@ -1,6 +1,6 @@
 #define EXPORT_TOOL
 #include <iostream>
-#include "PluginApi.h"
+#include "NewPluginApi.h"
 
 struct Point {
     int x;
@@ -113,8 +113,8 @@ class ShapesDrawer : public ITool {
     virtual void ActionBegin(ITexture* canvas, int x, int y) override;
 
     void SetSize(int new_size);
-    Color GetColor() const { return color; };
-    void SetColor(Color new_color) { color = new_color; };
+    color_t GetColor() const { return color; };
+    void SetColor(color_t new_color) { color = new_color; };
     void SetShape(ShapeType new_type) { type = new_type; };
 
 
@@ -122,6 +122,7 @@ class ShapesDrawer : public ITool {
     virtual void ActionEnd  (ITexture* canvas, int x, int y) override {};
 
     virtual const char* GetIconFileName() const override;
+    virtual const char* GetName() const override;
 
     virtual IPreferencesPanel* GetPreferencesPanel() const override;
 
@@ -131,7 +132,7 @@ class ShapesDrawer : public ITool {
     IPreferencesPanel* panel;
     ShapeType type;
     int size;
-    Color color;
+    color_t color;
 };
 
 class Plugin : public IPlugin {
@@ -139,9 +140,9 @@ class Plugin : public IPlugin {
     Plugin(Filler* filler, ShapesDrawer* drawer);
     ~Plugin() {};
 
-    virtual std::list<IFilter*> GetFilters() const override;
+    virtual Filters GetFilters() const override;
 
-    virtual std::list<ITool*> GetTools () const override;
+    virtual Tools GetTools () const override;
 
   private:
     Filler* filler;

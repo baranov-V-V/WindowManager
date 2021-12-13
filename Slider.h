@@ -1,7 +1,7 @@
 #pragma once
 #include "BasicInfo.h"
 #include "Functors.h"
-#include "PluginApi.h"
+#include "NewPluginApi.h"
 
 class VSliderAction {
   public:

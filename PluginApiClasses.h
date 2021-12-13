@@ -1,38 +1,37 @@
 #pragma once
 
-#include "PluginApi.h"
+#include "NewPluginApi.h"
 #include "Slider.h"
 #include "BasicInfo.h"
 #include "Window.h"
 
-using plugin::Buffer;
-using plugin::Color;
-using plugin::ITexture;
-using plugin::ITextureFactory;
+COLORREF ToCOLORREF(plugin::color_t color);
 
-COLORREF ToCOLORREF(plugin::Color color);
+namespace plugin {
+
+color_t ToColor_t(COLORREF color);
 
 class RenderTexture : public plugin::ITexture {
   public:
     RenderTexture(Texture* texture, Renderer* render);
     virtual ~RenderTexture() {}
 
-    virtual int32_t GetWidth() override;
-    virtual int32_t GetHieght() override;
+    virtual int32_t GetSizeX() override;
+    virtual int32_t GetSizeY() override;
 
     virtual Buffer ReadBuffer() override;
     virtual void ReleaseBuffer(Buffer buffer) override;
     virtual void LoadBuffer(Buffer buffer) override;
 
-    virtual void Clear(Color color) override;
+    virtual void Clear(color_t color) override;
     virtual void Present() override;
 
-    virtual void DrawLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, Color color) override;
-    virtual void DrawThickLine(int32_t x0, int32_t y0, int32_t x1, int32_t y1, int32_t thickness, Color color) override;
-    virtual void DrawCircle(int32_t x, int32_t y, int32_t radius, Color color) override;
-    virtual void DrawRect(int32_t x, int32_t y, int32_t width, int32_t height, Color color) override;
+    virtual void DrawLine(const Line& line) override;
+    virtual void DrawCircle(const Circle& circle) override;
+    virtual void DrawRect(const Rect& rect) override;
 
     virtual void CopyTexture(ITexture* texture, int32_t x, int32_t y, int32_t width, int32_t height) override;
+    virtual void CopyTexture(ITexture* source, int32_t x, int32_t y) override;
 
     Texture* getTexture() const { return texture; };
     Renderer* getRenderer() const { return render; };
@@ -54,20 +53,6 @@ class TextureFactory : public plugin::ITextureFactory {
     Renderer* render;
 };
 
-class WidgetInfo : public plugin::IWidget {
-  public:
-    WidgetInfo() : window_info(nullptr) {};
-    WidgetInfo(ManagerWindow* window) : window_info(window) {};
-    
-    virtual ~WidgetInfo() {};
-
-    ManagerWindow* getAttachWindow() { return window_info; };
-    void setAttachWindow(ManagerWindow* new_window) { window_info = new_window; };
-
-  private:
-    ManagerWindow* window_info;
-};
-
 class ClickCallback : public plugin::IClickCallback {
   public:
     ClickCallback();
@@ -86,35 +71,22 @@ class SliderCallback : public plugin::ISliderCallback {
   private:
 };
 
-class TextButton : public plugin::IButton, public WidgetInfo {
-  public:
-    TextButton(const char* text);
-    TextButton(int32_t width, int32_t height, const char* text, int32_t char_size);
-    virtual ~TextButton() {}
+class Button : public plugin::IButton {
+   public:
+    Button(ManagerWindow* window);
+    virtual ~Button() {};
 
-    int32_t GetWidth() override { return window->getSizeX(); };
-    int32_t GetHieght() override { return window->getSizeY(); };
-
-    virtual void SetClickCallback(plugin::IClickCallback* callback) override;
-  private:
-    TextButtonWindow* window;
-};
-
-class PicButton : public plugin::IButton, public WidgetInfo {
-  public:
-    PicButton(const char* icon_file_name);
-    PicButton(int32_t width, int32_t height, const char* icon_file_name);
-    virtual ~PicButton() {};
-
-    int32_t GetWidth() override { return window->getSizeX(); };
-    int32_t GetHieght() override { return window->getSizeY(); };
+    int32_t GetSizeX() override { return window->getSizeX(); };
+    int32_t GetSizeY() override { return window->getSizeY(); };
 
     virtual void SetClickCallback(plugin::IClickCallback* callback) override;
+    ManagerWindow* getWindow() { return window; };
+  
   private:
-    PicWindow* window;
+    ManagerWindow* window;   
 };
 
-class Slider : public plugin::ISlider, public WidgetInfo {
+class Slider : public plugin::ISlider {
   public:
     Slider(float range_min, float range_max);
     Slider(int32_t width, int32_t height, float range_min, float range_max);
@@ -124,39 +96,83 @@ class Slider : public plugin::ISlider, public WidgetInfo {
 
     virtual void SetSliderCallback(plugin::ISliderCallback* callback) override;
 
-    virtual float GetValue() override { return slider->getValue(); };
-    virtual void SetValue(float value) override { slider->setValue(value); };
+    virtual float GetValue() override;
+    virtual void SetValue(float value) override;
   
-    virtual int32_t GetWidth() override { return slider->getSizeX(); };
-    virtual int32_t GetHieght() override { return slider->getSizeY(); };
+    virtual int32_t GetSizeX() override;
+    virtual int32_t GetSizeY() override;
+
+    ManagerWindow* getWindow();;
 
   private:
     SliderBasicX* slider;
 };
 
-class Label : public plugin::ILabel, public WidgetInfo {
+class Label : public plugin::ILabel {
   public:
     Label(const char* text);
     Label(int32_t width, int32_t height, const char* text, int32_t char_size);
     virtual ~Label() {}
 
-    virtual int32_t GetWidth() override { return window->getSizeX(); };
-    virtual int32_t GetHieght() override { return window->getSizeY(); };
+    virtual int32_t GetSizeX() override { return window->getSizeX(); };
+    virtual int32_t GetSizeY() override { return window->getSizeY(); };
 
     virtual void SetText(const char* text) override;
+
+    ManagerWindow* getWindow() { return window; };
+
   private:
     TextButtonWindow* window;
 };
 
-class PreferencesPanel : public plugin::IPreferencesPanel, public WidgetInfo {
+class Icon : public plugin::IIcon {
+  public:
+    Icon(int32_t size_x, int32_t size_y);
+    virtual ~Icon() {};
+  
+    virtual int32_t GetSizeX() override { return window->getSizeX(); };
+    virtual int32_t GetSizeY() override { return window->getSizeY(); };
+
+    virtual void SetIcon(ITexture* icon) override;
+
+    ManagerWindow* getWindow() { return window; };
+
+  private:
+    BorderWindow* window;
+};
+
+class Palette : public plugin::IPalette {
+  public:
+    Palette();
+    virtual ~Palette() {};
+
+    virtual int32_t GetSizeX() override { return window->getSizeX(); };
+    virtual int32_t GetSizeY() override { return window->getSizeY(); };
+
+    virtual void SetPaletteCallback(plugin::IPaletteCallback* callback) override; 
+
+    ManagerWindow* getWindow() { return window; };
+
+    void ChangeColor(plugin::color_t color);
+
+  private:
+    BorderWindow* window;
+    plugin::IPaletteCallback* callback;
+};
+
+class PreferencesPanel : public plugin::IPreferencesPanel {
   public:
     PreferencesPanel();
     virtual ~PreferencesPanel() {}
 
-    int32_t GetWidth()  override { return layout->getSizeX(); };
-    int32_t GetHieght() override { return layout->getSizeY(); };
+    int32_t GetSizeX() override { return layout->getSizeX(); };
+    int32_t GetSizeY() override { return layout->getSizeY(); };
 
-    virtual void Attach(IWidget* widget, int32_t x, int32_t y) override;
+    virtual void Attach(IButton*  button,  int32_t x, int32_t y) override;
+    virtual void Attach(ILabel*   label,   int32_t x, int32_t y) override;
+    virtual void Attach(ISlider*  slider,  int32_t x, int32_t y) override;
+    virtual void Attach(IIcon*    icon,    int32_t x, int32_t y) override;
+    virtual void Attach(IPalette* palette, int32_t x, int32_t y) override;
 
     BorderWindow* getLayout() const { return layout; };
 
@@ -176,12 +192,15 @@ class WidgetFactory : public plugin::IWidgetFactory {
 
     virtual plugin::ISlider* CreateDefaultSlider(float range_min, float range_max) override;
     virtual plugin::ISlider* CreateSlider(int32_t width, int32_t height, float range_min, float range_max) override;
-    virtual plugin::ISlider* CreateSlider(int32_t width, int32_t height, float thumb_width, float thumb_height, float range_min, float range_max) override;
 
     virtual plugin::ILabel*  CreateDefaultLabel(const char* text) override;
     virtual plugin::ILabel*  CreateLabel(int32_t width, int32_t height, const char* text, int32_t char_size) override;
 
-    virtual plugin::IPreferencesPanel* CreateDefaultPreferencesPanel() override;
+    virtual IIcon*    CreateIcon(int32_t size_x, int32_t size_y) override;
+
+    virtual IPalette* CreatePalette() override;
+
+    virtual plugin::IPreferencesPanel* CreatePreferencesPanel() override;
   private:
     Renderer* render;
 };
@@ -197,6 +216,9 @@ class API : public plugin::IAPI {
     WidgetFactory widget_factory;
     TextureFactory texture_factory; 
 };
+
+
+} //namespace plugin
 
 /*
 class Plugin : public plugin::IPlugin {

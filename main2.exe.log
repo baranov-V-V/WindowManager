@@ -4061,7 +4061,7 @@ TXLib сообщает:
     195: plugin::ILabel*  WidgetFactory::CreateLabel(int32_t width, int32_t height, const char* text, int32_t char_size) {
 =>  196:     return new Label(width, height, text, char_size);
     197: };
-    198: plugin::IPreferencesPanel* WidgetFactory::CreateDefaultPreferencesPanel() {
+    198: plugin::IPreferencesPanel* WidgetFactory::CreatePreferencesPanel() {
 
 #10 0x000000006D401FC0 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\tools.dll: Version()
 #11 0x000000006D401D70 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\tools.dll: Version()
@@ -4126,7 +4126,7 @@ TXLib предупреждает:
 
      29:     for (int ix = 0; ix < texture->getSizeX(); ++ix) {
      30:         for (int iy = 0; iy <= texture->getSizeY(); ++iy) {
-=>   31:             buf.pixels[ix + iy * texture->getSizeY()] = ToColor(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
+=>   31:             buf.pixels[ix + iy * texture->getSizeY()] = ToColor_t(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
      32:         }
      33:     }
 
@@ -4243,7 +4243,7 @@ TXLib соболезнует...
 
      29:     for (int ix = 0; ix < texture->getSizeX(); ++ix) {
      30:         for (int iy = 0; iy <= texture->getSizeY(); ++iy) {
-=>   31:             buf.pixels[ix + iy * texture->getSizeY()] = ToColor(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
+=>   31:             buf.pixels[ix + iy * texture->getSizeY()] = ToColor_t(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
      32:         }
      33:     }
 
@@ -4356,7 +4356,7 @@ TXLib предупреждает:
 
      29:     for (int ix = 0; ix < texture->getSizeX(); ++ix) {
      30:         for (int iy = 0; iy <= texture->getSizeY(); ++iy) {
-=>   31:             buf.pixels[ix + iy * texture->getSizeX()] = ToColor(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
+=>   31:             buf.pixels[ix + iy * texture->getSizeX()] = ToColor_t(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
      32:         }
      33:     }
 
@@ -4473,7 +4473,7 @@ TXLib соболезнует...
 
      29:     for (int ix = 0; ix < texture->getSizeX(); ++ix) {
      30:         for (int iy = 0; iy <= texture->getSizeY(); ++iy) {
-=>   31:             buf.pixels[ix + iy * texture->getSizeX()] = ToColor(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
+=>   31:             buf.pixels[ix + iy * texture->getSizeX()] = ToColor_t(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
      32:         }
      33:     }
 
@@ -4586,7 +4586,7 @@ TXLib предупреждает:
 
      29:     for (int ix = 0; ix < texture->getSizeX(); ++ix) {
      30:         for (int iy = 0; iy < texture->getSizeY(); ++iy) {
-=>   31:             buf.pixels[ix + iy * texture->getSizeX()] = ToColor(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
+=>   31:             buf.pixels[ix + iy * texture->getSizeX()] = ToColor_t(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
      32:         }
      33:     }
 
@@ -4703,7 +4703,7 @@ TXLib соболезнует...
 
      29:     for (int ix = 0; ix < texture->getSizeX(); ++ix) {
      30:         for (int iy = 0; iy < texture->getSizeY(); ++iy) {
-=>   31:             buf.pixels[ix + iy * texture->getSizeX()] = ToColor(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
+=>   31:             buf.pixels[ix + iy * texture->getSizeX()] = ToColor_t(toCOLORREF(texture->getBuf()[ix + (max_canvas_y - iy) * max_canvas_x]));
      32:         }
      33:     }
 
@@ -5311,6 +5311,92 @@ See license on: http://txlib.ru
 TXLib file:	TXLib.h
 Compiled:	Dec  3 2021 19:11:30, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
 Started:	Dec 03 2021 19:11:50
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib предупреждает:
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF768B26F4C в функции getSizeY(). Попытка прочесть данные по адресу 0x0000000000000010. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+#1: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF768C79980 (64-bit), Flags: CMdRe0, Thread: 0x34DC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF768B26F4C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: getSizeY()
+# 1 0x00007FF768B2249C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: GetSizeY()
+# 2 0x00007FF930B61E7A in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\plugins\tools.dll: Version()
+# 3 0x00007FF930B61C2E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\plugins\tools.dll: Version()
+# 4 0x00007FF930B614D1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\plugins\tools.dll: Create()
+# 5 0x00007FF768AEB7FA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: LoadTool()
+# 6 0x00007FF768AEBAA6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: LoadTools()
+# 7 0x00007FF768AE97F7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: initBasicTools()
+# 8 0x00007FF768AC15A6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec 13 2021 03:18:15, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 13 2021 03:18:35
+
+Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
+Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager
+
+--------------------------------------------------
+
+--------------------------------------------------
+TXLib соболезнует...
+
+Программа: C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe,
+
+ВНЕЗАПНО: signal (11, 0x00): SIGSEGV: Доступ по неверному указателю. Ставьте ассерты! 
+
+Нарушение доступа к памяти.
+
+#1: Исключение EXCEPTION_ACCESS_VIOLATION (0xC0000005) при выполнении кода по адресу 0x00007FF768B26F4C в функции getSizeY(). Попытка прочесть данные по адресу 0x0000000000000010. Спасибо _txVectoredExceptionHandler(), что сообщил. Люблю его <3
+
+С помощью функции signal() вы можете сами обработать эту ошибку.
+
+#2: TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400], Instance: 0x00007FF768C79980 (64-bit), Flags: CMdRe0, Thread: 0x34DC (Main). 
+
+--------------------------------------------------
+Стек вызовов:
+
+# 0 0x00007FF768B26F4C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: getSizeY()
+# 1 0x00007FF768B2249C in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: GetSizeY()
+# 2 0x00007FF930B61E7A in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\plugins\tools.dll: Version()
+# 3 0x00007FF930B61C2E in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\plugins\tools.dll: Version()
+# 4 0x00007FF930B614D1 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\plugins\tools.dll: Create()
+# 5 0x00007FF768AEB7FA in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: LoadTool()
+# 6 0x00007FF768AEBAA6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: LoadTools()
+# 7 0x00007FF768AE97F7 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: initBasicTools()
+# 8 0x00007FF768AC15A6 in C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe: main()
+
+--------------------------------------------------
+Developed with:
+
+The Dumb Artist Library (TX Library)
+TXLib [Ver: 00173a, Rev: 170, Date: 2021-03-13 03:10:30 +0400]
+Copyright (C) Ded (Ilya Dedinsky, http://txlib.ru) <mail@txlib.ru>
+See license on: http://txlib.ru
+
+TXLib file:	TXLib.h
+Compiled:	Dec 13 2021 03:18:15, GNU g++ 11.2.0, std=201703L, MinGW-W64 Runtime 9.0.0 (alpha - rev. 0) 0000-00-00, 64-bit, Debug
+Started:	Dec 13 2021 03:18:35
 
 Run file:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager\main2.exe
 Directory:	C:\Documents and Settings\VBAR\Documents\Programs_C\WindowManager

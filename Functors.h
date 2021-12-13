@@ -3,7 +3,7 @@
 #include "BasicInfo.h"
 #include "Window.h"
 #include "Events.h"
-#include "PluginApi.h"
+#include "PluginApiClasses.h"
 
 enum RESIZE_DIRECTIONS {
     DIRECTION_NONE = 0,
@@ -729,4 +729,17 @@ class PlaceSliderBarOnClickX : public StartMove {
 
   private:
     SliderX* slider;
+};
+
+class ChangeColorCallbackFunctor : public VFunctor {
+  public:
+    ChangeColorCallbackFunctor();
+    ChangeColorCallbackFunctor(plugin::Palette* palette, COLORREF color);
+    virtual ~ChangeColorCallbackFunctor() {};
+
+    bool action(const EventData& data) override;
+
+  private:
+    plugin::Palette* palette;
+    COLORREF color;
 };

@@ -3,7 +3,7 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "PluginApi.h"
+#include "NewPluginApi.h"
 #include "BasicInfo.h"
 #include "SkinsConfig.h"
 #include "App.h"

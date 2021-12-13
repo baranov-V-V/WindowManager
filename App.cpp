@@ -9,8 +9,9 @@
 #include "Slider.h"
 
 Renderer* Renderer::instance = nullptr;
-std::mutex cursors_mutex;
+std::mutex cursor_mutex;
 extern ResizeCursors cursors;
+
 HCURSOR curr_cursor = LoadCursor(NULL, IDC_CROSS);
 
 App::App() : users_window(1196, 690), app_size(1196, 690),
@@ -24,9 +25,9 @@ void App::run() {
     on_run = true;
 
     while (on_run) {
+        this->makeEvents();
         app_window.draw(Renderer::getInstance());
         app_window.showOn(&users_window);
-        this->makeEvents();
     }
 
 };
@@ -176,7 +177,9 @@ ResizeCursors::~ResizeCursors() {
 
 void ResizeCursors::SetCurrCursor(CURSOR_TYPE new_type) {
     curr_type = new_type;
+    cursor_mutex.lock();
     curr_cursor = cursors[curr_type];
+    cursor_mutex.unlock();
 };
 
 void ResizeCursors::setResizeCursor(int resize_direction) {
@@ -189,5 +192,7 @@ void ResizeCursors::setResizeCursor(int resize_direction) {
     } else {
         curr_type = CURSOR_RESIZE_NE;
     }
+    cursor_mutex.lock();
     curr_cursor = cursors[curr_type];
+    cursor_mutex.unlock();
 };

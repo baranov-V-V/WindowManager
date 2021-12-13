@@ -8,7 +8,6 @@
 #include "Slider.h"
 #include "App.h"
 
-extern std::mutex cursors_mutex;
 extern ResizeCursors cursors;
 
 DummyFunctor::DummyFunctor() {};
@@ -390,7 +389,7 @@ bool GlowPicFunctor::action(const EventData& data) {
         default_wnd.showOn(glow_window);
         curr_state = STATE_DEFAULT;
     }
-    return true;
+    return false;
 };
 
 GlowBorderFunctor::GlowBorderFunctor() {};
@@ -416,7 +415,7 @@ bool GlowBorderFunctor::action(const EventData& data) {
         glow_window->setRedraw(true);
         curr_state = STATE_DEFAULT;
     }
-    return true;
+    return false;
 };
 
 MakeFirst::MakeFirst() {};
@@ -471,11 +470,9 @@ void ResizeCanvas::changeCursor(Pair<int> rel_coord) {
         SET_DIR_DOWN(direction);
     }
 
-    cursors_mutex.lock();
     cursors.setResizeCursor(direction);
-    cursors_mutex.unlock();
 
-    std::cout << "changed dir to " << direction << "\n";
+    //std::cout << "changed dir to " << direction << "\n";
 };
 bool ResizeCanvas::action(const EventData& data) {
     if (!on_move) {
@@ -627,3 +624,10 @@ bool PlaceSliderBarOnClickX::action(const EventData& data) {
     slider->getBar()->getPressDown()->action(data);
     return true;
 }
+
+ChangeColorCallbackFunctor::ChangeColorCallbackFunctor() {};
+ChangeColorCallbackFunctor::ChangeColorCallbackFunctor(plugin::Palette* palette, COLORREF color) : color(color), palette(palette) {};
+bool ChangeColorCallbackFunctor::action(const EventData& data) {
+    palette->ChangeColor(plugin::ToColor_t(color));
+    return true;
+};
