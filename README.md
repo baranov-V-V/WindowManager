@@ -1,2 +1,2 @@
-# WindowManager
+### GUI written in c++
  
