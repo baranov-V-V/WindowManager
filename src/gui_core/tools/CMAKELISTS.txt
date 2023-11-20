@@ -1,0 +1,8 @@
+target_sources(main
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/Tools.h
+    
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Tools.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Utility.cpp 
+)

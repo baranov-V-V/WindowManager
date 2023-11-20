@@ -1,0 +1,16 @@
+target_include_directories(main
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/.
+    ${CMAKE_CURRENT_SOURCE_DIR}/app
+    ${CMAKE_CURRENT_SOURCE_DIR}/config
+    ${CMAKE_CURRENT_SOURCE_DIR}/event
+    ${CMAKE_CURRENT_SOURCE_DIR}/gui_core
+    ${CMAKE_CURRENT_SOURCE_DIR}/plugin_api
+  )
+
+add_subdirectory(app)
+add_subdirectory(config)
+add_subdirectory(event)
+add_subdirectory(gui_core)
+add_subdirectory(plugin_api)
+#add_subdirectory(lib_export)

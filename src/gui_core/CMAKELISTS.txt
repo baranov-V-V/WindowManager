@@ -1,0 +1,4 @@
+add_subdirectory(actions)
+add_subdirectory(renderer)
+add_subdirectory(tools)
+add_subdirectory(widgets)
