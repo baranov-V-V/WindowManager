@@ -1,0 +1,12 @@
+target_sources(main
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/BasicWindow.h    
+    ${CMAKE_CURRENT_SOURCE_DIR}/BasicInfo.h    
+    ${CMAKE_CURRENT_SOURCE_DIR}/Slider.h    
+    ${CMAKE_CURRENT_SOURCE_DIR}/Window.h    
+    ${CMAKE_CURRENT_SOURCE_DIR}/WindowManager.h
+    
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Slider.cpp
+    ${CMAKE_CURRENT_SOURCE_DIR}/Window.cpp
+)

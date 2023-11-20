@@ -1,9 +1,9 @@
 #pragma once
 
-#include "BasicInfo.h"
-#include "Window.h"
-#include "Events.h"
-#include "PluginApiClasses.h"
+#include "gui_core/widgets/BasicInfo.h"
+#include "gui_core/widgets/Window.h"
+#include "event/Events.h"
+#include "plugin_api/PluginApiClasses.h"
 
 enum RESIZE_DIRECTIONS {
     DIRECTION_NONE = 0,

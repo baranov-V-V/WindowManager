@@ -1,4 +1,4 @@
-#include "ModuleStandartFunc.h"
+#include "gui_core/renderer/ModuleStandartFunc.h"
 
 RGBQUAD* TextureGetBuf(Texture* texture) {
     return texture->getBuf();

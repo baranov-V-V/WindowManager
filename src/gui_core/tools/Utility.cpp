@@ -1,11 +1,11 @@
 #include <algorithm>
 
-#include "BasicInfo.h"
-#include "Functors.h"
-#include "Window.h"
-#include "App.h"
-#include "Tools.h"
-#include "SkinsConfig.h"
+#include "gui_core/widgets/BasicInfo.h"
+#include "gui_core/actions/Functors.h"
+#include "gui_core/widgets/Window.h"
+#include "app/App.h"
+#include "gui_core/tools/Tools.h"
+#include "config/SkinsConfig.h"
 
 PicWindow* MakeBasicMenu(int x_size, int y_size, int coord_x, int coord_y, ManagerWindow* parent, App* app, int but_x) {
     int but_y = y_size;  

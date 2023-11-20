@@ -2,8 +2,9 @@
 #include <queue>
 #include <string>
 
-#include "BasicInfo.h"
-#include "Window.h"
+//#include "src/gui_core/widgets/BasicWindow.h"
+#include "../gui_core/widgets/BasicWindow.h"
+#include "gui_core/widgets/Window.h"
 
 class App {
   private:

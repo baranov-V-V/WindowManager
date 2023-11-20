@@ -1,11 +1,11 @@
 //graphics engine
-#include "TXLib.h"
-
 #include <mutex>
 
-#include "Window.h"
-#include "App.h"
-#include "Functors.h"
+#include "../../../third_party/TXLib/TXLib.h"
+
+#include "gui_core/widgets/Window.h"
+#include "app/App.h"
+#include "gui_core/actions/Functors.h"
 
 extern std::mutex cursor_mutex;
 extern ResizeCursors cursors;

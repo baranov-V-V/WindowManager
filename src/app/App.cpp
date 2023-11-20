@@ -1,12 +1,13 @@
 #include <mutex>
 
 #include "App.h"
-#include "Tools.h"
-#include "SkinsConfig.h"
-#include "Functors.h"
-#include "Window.h"
-#include "Events.h"
-#include "Slider.h"
+
+#include "gui_core/tools/Tools.h"
+#include "config/SkinsConfig.h"
+#include "gui_core/actions/Functors.h"
+#include "gui_core/widgets/Window.h"
+#include "event/Events.h"
+#include "gui_core/widgets/Slider.h"
 
 Renderer* Renderer::instance = nullptr;
 std::mutex cursor_mutex;

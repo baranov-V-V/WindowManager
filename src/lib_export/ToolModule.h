@@ -1,4 +1,4 @@
-#include "BasicWindow.h"
+#include "gui_core/widgets/BasicWindow.h"
 #include "ModuleStandartFunc.h"
 
 #define TOOLCALL __cdecl

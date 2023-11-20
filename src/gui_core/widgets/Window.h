@@ -1,11 +1,12 @@
 #pragma once
+
 #include <ctime>
 #include <map>
 #include <set>
 
-#include "BasicInfo.h"
-#include "Events.h"
-#include "BasicWindow.h"
+#include "gui_core/widgets/BasicInfo.h"
+#include "event/Events.h"
+#include "gui_core/widgets/BasicWindow.h"
 
 using std::map;
 using std::set;

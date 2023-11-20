@@ -1,9 +1,10 @@
 #include <cassert>
-#include "PluginApiClasses.h"
-#include "Slider.h"
-#include "Functors.h"
-#include "App.h"
-#include "SkinsConfig.h"
+
+#include "plugin_api/PluginApiClasses.h"
+#include "gui_core/widgets/Slider.h"
+#include "gui_core/actions/Functors.h"
+#include "app/App.h"
+#include "config/SkinsConfig.h"
 
 using plugin::Buffer;
 

@@ -1,7 +1,9 @@
 #pragma once
+
 #include <cassert>
 #include <iostream>
-#include "BasicInfo.h"
+
+#include "gui_core/widgets/BasicInfo.h"
 
 class BasicWindow {
   public:

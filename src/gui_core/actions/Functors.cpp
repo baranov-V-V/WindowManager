@@ -1,12 +1,11 @@
 #include <cassert>
 #include <iostream>
-#include <mutex>
 
-#include "Functors.h"
-#include "Window.h"
-#include "Tools.h"
-#include "Slider.h"
-#include "App.h"
+#include "gui_core/actions/Functors.h"
+#include "gui_core/widgets/Window.h"
+#include "gui_core/tools/Tools.h"
+#include "gui_core/widgets/Slider.h"
+#include "app/App.h"
 
 extern ResizeCursors cursors;
 

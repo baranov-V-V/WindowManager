@@ -1,6 +1,6 @@
 #define EXPORT_TOOL
 #include <iostream>
-#include "NewPluginApi.h"
+#include "plugin_api/NewPluginApi.h"
 
 struct Point {
     int x;

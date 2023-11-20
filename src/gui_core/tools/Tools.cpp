@@ -3,10 +3,10 @@
 #include <cassert>
 #include <iostream>
 
-#include "Tools.h"
-#include "Window.h"
-#include "App.h"
-#include "PluginApiClasses.h"
+#include "gui_core/tools/Tools.h"
+#include "gui_core/widgets/Window.h"
+#include "app/App.h"
+#include "plugin_api/PluginApiClasses.h"
 
 void VTool::adjust() {
     if (adjust_window != nullptr) {

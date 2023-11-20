@@ -2,10 +2,10 @@
 #include <cassert>
 #include <cmath>
 
-#include "Window.h"
-#include "Functors.h"
-#include "Tools.h"
-#include "App.h"
+#include "gui_core/widgets/Window.h"
+#include "gui_core/actions/Functors.h"
+#include "gui_core/tools/Tools.h"
+#include "app/App.h"
 
 Renderer::Renderer() : window(nullptr), max(0, 0), min(0, 0) {};
 

@@ -11,7 +11,8 @@
 #include <ctime>
 #include <sstream>
 #include <queue>
-#include "Functors.h"
+
+#include "gui_core/actions/Functors.h"
 
 //in each window there is texture.
 

@@ -3,10 +3,10 @@
 #include <vector>
 #include <iostream>
 #include <string>
-#include "NewPluginApi.h"
-#include "BasicInfo.h"
-#include "SkinsConfig.h"
-#include "App.h"
+#include "plugin_api/NewPluginApi.h"
+#include "gui_core/widgets/BasicInfo.h"
+#include "config/SkinsConfig.h"
+#include "app/App.h"
 
 //#include "ToolModule.h"
 

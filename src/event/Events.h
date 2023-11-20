@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasicInfo.h"
+#include "gui_core/widgets/BasicInfo.h"
 
 enum EventType {
     EVENT_MOUSE_MOVE,

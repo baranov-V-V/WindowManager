@@ -1,7 +1,7 @@
-#include "Slider.h"
-#include "Functors.h"
-#include "Events.h"
-#include "SkinsConfig.h"
+#include "gui_core/widgets/Slider.h"
+#include "gui_core/actions/Functors.h"
+#include "event/Events.h"
+#include "config/SkinsConfig.h"
 
 SliderBasicX::SliderBasicX(int size_x, int size_y, int coord_x, int coord_y, float min_val, float max_val, VSliderAction* action) :
     VSlider(min_val, max_val, action), 

@@ -1,0 +1,8 @@
+target_sources(main
+  PUBLIC
+    ${CMAKE_CURRENT_SOURCE_DIR}/BasicFunctors.h
+    ${CMAKE_CURRENT_SOURCE_DIR}/Functors.h
+    
+  PRIVATE
+    ${CMAKE_CURRENT_SOURCE_DIR}/Functors.cpp
+)

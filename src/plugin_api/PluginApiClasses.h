@@ -1,9 +1,9 @@
 #pragma once
 
-#include "NewPluginApi.h"
-#include "Slider.h"
-#include "BasicInfo.h"
-#include "Window.h"
+#include "plugin_api/NewPluginApi.h"
+#include "gui_core/widgets/Slider.h"
+#include "gui_core/widgets/BasicInfo.h"
+#include "gui_core/widgets/Window.h"
 
 COLORREF ToCOLORREF(plugin::color_t color);
 

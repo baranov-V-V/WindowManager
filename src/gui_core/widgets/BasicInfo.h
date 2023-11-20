@@ -1,6 +1,6 @@
 #pragma once
 
-#include<windows.h>
+#include <windows.h>
 
 enum WINDOW_TYPES {
     TYPE_WINDOW = 1,

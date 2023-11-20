@@ -1,6 +1,6 @@
 #pragma once
 
-#include "BasicWindow.h"
+#include "gui_core/widgets/BasicWindow.h"
 
 RGBQUAD* TextureGetBuf(Texture* texture);
 
