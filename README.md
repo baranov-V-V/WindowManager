@@ -22,7 +22,7 @@ The palette with colors and available tools. In the up left corner there's a but
 
 ## Plugin API
 
-If you can add a new filter or a new tool with no need to recompile the project. To create a tool or a filter you need to write a class with a specific interface and compile it as a dll. The program will dynamically link it and get access to provided methods. The inferface is described below
+You can add a new filter or a new tool with no need to recompile the project. To create a tool or a filter you need to write a class with a specific interface and compile it as a dll. The program will dynamically link it and get access to provided methods. The inferface is described below
 
 ### Basic types
 
